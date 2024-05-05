@@ -18,7 +18,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Supplier Name</th>
@@ -28,15 +28,6 @@
                             <th>Email</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Supplier Name</th>
-                            <th>Address</th>
-                            <th>Contact Person</th>
-                            <th>Contact Number</th>
-                            <th>Email</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         <tr>
                             <td>Tiger Corporation</td>

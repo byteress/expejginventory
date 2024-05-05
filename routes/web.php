@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Frontend\AuthController;
+use App\Livewire\Frontend\Login;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +14,4 @@ use App\Http\Controllers\Frontend\AuthController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('guest');
+Route::get('/', Login::class)->middleware('guest')->name('login') ;

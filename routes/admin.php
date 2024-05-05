@@ -6,8 +6,11 @@ use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Livewire\Admin\CreateUser;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Users;
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
 
 Route::get('/product', [ProductController::class, 'index'])->name('product');
@@ -19,5 +22,5 @@ Route::get('/branch/new`', [BranchController::class, 'createBranch'])->name('cre
 Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
 Route::get('/supplier/new`', [SupplierController::class, 'createSupplier'])->name('create.supplier');
 
-Route::get('/users', [UsersController::class, 'index'])->name('users');
-Route::get('/users/new`', [UsersController::class, 'createUser'])->name('create.users');
+Route::get('/users', Users::class)->name('users');
+Route::get('/users/new', CreateUser::class)->name('create.user');

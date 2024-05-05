@@ -2,7 +2,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+    <a wire:navigate class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin.dashboard') }}">
         <div class="sidebar-brand-icon">
             <i class="fas fa-couch"></i>
         </div>
@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="{{ route('admin.dashboard') }}">
+        <a wire:navigate class="nav-link" href="{{ route('admin.dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
@@ -36,8 +36,8 @@
         </a>
         <div id="collapseZero" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('admin.product') }}">List</a>
-                <a class="collapse-item" href="{{ route('admin.create.product') }}">New Branch</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.product') }}">List</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.create.product') }}">New Branch</a>
             </div>
         </div>
     </li>
@@ -51,8 +51,8 @@
         </a>
         <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('admin.branch') }}">List</a>
-                <a class="collapse-item" href="{{ route('admin.create.branch') }}">New Branch</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.branch') }}">List</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.create.branch') }}">New Branch</a>
             </div>
         </div>
     </li>
@@ -66,8 +66,8 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('admin.supplier') }}">List</a>
-                <a class="collapse-item" href="{{ route('admin.create.supplier') }}">New Supplier</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.supplier') }}">List</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.create.supplier') }}">New Supplier</a>
             </div>
         </div>
     </li>
@@ -81,8 +81,8 @@
         </a>
         <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('admin.users') }}">List</a>
-                <a class="collapse-item" href="{{ route('admin.create.user') }}">New User</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.users') }}">List</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.create.user') }}">New User</a>
             </div>
         </div>
     </li>
@@ -104,7 +104,7 @@
         </a>
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">System Settings</a>
+                <a wire:navigate class="collapse-item" href="#">System Settings</a>
             </div>
         </div>
     </li>
