@@ -21,6 +21,67 @@
                 @csrf
                 <div class="container">
                     <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="img-container">
+                                        <input type="file" id="imgInp" class = "school-img" accept="image/*" name = "schoollogo" hidden>
+                                        <div class="img-area" data-img="">
+                                            <h1><i class="fas fa-image"></i></h1>
+                                            {{-- if Image is there <img id="chosen-image" class = "school-img"  src =""> --}}
+                                        </div>
+                                        <a class="btn btn-primary btn-full select-image"> Featured Image</a>
+                                    </div>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row mt-3">
+                                        <div class="col-md-9">
+                                            <h4>Additional Images </h4>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <a class="btn btn-primary btn-block select-multiple mb-3"><i class="fas fa-plus"></i> Select Images</a>
+                                            <input type="file" id="additionalImg" class = "additional-img" accept="image/*" name = "schoollogo" hidden multiple>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card">
+                                                <div class="card-body additional-img-container">
+                                                    <h1><i class="fas fa-plus"></i></h1>
+                                                    {{-- if image exist <img src ="#" class ="additional-images"> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card">
+                                                <div class="card-body additional-img-container">
+                                                    <h1><i class="fas fa-plus"></i></h1>
+                                                    {{-- if image exist <img src ="#" class ="additional-images"> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card">
+                                                <div class="card-body additional-img-container">
+                                                    <h1><i class="fas fa-plus"></i></h1>
+                                                    {{-- if image exist <img src ="#" class ="additional-images"> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card">
+                                                <div class="card-body additional-img-container">
+                                                    <h1><i class="fas fa-plus"></i></h1>
+                                                    {{-- if image exist <img src ="#" class ="additional-images"> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="product_name">Product Name</label>

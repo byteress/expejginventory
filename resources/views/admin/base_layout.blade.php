@@ -105,6 +105,55 @@
     <!-- Page level custom scripts -->
     <script src="{{ asset('assets/js/demo/datatables-demo.js') }}"></script>
 
+    <script>
+        $(document).ready(function() {
+            const selectImage = document.querySelector('.select-image');
+            const inputFile = document.querySelector('#imgInp');
+            const imgArea = document.querySelector('.img-area');
+
+            const selectImage2 = document.querySelector('.select-multiple');
+            const inputFile2 = document.querySelector('#additionalImg');
+
+            imgArea.addEventListener('click', function () {
+                inputFile.click();
+            })
+
+            imgArea.addEventListener('click', function () {
+                inputFile.click();
+            })
+
+
+            selectImage2.addEventListener('click', function (e) {
+                event.preventDefault();
+                inputFile2.click();
+            })
+
+            selectImage.addEventListener('click', function (e) {
+                event.preventDefault();
+                inputFile.click();
+            })
+
+            inputFile.addEventListener('change', function () {
+                const image = this.files[0]
+                if(image.size < 2000000) {
+                    const reader = new FileReader();
+                    reader.onload = ()=> {
+                        const allImg = imgArea.querySelectorAll('img');
+                        allImg.forEach(item=> item.remove());
+                        const imgUrl = reader.result;
+                        const img = document.createElement('img');
+                        img.src = imgUrl;
+                        imgArea.appendChild(img);
+                        imgArea.classList.add('active');
+                        imgArea.dataset.img = image.name;
+                    }
+                    reader.readAsDataURL(image);
+                } else {
+                    alert("Image size more than 2MB");
+                }
+            })
+        });
+    </script>
 </body>
 
 </html>
