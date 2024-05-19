@@ -6,15 +6,32 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <div class="form-group col-md-2">
-                <input type="text" class="float-left form-control" placeholder="Search..." wire:model.live="search">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <input type="text" class="float-left form-control" placeholder="Search..." wire:model.live="search">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="sr-only" for="inlineFormInputGroup">Username</label>
+                    <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Filter By Supplier</div>
+                    </div>
+                    <select name="" id="" class="form-control" >
+                        <option value="" disabled>Select Supplier</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="col-md-2 offset-md-4">
+                    <a wire:navigate href="{{ route('admin.create.product') }}" class="btn btn-primary btn-icon-split float-right btn-sm">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span class="text">New Product</span>
+                    </a>
+                </div>
             </div>
-            <a wire:navigate href="{{ route('admin.create.product') }}" class="btn btn-primary btn-icon-split float-right btn-sm">
-                <span class="icon text-white-50">
-                    <i class="fas fa-plus"></i>
-                </span>
-                <span class="text">New Product</span>
-            </a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -81,7 +98,7 @@
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="5" align="center">No products found.</td>
+                                <td colspan="10" align="center">No products found.</td>
                             </tr>
                         @endforelse
                     </tbody>
