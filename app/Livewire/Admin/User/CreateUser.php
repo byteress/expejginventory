@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\User;
 
 use App\Exceptions\ErrorHandler;
+use BranchManagement\Models\Branch;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -66,6 +67,8 @@ class CreateUser extends Component
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
-        return view('livewire.admin.create-user');
+        return view('livewire.admin.create-user', [
+            'branches' => Branch::all()
+        ]);
     }
 }

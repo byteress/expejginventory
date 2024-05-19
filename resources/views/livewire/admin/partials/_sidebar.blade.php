@@ -37,7 +37,7 @@
         <div id="collapseZero" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item" href="{{ route('admin.product') }}">List</a>
-                <a wire:navigate class="collapse-item" href="{{ route('admin.create.product') }}">New Branch</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.create.product') }}">New Product</a>
             </div>
         </div>
     </li>

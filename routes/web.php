@@ -14,4 +14,4 @@ use App\Livewire\Frontend\Login;
 |
 */
 
-Route::get('/', Login::class)->middleware('guest')->name('login') ;
+Route::get('/', Login::class)->name('login') ;

@@ -6,7 +6,8 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <a wire:navigate href="{{ route('admin.create.user') }}" class="btn btn-primary btn-icon-split float-right btn-sm">
+            <a wire:navigate href="{{ route('admin.create.user') }}"
+                class="btn btn-primary btn-icon-split float-right btn-sm">
                 <span class="icon text-white-50">
                     <i class="fas fa-plus"></i>
                 </span>
@@ -15,6 +16,17 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
+                @if (session('alert'))
+                    <div class="alert alert-danger" role="alert">
+                        {{ session('alert') }}
+                    </div>
+                @endif
+
+                @if (session('success'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
@@ -22,7 +34,9 @@
                             <th>Last Name</th>
                             <th>Email</th>
                             <th>Branch</th>
-                            <th>User Type</th>
+                            <th>User Role</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,14 +45,46 @@
                                 <td>{{ $user->first_name }}</td>
                                 <td>{{ $user->last_name }}</td>
                                 <td>{{ $user->email }}</td>
-                                <td>Male</td>
-                                <td>Admin</td>
+                                <td>{{ $user->branch?->name ?? '-' }}</td>
+                                <td>{{ !is_null($user->roles->first()) ? \IdentityAndAccessContracts\Enums\Role::from($user->roles->first()->name)->displayName() : '-' }}
+                                </td>
+                                <td><a wire:navigate href="{{ route('admin.edit.user', ['user' => $user->id]) }}"
+                                        class="btn btn-info btn-sm">Edit</a></td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                        data-target="#deleteModal1">Delete</button>
+                                    <!-- Delete Modal -->
+                                    <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1"
+                                        role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModal1Label">Delete Branch</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this branch?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Cancel</button>
+                                                    <button wire:click="delete('{{ $user->id }}')" type="button"
+                                                        class="btn btn-danger">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Delete Modal -->
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" align="center">No users found.</td>
+                                <td colspan="7" align="center">No users found.</td>
                             </tr>
-                        @endforelse 
+                        @endforelse
                         <!-- Add more user data rows as needed -->
                     </tbody>
                 </table>
@@ -48,3 +94,11 @@
     </div>
 
 </div>
+
+@script
+    <script>
+        $wire.on('close-modal', () => {
+            $('.modal').modal('hide');
+        });
+    </script>
+@endscript

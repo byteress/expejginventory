@@ -15,15 +15,27 @@
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Login</h1>
                                 </div>
-                                <form class="user">
+                                @if (session('alert'))
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ session('alert') }}
+                                    </div>
+                                @endif
+                                <form class="user" wire:submit="login">
                                     <div class="form-group">
-                                        <input type="email" class="form-control form-control-user"
+                                        <input wire:model="email" type="email" class="form-control form-control-user"
                                             id="exampleInputEmail" aria-describedby="emailHelp"
                                             placeholder="Enter Email Address...">
+                                        @error('email')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password">
+                                        <input wire:model="password" type="password"
+                                            class="form-control form-control-user" id="exampleInputPassword"
+                                            placeholder="Password">
+                                        @error('password')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox small">
@@ -32,16 +44,13 @@
                                                 Me</label>
                                         </div>
                                     </div>
-                                    <a href="{{ route('admin.dashboard') }}" wire:navigate class="btn btn-primary btn-user btn-block">
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">
                                         Login
-                                    </a>
+                                    </button>
                                 </form>
                                 <hr>
                                 <div class="text-center">
                                     <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                </div>
-                                <div class="text-center">
-                                    <a class="small" href="register.html">Create an Account!</a>
                                 </div>
                             </div>
                         </div>

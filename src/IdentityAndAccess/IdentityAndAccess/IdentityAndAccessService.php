@@ -8,6 +8,7 @@ use IdentityAndAccessContracts\Enums\Role;
 use IdentityAndAccessContracts\Exceptions\InvalidDomainException;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use IdentityAndAccessContracts\Utils\Result;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class IdentityAndAccessService implements IIdentityAndAccessService
@@ -15,6 +16,7 @@ class IdentityAndAccessService implements IIdentityAndAccessService
     public function create(string $userId, string $firstName, string $lastName, string $email, string $password, ?string $phone, ?string $address, string $role, ?string $branch): Result
     {
         try {
+            DB::beginTransaction();
             if($role != Role::Admin->value && is_null($branch)) throw new InvalidDomainException('Branch is required.', ['branch' => 'Branch is required.']);
             
             if (User::whereId($userId)->exists()) throw new InvalidDomainException('User ID already exists.', ['userId' => 'User ID already exists.']);
@@ -33,9 +35,10 @@ class IdentityAndAccessService implements IIdentityAndAccessService
             $user->save();
 
             $user->assignRole($role);
-
+            DB::commit();
             return Result::success(null);
         } catch (Exception $e) {
+            DB::rollBack();
             report($e);
             return Result::failure($e);
         }
@@ -52,11 +55,12 @@ class IdentityAndAccessService implements IIdentityAndAccessService
                 'email' => $email,
                 'phone' => $phone,
                 'address' => $address,
-                'branch' => $branch,
+                'branch_id' => $branch,
             ]);
 
             return Result::success(null);
         } catch (Exception $e) {
+            report($e);
             return Result::failure($e);
         }
     }
@@ -66,10 +70,11 @@ class IdentityAndAccessService implements IIdentityAndAccessService
         try {
             $user = User::find($userId);
 
-            $user->delete();
+            $user?->delete();
 
             return Result::success(null);
         } catch (Exception $e) {
+            report($e);
             return Result::failure($e);
         }
     }

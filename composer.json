@@ -12,11 +12,13 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.4",
         "propaganistas/laravel-phone": "^5.2",
+        "spatie/laravel-medialibrary": "^10.15",
         "spatie/laravel-permission": "^6.7"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.9.1",
+        "larastan/larastan": "^2.0",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
@@ -30,6 +32,12 @@
             "App\\": "app/",
             "IdentityAndAccessContracts\\": "src/IdentityAndAccess/Contracts/",
             "IdentityAndAccess\\": "src/IdentityAndAccess/IdentityAndAccess/",
+            "BranchManagementContracts\\": "src/BranchManagement/Contracts/",
+            "BranchManagement\\": "src/BranchManagement/BranchManagement/",
+            "SupplierManagementContracts\\": "src/SupplierManagement/Contracts/",
+            "SupplierManagement\\": "src/SupplierManagement/SupplierManagement/",
+            "ProductManagementContracts\\": "src/ProductManagement/Contracts/",
+            "ProductManagement\\": "src/ProductManagement/ProductManagement/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
@@ -45,9 +53,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:models"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -58,7 +64,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "barryvdh/laravel-ide-helper"
+            ]
         }
     },
     "config": {

@@ -78,6 +78,19 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label for="role">Branch</label>
+                                <select class="form-control" id="role" wire:model="branch">
+                                    <option value="">Select Branch</option>
+                                    @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                    <!-- Add more user types if needed -->
+                                </select>
+                                @error('branch') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" wire:model="password" placeholder="Password">
                                 @error('password') <span class="text-danger">{{ $message }}</span> @enderror
