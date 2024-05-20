@@ -84,7 +84,7 @@
                                                             <h1><i class="fas fa-plus"></i></h1>
                                                         @else
                                                             <img src ="{{ $gallery[$i]->temporaryUrl() }}"
-                                                                class ="additional-images">
+                                                                class ="additional-images img-fluid">
                                                         @endif
                                                     </div>
                                                 </div>

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ProductController;
 use App\Livewire\Admin\Branch\Branches;
 use App\Livewire\Admin\Branch\CreateBranch;
 use App\Livewire\Admin\Branch\EditBranch;

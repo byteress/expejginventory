@@ -72,6 +72,8 @@ class ProductManagementService implements IProductManagementService
 
             if (!$product) throw new InvalidDomainException('Product not found.', ['productId' => 'Product not found.']);
 
+            $product->clearMediaCollection('featured');
+
             $product->addMedia($featuredImagePath)
                 ->withResponsiveImages()
                 ->toMediaCollection('featured');
@@ -92,6 +94,8 @@ class ProductManagementService implements IProductManagementService
             $product = Product::find($productId);
 
             if (!$product) throw new InvalidDomainException('Product not found.', ['productId' => 'Product not found.']);
+
+            $product->clearMediaCollection('gallery');
 
             foreach ($gallery as $image) {
                 $product->addMedia($image)

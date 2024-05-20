@@ -6,7 +6,8 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <a href="{{ route('admin.product') }}" wire:navigate type="button" class="btn btn-secondary btn-icon-split float-right btn-sm">
+            <a href="{{ route('admin.product') }}" wire:navigate type="button"
+                class="btn btn-secondary btn-icon-split float-right btn-sm">
                 <span class="icon text-white-50">
                     <i class="fas fa-chevron-left"></i>
                 </span>
@@ -38,8 +39,9 @@
                                         <input x-ref="featuredImage" type="file" id="imgInp" class = "school-img"
                                             accept="image/*" wire:model="featuredImage" hidden>
                                         @if (!$featuredImage || count($errors->get('featuredImage')))
-                                            <div @click="$refs.featuredImage.click()" class="img-area" data-img="">
-                                                {{ $defaultFeaturedImage->img()->attributes(['class' => 'school-img']) }}
+                                            <div @click="$refs.featuredImage.click()" class="img-area img-fluid"
+                                                data-img="">
+                                                {{ $defaultFeaturedImage->img()->attributes(['class' => 'img-fluid']) }}
                                             </div>
                                             <a @click="$refs.featuredImage.click()"
                                                 class="btn btn-primary btn-full select-image">Change Featured Image</a>
@@ -81,10 +83,18 @@
                                                 <div class="card">
                                                     <div class="card-body additional-img-container">
                                                         @if (!isset($gallery[$i]) || count($errors->get('gallery')) || count($errors->get('gallery.*')))
-                                                            @if(!isset($defaultGallery[$i]))<h1><i class="fas fa-plus"></i></h1>@else {{ $defaultGallery[$i]->img()->attributes(['class' => 'school-img']) }} @endif
+                                                            @if (!isset($defaultGallery[$i]))
+                                                                <h1><i class="fas fa-plus"></i></h1>
+                                                            @else
+                                                                @if (!isset($gallery[0]))
+                                                                    {{ $defaultGallery[$i]->img()->attributes(['class' => 'img-fluid']) }}
+                                                                @else
+                                                                    <h1><i class="fas fa-plus"></i></h1>
+                                                                @endif
+                                                            @endif
                                                         @else
                                                             <img src ="{{ $gallery[$i]->temporaryUrl() }}"
-                                                                class ="additional-images">
+                                                                class ="additional-images img-fluid">
                                                         @endif
                                                     </div>
                                                 </div>

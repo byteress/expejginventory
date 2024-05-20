@@ -11,6 +11,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.4",
+        "milon/barcode": "^11.0",
         "propaganistas/laravel-phone": "^5.2",
         "spatie/laravel-medialibrary": "^10.15",
         "spatie/laravel-permission": "^6.7"

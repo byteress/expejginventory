@@ -9,22 +9,28 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <input type="text" class="float-left form-control" placeholder="Search..." wire:model.live="search">
+                        <input type="text" class="float-left form-control" placeholder="Search..."
+                            wire:model.live="search">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <label class="sr-only" for="inlineFormInputGroup">Username</label>
                     <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">Filter By Supplier</div>
-                    </div>
-                    <select name="" id="" class="form-control" >
-                        <option value="" disabled>Select Supplier</option>
-                    </select>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Filter By Supplier</div>
+                        </div>
+                        <select wire:model.change="supplier" class="form-control">
+                            <option value="" style="display:none">Select Supplier</option>
+                            @foreach ($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}">{{ $supplier->code }} - {{ $supplier->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-2 offset-md-4">
-                    <a wire:navigate href="{{ route('admin.create.product') }}" class="btn btn-primary btn-icon-split float-right btn-sm">
+                    <a wire:navigate href="{{ route('admin.create.product') }}"
+                        class="btn btn-primary btn-icon-split float-right btn-sm">
                         <span class="icon text-white-50">
                             <i class="fas fa-plus"></i>
                         </span>
@@ -56,46 +62,68 @@
                             <th>Supplier</th>
                             <th>Regular Price</th>
                             <th>Sale Price</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($products as $product)
-                        <tr>
-                            <td align="center">{{ $product->getFirstMedia('featured')->img()->attributes(['width' => '100', 'height' => '100']) }}</td>
-                            <td>{{ $product->sku_code }}-{{ $product->sku_number }}</td>
-                            <td>{{ $product->model }}</td>
-                            <td>{{ $product->description }}</td>
-                            <td>{{ $product->supplier->name }}</td>
-                            <td>{{ $product->regular_price }}</td>
-                            <td>{{ $product->sale_price }}</td>
-                            <td><a wire:navigate href="{{ route('admin.edit.product', ['product' => $product->id]) }}" class="btn btn-info btn-sm">Edit</a></td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal1">Delete</button>
-                                <!-- Delete Modal -->
-                                <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1" role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModal1Label">Delete Product</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete this product?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                <button wire:click="delete('{{ $product->id }}')" type="button" class="btn btn-danger">Delete</button>
+                            <tr>
+                                <td align="center">
+                                    {{ $product->getFirstMedia('featured')->img()->attributes(['width' => '100', 'height' => '100', 'class' => 'img-fluid']) }}
+                                </td>
+                                <td>
+                                    <livewire:admin.product.partials.sku productId="{{ $product->id }}"
+                                        sku="{{ $product->sku_number ?? null }}" :key="$product->id" />
+                                </td>
+                                <td>{{ $product->model }}</td>
+                                <td>{{ $product->description }}</td>
+                                <td>{{ $product->supplier->name }}</td>
+                                <td>{{ $product->regular_price }}</td>
+                                <td>{{ $product->sale_price }}</td>
+
+                                <td>
+                                    <div class="btn-group">
+                                        <a wire:navigate
+                                            href="{{ route('admin.edit.product', ['product' => $product->id]) }}"
+                                            type="button" class="btn btn-primary">Edit</a>
+                                        <button type="button"
+                                            class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a data-toggle="modal" data-target="#deleteModal1" class="dropdown-item"
+                                                href="#">Delete</a>
+                                        </div>
+                                        <!-- Delete Modal -->
+                                        <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1"
+                                            role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModal1Label">Delete Product
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete this product?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Cancel</button>
+                                                        <button wire:click="delete('{{ $product->id }}')"
+                                                            type="button" class="btn btn-danger">Delete</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <!-- End Delete Modal -->
                                     </div>
-                                </div>
-                                <!-- End Delete Modal -->
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         @empty
                             <tr>
                                 <td colspan="10" align="center">No products found.</td>
