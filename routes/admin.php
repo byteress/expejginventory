@@ -12,6 +12,12 @@ use App\Livewire\Admin\Product\Products;
 use App\Livewire\Admin\Supplier\CreateSupplier;
 use App\Livewire\Admin\Supplier\EditSupplier;
 use App\Livewire\Admin\Supplier\Suppliers;
+use App\Livewire\Admin\Stock\ReceiveProducts;
+use App\Livewire\Admin\Stock\ReceiveProductsHistory;
+use App\Livewire\Admin\Stock\ViewRequest;
+use App\Livewire\Admin\Stock\ForTransfer;
+use App\Livewire\Admin\Stock\Incoming;
+use App\Livewire\Admin\Stock\RequestHistory;
 use App\Livewire\Admin\User\EditUser;
 use App\Livewire\Admin\User\Users;
 
@@ -33,3 +39,11 @@ Route::get('/supplier/edit/{supplier}', EditSupplier::class)->name('edit.supplie
 Route::get('/users', Users::class)->name('users');
 Route::get('/users/new', CreateUser::class)->name('create.user');
 Route::get('/users/edit/{user}', EditUser::class)->name('edit.user');
+
+Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
+Route::get('/receive-product-history', ReceiveProductsHistory::class)->name('receive.product.history');
+
+Route::get('/view-request', ViewRequest::class)->name('view.request');
+Route::get('/for-transfer', ForTransfer::class)->name('for.transfer');
+Route::get('/incoming', Incoming::class)->name('incoming');
+Route::get('/request-history', RequestHistory::class)->name('request.history');

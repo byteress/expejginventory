@@ -92,6 +92,46 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
+        Stocks
+    </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+            aria-expanded="true" aria-controls="collapseFour">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Receive Product</span>
+        </a>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product') }}">Receive</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product.history') }}">History</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
+            aria-expanded="true" aria-controls="collapseFive">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Request Transfer</span>
+        </a>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.view.request') }}">View Requests</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.for.transfer') }}">For Transfer</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.incoming') }}">Incoming</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.request.history') }}">History</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
         Addons
     </div>
 
