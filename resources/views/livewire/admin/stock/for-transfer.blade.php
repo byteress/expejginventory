@@ -28,15 +28,6 @@
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Product Name</th>
-                                            <th>Product Code</th>
-                                            <th>Supplier</th>
-                                            <th>Branch</th>
-                                            <th></th>
-                                        </tr>
-                                    </tfoot>
                                     <tbody>
                                         <tr>
                                             <td>Tiger Nixon</td>

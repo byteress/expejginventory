@@ -25,18 +25,10 @@
                                         <th>Product Code</th>
                                         <th>Supplier</th>
                                         <th>Branch</th>
+                                        <th>Quantity</th>
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Product Code</th>
-                                        <th>Supplier</th>
-                                        <th>Branch</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
                                 <tbody>
                                     <tr>
                                         <td>Tiger Nixon</td>
@@ -44,10 +36,18 @@
                                         <td>61</td>
                                         <td>2011/04/25</td>
                                         <td>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon3">Qty.</span>
+                                                </div>
+                                                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" style = "width:50px;">
+                                            </div>
+                                        </td>
+                                        <td>
                                             <div class="btn-group">
                                                 <a wire:navigate
                                                     href="#"
-                                                    type="button" class="btn btn-primary">Recieve</a>
+                                                    type="button" class="btn btn-primary">Receive</a>
                                                 <button type="button"
                                                     class="btn btn-primary dropdown-toggle dropdown-toggle-split"
                                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -118,15 +118,6 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Product Code</th>
-                                    <th>Supplier</th>
-                                    <th>Branch</th>
-                                    <th>Status</th>
-                                </tr>
-                            </tfoot>
                             <tbody>
                                 <tr>
                                     <td>Tiger Nixon</td>

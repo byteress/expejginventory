@@ -119,6 +119,7 @@
         </a>
         <div id="collapseFive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.request.transfer') }}">Request Transfer</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.view.request') }}">View Requests</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.for.transfer') }}">For Transfer</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.incoming') }}">Incoming</a>

@@ -3,7 +3,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Incoming</h1>
+        <h1 class="h3 mb-2 text-gray-800">Request Transfer</h1>
         <div class="row">
             <div class="col-md-6">
                     <!-- DataTales Example -->
@@ -25,6 +25,7 @@
                                             <th>Product Code</th>
                                             <th>Supplier</th>
                                             <th>Branch</th>
+                                            <th>Quantity</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -35,10 +36,18 @@
                                             <td>61</td>
                                             <td>2011/04/25</td>
                                             <td>
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text" id="basic-addon3">Qty.</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" style = "width:50px;">
+                                                </div>
+                                            </td>
+                                            <td>
                                                 <div class="btn-group">
                                                     <a wire:navigate
                                                         href="#"
-                                                        type="button" class="btn btn-primary">Confirm</a>
+                                                        type="button" class="btn btn-primary">Transfer</a>
                                                     <button type="button"
                                                         class="btn btn-primary dropdown-toggle dropdown-toggle-split"
                                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

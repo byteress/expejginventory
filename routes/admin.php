@@ -17,6 +17,7 @@ use App\Livewire\Admin\Stock\ReceiveProductsHistory;
 use App\Livewire\Admin\Stock\ViewRequest;
 use App\Livewire\Admin\Stock\ForTransfer;
 use App\Livewire\Admin\Stock\Incoming;
+use App\Livewire\Admin\Stock\RequestTransfer;
 use App\Livewire\Admin\Stock\RequestHistory;
 use App\Livewire\Admin\User\EditUser;
 use App\Livewire\Admin\User\Users;
@@ -43,6 +44,7 @@ Route::get('/users/edit/{user}', EditUser::class)->name('edit.user');
 Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
 Route::get('/receive-product-history', ReceiveProductsHistory::class)->name('receive.product.history');
 
+Route::get('/request-transfer', RequestTransfer::class)->name('request.transfer');
 Route::get('/view-request', ViewRequest::class)->name('view.request');
 Route::get('/for-transfer', ForTransfer::class)->name('for.transfer');
 Route::get('/incoming', Incoming::class)->name('incoming');
