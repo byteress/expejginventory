@@ -124,7 +124,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item" href="{{ route('admin.request.transfer') }}">Request Transfer</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.view.request') }}">View Requests</a>
-                <a wire:navigate class="collapse-item" href="{{ route('admin.for.transfer') }}">For Transfer</a>
+                {{-- <a wire:navigate class="collapse-item" href="{{ route('admin.for.transfer') }}">For Transfer</a> --}}
                 <a wire:navigate class="collapse-item" href="{{ route('admin.incoming') }}">Incoming</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.request.history') }}">History</a>
             </div>
