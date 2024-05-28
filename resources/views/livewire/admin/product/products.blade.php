@@ -67,13 +67,13 @@
                     </thead>
                     <tbody>
                         @forelse ($products as $product)
-                            <tr>
+                            <tr wire:key="{{ $product->id }}">
                                 <td align="center">
-                                    {{ $product->getFirstMedia('featured')->img()->attributes(['width' => '100', 'height' => '100', 'class' => 'img-fluid']) }}
+                                    {{ $product->getFirstMedia('featured')->img()->lazy()->attributes(['width' => '100', 'height' => '100', 'class' => 'img-fluid']) }}
                                 </td>
                                 <td>
                                     <livewire:admin.product.partials.sku productId="{{ $product->id }}"
-                                        sku="{{ $product->sku_number ?? null }}" :key="$product->id" />
+                                        sku="{{ $product->sku_number ?? null }}" :key="$product->id"/>
                                 </td>
                                 <td>{{ $product->model }}</td>
                                 <td>{{ $product->description }}</td>

@@ -22,7 +22,7 @@ class Product extends Model implements HasMedia
         $this->addMediaCollection('gallery');
     }
 
-    public function supplier()
+    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }

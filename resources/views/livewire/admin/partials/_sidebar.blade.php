@@ -18,7 +18,8 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
-
+    
+    @hasrole('admin')
     <!-- Divider -->
     <hr class="sidebar-divider">
 
@@ -86,7 +87,9 @@
             </div>
         </div>
     </li>
+    @endhasrole
 
+    @hasanyrole('admin|inventory_head')
     <!-- Divider -->
     <hr class="sidebar-divider">
 
@@ -127,7 +130,7 @@
             </div>
         </div>
     </li>
-
+    @endhasanyrole
     <!-- Divider -->
     <hr class="sidebar-divider">
 

@@ -13,6 +13,7 @@
         "livewire/livewire": "^3.4",
         "milon/barcode": "^11.0",
         "propaganistas/laravel-phone": "^5.2",
+        "spatie/laravel-event-sourcing": "^7.6",
         "spatie/laravel-medialibrary": "^10.15",
         "spatie/laravel-permission": "^6.7"
     },
@@ -39,13 +40,18 @@
             "SupplierManagement\\": "src/SupplierManagement/SupplierManagement/",
             "ProductManagementContracts\\": "src/ProductManagement/Contracts/",
             "ProductManagement\\": "src/ProductManagement/ProductManagement/",
+            "StockManagementContracts\\": "src/StockManagement/Contracts/",
+            "StockManagement\\": "src/StockManagement/StockManagement/",
+            "TransferContracts\\": "src/Transfer/Contracts/",
+            "Transfer\\": "src/Transfer/Transfer/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "StockManagementTests\\": "src/StockManagement/Tests/"
         }
     },
     "scripts": {
