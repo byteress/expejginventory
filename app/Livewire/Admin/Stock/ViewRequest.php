@@ -71,6 +71,7 @@ class ViewRequest extends Component
             ->join('products', 'product_requests.product_id', '=', 'products.id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
             ->select('product_requests.*', 'branches.name', 'products.*', 'suppliers.code')
+            ->where('product_requests.quantity', '>', 0)
             ->get();
     }
 
