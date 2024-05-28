@@ -37,7 +37,7 @@
                                             <td>{{ $product->model }}</td>
                                             <td>{{ $product->description }}</td>
                                             <td><livewire:admin.stock.partial.on-hand :key="$product->id"
-                                                productId="{{ $product->id }}" branchId="{{ auth()->user()->branch_id }}">
+                                                productId="{{ $product->id }}">
                                             {{-- <td><button wire:click="select('{{ $product->id }}')" type="button"
                                                     class="btn btn-primary" data-dismiss="modal">Select</button></td> --}}
                                             <td>

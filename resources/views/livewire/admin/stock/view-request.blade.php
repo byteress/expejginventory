@@ -3,7 +3,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">For Transfer</h1>
+        <h1 class="h3 mb-2 text-gray-800">Requests</h1>
         <div class="row">
             <div class="col-md-6">
                 <!-- DataTales Example -->
