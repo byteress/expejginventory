@@ -42,12 +42,14 @@ class Product extends Aggregate
         string $actor
     ): self
     {
+        if($receiver == $sender) throw new InvalidDomainException('Cannot transfer to yourself', ['request' => 'Cannot transfer to yourselft']);
+
         $requested = $this->state[$receiver]['requested'] ?? 0;
         $transferred = $this->state[$receiver]['transferred'] ?? 0;
 
         $pending = $requested - $transferred;
 
-        if($pending < $quantity) throw new InvalidDomainException('Cannot transfer more than the requested quantity', ['request' => 'Cannot transfer more than the requested quantityt']);
+        if($pending < $quantity) throw new InvalidDomainException('Cannot transfer more than the requested quantity', ['request' => 'Cannot transfer more than the requested quantity']);
 
         $event = new ProductTransferred(
             $this->uuid(),
