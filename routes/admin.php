@@ -22,8 +22,12 @@ use App\Livewire\Admin\Stock\RequestHistory;
 use App\Livewire\Admin\Stock\TransferDetails;
 use App\Livewire\Admin\User\EditUser;
 use App\Livewire\Admin\User\Users;
+use App\Livewire\Admin\Order\OrderProduct;
+use App\Livewire\Admin\Order\Orders;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
+Route::get('/order-product', OrderProduct::class)->name('order.product');
+Route::get('/orders', Orders::class)->name('orders');
 
 Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/product', Products::class)->name('product');
@@ -41,8 +45,8 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/users', Users::class)->name('users');
     Route::get('/users/new', CreateUser::class)->name('create.user');
     Route::get('/users/edit/{user}', EditUser::class)->name('edit.user');
-});
 
+});
 Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
     Route::get('/receive-product-history', ReceiveProductsHistory::class)->name('receive.product.history');
