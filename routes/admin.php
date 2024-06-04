@@ -24,10 +24,14 @@ use App\Livewire\Admin\User\EditUser;
 use App\Livewire\Admin\User\Users;
 use App\Livewire\Admin\Order\OrderProduct;
 use App\Livewire\Admin\Order\Orders;
+use App\Livewire\Admin\Order\OrderCashier;
+use App\Livewire\Admin\Order\OrderCashierDetails;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 Route::get('/order-product', OrderProduct::class)->name('order.product');
 Route::get('/orders', Orders::class)->name('orders');
+Route::get('/order-cashier', OrderCashier::class)->name('order.cashier');
+Route::get('/order-cashier-details', OrderCashierDetails::class)->name('order.cashier.details');
 
 Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/product', Products::class)->name('product');

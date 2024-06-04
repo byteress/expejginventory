@@ -5,7 +5,7 @@
         <!-- Page Heading -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                <h1 class="h3 mb-2 text-primary admin-title">Orders Cart</h1>
+                <h1 class="h3 mb-2 text-primary admin-title">Order #APR-9394399</h1>
             </div>
         </div>
 
@@ -130,13 +130,85 @@
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <div class="row mt-4 mb-4">
-                            <div class="col-md-2 offset-md-8">
-                                <h4 class="text-secondary mt-1"><small>Total (2 items):</small> <strong class ="text-primary">$4000</strong></h4>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-start">
+                                    <h5 class ="mb-2 text-primary admin-title">Payment Options</h5>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-end">
+                                    <a href="#"
+                                        class="btn btn-primary btn-icon-split float-right btn-sm">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span class="text">New Payment Method</span>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="card shadow d-none d-md-block">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <p class="text-primary mb-0">Type</p>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <p class="text-primary mb-0">Amount</p>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <p class="text-primary mb-0">Actions</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2 mb-3">
+                                <div class="card shadow mb-2">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                      <label class="input-group-text" for="inputGroupSelect01">Payment Type</label>
+                                                    </div>
+                                                    <select class="custom-select" id="inputGroupSelect01">
+                                                      <option disabled selected>Select Payment Method</option>
+                                                      <option value="Cash">Cash</option>
+                                                      <option value="Gcash">Gcash</option>
+                                                      <option value="Paymaya">Paymaya</option>
+                                                      <option value="Bank Transfer">Bank Transfer</option>
+                                                      <option value="Others">Others</option>
+                                                    </select>
+                                                  </div>
+                                            </div>
+                                            <div class="col-md-2 offset-md-4">
+                                                <div class="d-flex justify-content-center">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Php</span>
+                                                    </div>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="d-flex justify-content-center">
+                                                <button class="btn btn-danger btn-sm mt-1">
+                                                    <i class="fas fa-trash-alt"></i> Remove
+                                                </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 offset-10">
+                                <h4 class="text-secondary mt-1"><small>Total Payment:</small> <strong class ="text-primary">$4000</strong></h4>
+                            </div>
+                            <div class="col-md-2 offset-10">
                                 <a href="#" class="btn btn-primary btn-lg btn-block">
-                                    Checkout
+                                    Place Order
                                 </a>
                             </div>
                         </div>
