@@ -31,23 +31,23 @@
                             </div>
                             <div class="row">
                                 @foreach ($products as $product)
-                                    <div class="col-md-3 mb-4">
+                                    <div class="col-md-4 mb-4">
                                         <div class="card shadow">
                                             <img src="{{ $product['image'] }}" class="card-img-top" alt="{{ $product['title'] }}">
                                             <div class="card-body">
                                                 <h5 class="card-title"><b>{{ $product['title'] }}</b></h5>
                                                 <p class="card-text">{{ $product['description'] }}</p>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-5">
                                                         <div class="d-flex justify-content-start">
                                                             <div class="mb-0 font-weight-bold text-gray-800 price-box">
                                                                 <i class="fas fa-tag"></i> $215,000
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-7">
                                                         <div class="d-flex justify-content-end">
-                                                            <a class="btn btn-primary btn-icon-split" wire:click="addToCart({{ $product['id'] }})">
+                                                            <a class="btn btn-primary btn-sm btn-icon-split" wire:click="addToCart({{ $product['id'] }})">
                                                                 <span class="icon text-white-50">
                                                                     <i class="fas fa-cart-plus"></i>
                                                                 </span>

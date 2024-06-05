@@ -10,59 +10,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-3">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h5 class ="mb-2 text-primary admin-title">Customer Information</h5>
-                        <hr>
-                        <form class="needs-validation" novalidate>
-                            <div class="form-row">
-                              <div class="col-md-6 mb-3">
-                                <label for="validationTooltip01">First name</label>
-                                <input type="text" class="form-control" id="validationTooltip01" value="Mark" required>
-                                <div class="valid-tooltip">
-                                  Looks good!
-                                </div>
-                              </div>
-                              <div class="col-md-6 mb-3">
-                                <label for="validationTooltip02">Last name</label>
-                                <input type="text" class="form-control" id="validationTooltip02" value="Otto" required>
-                                <div class="valid-tooltip">
-                                  Looks good!
-                                </div>
-                              </div>
-                            </div>
-                            <div class="form-row">
-                              <div class="col-md-12 mb-3">
-                                <label for="validationTooltip03">City</label>
-                                <input type="text" class="form-control" id="validationTooltip03" required>
-                                <div class="invalid-tooltip">
-                                  Please provide a valid city.
-                                </div>
-                              </div>
-                              <div class="col-md-12 mb-3">
-                                <label for="validationTooltip04">State</label>
-                                <select class="custom-select" id="validationTooltip04" required>
-                                  <option selected disabled value="">Choose...</option>
-                                  <option>...</option>
-                                </select>
-                                <div class="invalid-tooltip">
-                                  Please select a valid state.
-                                </div>
-                              </div>
-                              <div class="col-md-12 mb-3">
-                                <label for="validationTooltip05">Zip</label>
-                                <input type="text" class="form-control" id="validationTooltip05" required>
-                                <div class="invalid-tooltip">
-                                  Please provide a valid zip.
-                                </div>
-                              </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <div class="card shadow mb-4 d-none d-md-block">
                     <div class="card-body">
                         <div class="row">
@@ -127,12 +75,64 @@
                 <!-- / Cart Items -->
 
             </div>
-            <div class="col-md-12">
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h5 class ="mb-2 text-primary admin-title">Customer Information</h5>
+                        <hr>
+                        <form class="needs-validation" novalidate>
+                            <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="validationTooltip01">First name</label>
+                                <input type="text" class="form-control" id="validationTooltip01" value="Mark" required>
+                                <div class="valid-tooltip">
+                                Looks good!
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="validationTooltip02">Last name</label>
+                                <input type="text" class="form-control" id="validationTooltip02" value="Otto" required>
+                                <div class="valid-tooltip">
+                                Looks good!
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label for="validationTooltip03">City</label>
+                                <input type="text" class="form-control" id="validationTooltip03" required>
+                                <div class="invalid-tooltip">
+                                Please provide a valid city.
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="validationTooltip04">State</label>
+                                <select class="custom-select" id="validationTooltip04" required>
+                                <option selected disabled value="">Choose...</option>
+                                <option>...</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                Please select a valid state.
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="validationTooltip05">Zip</label>
+                                <input type="text" class="form-control" id="validationTooltip05" required>
+                                <div class="invalid-tooltip">
+                                Please provide a valid zip.
+                                </div>
+                            </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <div class="row mt-4 mb-4">
-                            <div class="col-md-2 offset-md-8">
-                                <h4 class="text-secondary mt-1"><small>Total (2 items):</small> <strong class ="text-primary">$4000</strong></h4>
+                            <div class="col-md-3 offset-md-7">
+                                <h4 class="text-secondary mt-1"><small>Total Payment:</small> <strong class ="text-primary">$4000</strong></h4>
                             </div>
                             <div class="col-md-2">
                                 <a href="#" class="btn btn-primary btn-lg btn-block">
@@ -146,5 +146,55 @@
         </div>
 
     </div>
+
+            <!-- Confirm Login Modal -->
+            <div class="modal fade" id="confirmLogin" tabindex="-1" aria-labelledby="confirmLoginLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Confirm Login</h1>
+                                    </div>
+                                    @if (session('alert'))
+                                        <div class="alert alert-danger" role="alert">
+                                            {{ session('alert') }}
+                                        </div>
+                                    @endif
+                                    <form class="user" wire:submit="login">
+                                        <div class="form-group">
+                                            <input wire:model="email" type="email" class="form-control"
+                                                id="exampleInputEmail" aria-describedby="emailHelp"
+                                                placeholder="Enter Email Address...">
+                                            @error('email')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <input wire:model="password" type="password"
+                                                class="form-control" id="exampleInputPassword"
+                                                placeholder="Password">
+                                            @error('password')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            Login
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <!-- End  Confirm Login Modal -->
     <!-- /.container-fluid -->
 </div>
