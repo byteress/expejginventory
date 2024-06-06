@@ -123,7 +123,12 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="d-flex justify-content-center">
-                                    <input type="text" value = "300" class ="form-control mt-5 col-md-4 text-center">
+                                        <div class="input-group mt-5" style = "width:150px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Php</span>
+                                            </div>
+                                            <input type="text" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -228,10 +233,13 @@
                                 <div class="card shadow d-none d-md-block">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-8">
-                                                <p class="text-primary mb-0">Type</p>
+                                            <div class="col-md-4">
+                                                <p class="text-primary mb-0">Payment Type</p>
                                             </div>
-                                            <div class="col-md-2 text-center">
+                                            <div class="col-md-2 offset-md-1 text-center">
+                                                <p class="text-primary mb-0">Reference #</p>
+                                            </div>
+                                            <div class="col-md-2 offset-md-1 text-center">
                                                 <p class="text-primary mb-0">Amount</p>
                                             </div>
                                             <div class="col-md-2 text-center">
@@ -245,10 +253,10 @@
                                 <div class="card shadow mb-2">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mt-1">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
-                                                      <label class="input-group-text" for="inputGroupSelect01">Payment Type</label>
+                                                      <label class="input-group-text" for="inputGroupSelect01">Type</label>
                                                     </div>
                                                     <select class="custom-select" id="inputGroupSelect01">
                                                       <option disabled selected>Select Payment Method</option>
@@ -260,7 +268,17 @@
                                                     </select>
                                                   </div>
                                             </div>
-                                            <div class="col-md-2 offset-md-4 mt-1">
+                                            <div class="col-md-4 mt-1">
+                                                <div class="d-flex justify-content-center">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">#</span>
+                                                    </div>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mt-1">
                                                 <div class="d-flex justify-content-center">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
