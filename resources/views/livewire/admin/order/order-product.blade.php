@@ -189,7 +189,6 @@
                 }
             );
             html5QrcodeScanner.render(onScanSuccess);
-            html5QrcodeScanner.pause();
         }
     });
 </script>
