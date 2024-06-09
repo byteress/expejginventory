@@ -17262,6 +17262,860 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace Milon\Barcode\Facades {
+            /**
+     * 
+     *
+     * @method static string|false getBarcodePNGPath(string $code, string $type, int|float $w = 2, int|float $h = 30, array $color = [0, 0, 0], bool $showCode = false)
+     * @method static \Illuminate\Contracts\Routing\UrlGenerator|string getBarcodePNGUri(string $code, string $type, int|float $w = 2, int|float $h = 30, array $color = [0, 0, 0])
+     */        class DNS1DFacade {
+                    /**
+         * Return a SVG string representation of barcode.
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Minimum width of a single bar in user units.
+         * @param $h (int) Height of barcode in user units.
+         * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+         * @return string SVG code.
+         * @protected 
+         * @static 
+         */        public static function getBarcodeSVG($code, $type, $w = 2, $h = 30, $color = 'black', $showCode = true, $inline = false)
+        {
+                        /** @var \Milon\Barcode\DNS1D $instance */
+                        return $instance->getBarcodeSVG($code, $type, $w, $h, $color, $showCode, $inline);
+        }
+                    /**
+         * Return an HTML representation of barcode.
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Width of a single bar element in pixels.
+         * @param $h (int) Height of a single bar element in pixels.
+         * @param $color (string) Foreground color for bar elements (background is transparent).
+         * @param $showcode (int) font size of the shown code, default 0.
+         * @return string HTML code.
+         * @protected 
+         * @static 
+         */        public static function getBarcodeHTML($code, $type, $w = 2, $h = 30, $color = 'black', $showCode = 0)
+        {
+                        /** @var \Milon\Barcode\DNS1D $instance */
+                        return $instance->getBarcodeHTML($code, $type, $w, $h, $color, $showCode);
+        }
+                    /**
+         * Return a PNG image representation of barcode (requires GD or Imagick library).
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Width of a single bar element in pixels.
+         * @param $h (int) Height of a single bar element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+         * @return string|false in case of error.
+         * @protected 
+         * @static 
+         */        public static function getBarcodePNG($code, $type, $w = 2, $h = 30, $color = [], $showCode = false)
+        {
+                        /** @var \Milon\Barcode\DNS1D $instance */
+                        return $instance->getBarcodePNG($code, $type, $w, $h, $color, $showCode);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function setStorPath($path)
+        {
+                        /** @var \Milon\Barcode\DNS1D $instance */
+                        return $instance->setStorPath($path);
+        }
+                    /**
+         * Return a JPG image representation of barcode (requires GD or Imagick library).
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Width of a single bar element in pixels.
+         * @param $h (int) Height of a single bar element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+         * @return string|false in case of error.
+         * @protected 
+         * @static 
+         */        public static function getBarcodeJPG($code, $type, $w = 2, $h = 30, $color = [], $showCode = false)
+        {
+                        /** @var \Milon\Barcode\DNS1D $instance */
+                        return $instance->getBarcodeJPG($code, $type, $w, $h, $color, $showCode);
+        }
+            }
+            /**
+     * 
+     *
+     * @method static string|false getBarcodePNGPath(string $code, string $type, int $w = 2, int $h = 30, array $color = [0, 0, 0])
+     */        class DNS2DFacade {
+                    /**
+         * Return a SVG string representation of barcode.
+         * 
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in user units.
+         * @param $h (int) Height of a single rectangle element in user units.
+         * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+         * @return string SVG code.
+         * @protected 
+         * @static 
+         */        public static function getBarcodeSVG($code, $type, $w = 3, $h = 3, $color = 'black')
+        {
+                        /** @var \Milon\Barcode\DNS2D $instance */
+                        return $instance->getBarcodeSVG($code, $type, $w, $h, $color);
+        }
+                    /**
+         * Return an HTML representation of barcode.
+         * 
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in pixels.
+         * @param $h (int) Height of a single rectangle element in pixels.
+         * @param $color (string) Foreground color for bar elements (background is transparent).
+         * @return string HTML code.
+         * @protected 
+         * @static 
+         */        public static function getBarcodeHTML($code, $type, $w = 10, $h = 10, $color = 'black')
+        {
+                        /** @var \Milon\Barcode\DNS2D $instance */
+                        return $instance->getBarcodeHTML($code, $type, $w, $h, $color);
+        }
+                    /**
+         * Return a PNG image representation of barcode (requires GD or Imagick library).
+         * 
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in pixels.
+         * @param $h (int) Height of a single rectangle element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+         * @return string|false path or false in case of error.
+         * @protected 
+         * @static 
+         */        public static function getBarcodePNG($code, $type, $w = 3, $h = 3, $color = [])
+        {
+                        /** @var \Milon\Barcode\DNS2D $instance */
+                        return $instance->getBarcodePNG($code, $type, $w, $h, $color);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function setStorPath($path)
+        {
+                        /** @var \Milon\Barcode\DNS2D $instance */
+                        return $instance->setStorPath($path);
+        }
+            }
+    }
+
+namespace Jackiedo\Cart\Facades {
+            /**
+     * The Cart facade.
+     *
+     * @package Jackiedo\Cart
+     * @author Jackie Do <anhvudo@gmail.com>
+     */        class Cart {
+                    /**
+         * Select a cart to work with.
+         *
+         * @param null|string $name The cart name
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function name($name = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->name($name);
+        }
+                    /**
+         * Create an another cart instance with the specific name.
+         *
+         * @param null|string $name The cart name
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function newInstance($name = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->newInstance($name);
+        }
+                    /**
+         * Determines whether this cart has been grouped.
+         *
+         * @return bool 
+         * @static 
+         */        public static function hasBeenGrouped()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasBeenGrouped();
+        }
+                    /**
+         * Determines whether this cart is in the specific group.
+         *
+         * @param string $groupName The specific group name
+         * @return bool 
+         * @static 
+         */        public static function isInGroup($groupName)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->isInGroup($groupName);
+        }
+                    /**
+         * Get the group name of the cart.
+         *
+         * @return string 
+         * @static 
+         */        public static function getGroupName()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getGroupName();
+        }
+                    /**
+         * Get the current cart name.
+         *
+         * @return string 
+         * @static 
+         */        public static function getName()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getName();
+        }
+                    /**
+         * Get config of this cart.
+         *
+         * @param string $name The config name
+         * @param mixed $default The return value if the config does not exist
+         * @return mixed 
+         * @static 
+         */        public static function getConfig($name = null, $default = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getConfig($name, $default);
+        }
+                    /**
+         * Change whether the cart status is used for commercial or not.
+         *
+         * @param bool $status
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function useForCommercial($status = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->useForCommercial($status);
+        }
+                    /**
+         * Enable or disable built-in tax system for the cart.
+         * 
+         * This is only possible if the cart is empty.
+         *
+         * @param bool $status
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function useBuiltinTax($status = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->useBuiltinTax($status);
+        }
+                    /**
+         * Set default action rules for the cart.
+         * 
+         * This is only possible if the cart is empty.
+         *
+         * @param array $rules The default action rules
+         * @static 
+         */        public static function setDefaultActionRules($rules = [])
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->setDefaultActionRules($rules);
+        }
+                    /**
+         * Set action groups order for the cart.
+         *
+         * @param array $order The action groups order
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function setActionGroupsOrder($order = [])
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->setActionGroupsOrder($order);
+        }
+                    /**
+         * Determines if the cart is empty.
+         *
+         * @return bool returns true if the cart has no items, no taxes,
+         *              and no action has been applied yet
+         * @static 
+         */        public static function isEmpty()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->isEmpty();
+        }
+                    /**
+         * Determines if the cart has no items.
+         *
+         * @return bool 
+         * @static 
+         */        public static function hasNoItems()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasNoItems();
+        }
+                    /**
+         * Determines if the cart has no actions.
+         *
+         * @return bool 
+         * @static 
+         */        public static function hasNoActions()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasNoActions();
+        }
+                    /**
+         * Determines if the cart has no taxes.
+         *
+         * @return bool 
+         * @static 
+         */        public static function hasNoTaxes()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasNoTaxes();
+        }
+                    /**
+         * Determines if current cart is used for commcercial.
+         *
+         * @return bool 
+         * @static 
+         */        public static function isCommercialCart()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->isCommercialCart();
+        }
+                    /**
+         * Determines if current cart is enabled built-in tax system.
+         *
+         * @return bool 
+         * @static 
+         */        public static function isEnabledBuiltinTax()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->isEnabledBuiltinTax();
+        }
+                    /**
+         * Remove cart from session.
+         *
+         * @param bool $withEvent Enable firing the event
+         * @return bool 
+         * @static 
+         */        public static function destroy($withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->destroy($withEvent);
+        }
+                    /**
+         * Add an item into the items container.
+         *
+         * @param array $attributes The item attributes
+         * @param bool $withEvent Enable firing the event
+         * @return null|\Jackiedo\Cart\Item 
+         * @static 
+         */        public static function addItem($attributes = [], $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->addItem($attributes, $withEvent);
+        }
+                    /**
+         * Update an item in the items container.
+         *
+         * @param string $itemHash The unique identifier of the item
+         * @param array|int $attributes New quantity of item or array of new attributes to update
+         * @param bool $withEvent Enable firing the event
+         * @return null|\Jackiedo\Cart\Item 
+         * @static 
+         */        public static function updateItem($itemHash, $attributes = [], $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->updateItem($itemHash, $attributes, $withEvent);
+        }
+                    /**
+         * Remove an item out of the items container.
+         *
+         * @param string $itemHash The unique identifier of the item
+         * @param bool $withEvent Enable firing the event
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function removeItem($itemHash, $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->removeItem($itemHash, $withEvent);
+        }
+                    /**
+         * Delete all items in the items container.
+         *
+         * @param bool $withEvent Enable firing the event
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function clearItems($withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->clearItems($withEvent);
+        }
+                    /**
+         * Get an item in the items container.
+         *
+         * @param string $itemHash The unique identifier of the item
+         * @return \Jackiedo\Cart\Item 
+         * @static 
+         */        public static function getItem($itemHash)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getItem($itemHash);
+        }
+                    /**
+         * Get all items in the items container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return array 
+         * @static 
+         */        public static function getItems($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getItems($filter, $complyAll);
+        }
+                    /**
+         * Count the number of items in the items container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return int 
+         * @static 
+         */        public static function countItems($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->countItems($filter, $complyAll);
+        }
+                    /**
+         * Sum the quantities of all items in the items container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return int 
+         * @static 
+         */        public static function sumItemsQuantity($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->sumItemsQuantity($filter, $complyAll);
+        }
+                    /**
+         * Determines if the item exists in the items container.
+         *
+         * @param string $itemHash The unique identifier of the item
+         * @return bool 
+         * @static 
+         */        public static function hasItem($itemHash)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasItem($itemHash);
+        }
+                    /**
+         * Set value for one or some extended informations of the cart.
+         *
+         * @param array|string $information The information want to set
+         * @param mixed $value The value of information
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function setExtraInfo($information, $value = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->setExtraInfo($information, $value);
+        }
+                    /**
+         * Get value of one or some extended informations of the cart
+         * using "dot" notation.
+         *
+         * @param null|array|string $information The information want to get
+         * @param mixed $default The return value if information does not exist
+         * @return mixed 
+         * @static 
+         */        public static function getExtraInfo($information = null, $default = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getExtraInfo($information, $default);
+        }
+                    /**
+         * Remove one or some extended informations of the cart
+         * using "dot" notation.
+         *
+         * @param null|array|string $information The information want to remove
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function removeExtraInfo($information = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->removeExtraInfo($information);
+        }
+                    /**
+         * Set value for one or some extended informations of the group
+         * using "dot" notation.
+         *
+         * @param string $groupName The name of the cart group
+         * @param array|string $information The information want to set
+         * @param mixed $value The value of information
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function setGroupExtraInfo($groupName, $information, $value = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->setGroupExtraInfo($groupName, $information, $value);
+        }
+                    /**
+         * Get value of one or some extended informations of the group
+         * using "dot" notation.
+         *
+         * @param string $groupName The name of the cart group
+         * @param null|array|string $information The information want to get
+         * @param mixed $default The return value if information does not exist
+         * @return mixed 
+         * @static 
+         */        public static function getGroupExtraInfo($groupName, $information = null, $default = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getGroupExtraInfo($groupName, $information, $default);
+        }
+                    /**
+         * Remove one or some extended informations of the group
+         * using "dot" notation.
+         *
+         * @param string $groupName The name of the cart group
+         * @param null|array|string $information The information want to remove
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function removeGroupExtraInfo($groupName, $information = null)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->removeGroupExtraInfo($groupName, $information);
+        }
+                    /**
+         * Add a tax into the taxes container of this cart.
+         *
+         * @param array $attributes The tax attributes
+         * @param bool $withEvent Enable firing the event
+         * @return null|\Jackiedo\Cart\Tax 
+         * @static 
+         */        public static function applyTax($attributes = [], $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->applyTax($attributes, $withEvent);
+        }
+                    /**
+         * Update a tax in the taxes container.
+         *
+         * @param string $taxHash The unique identifire of the tax instance
+         * @param array $attributes The new attributes
+         * @param bool $withEvent Enable firing the event
+         * @return null|\Jackiedo\Cart\Tax 
+         * @static 
+         */        public static function updateTax($taxHash, $attributes = [], $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->updateTax($taxHash, $attributes, $withEvent);
+        }
+                    /**
+         * Get an applied tax in the taxes container of this cart.
+         *
+         * @param string $taxHash The unique identifire of the tax instance
+         * @return \Jackiedo\Cart\Tax 
+         * @static 
+         */        public static function getTax($taxHash)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getTax($taxHash);
+        }
+                    /**
+         * Get all tax instances in the taxes container of this cart that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return array 
+         * @static 
+         */        public static function getTaxes($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getTaxes($filter, $complyAll);
+        }
+                    /**
+         * Count all taxes in the actions container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return int 
+         * @static 
+         */        public static function countTaxes($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->countTaxes($filter, $complyAll);
+        }
+                    /**
+         * Determines if the tax exists in the taxes container of this cart.
+         *
+         * @param string $taxHash The unique identifier of the tax
+         * @return bool 
+         * @static 
+         */        public static function hasTax($taxHash)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasTax($taxHash);
+        }
+                    /**
+         * Remove an applied tax from the taxes container of this cart.
+         *
+         * @param string $taxHash The unique identifier of the tax instance
+         * @param bool $withEvent Enable firing the event
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function removeTax($taxHash, $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->removeTax($taxHash, $withEvent);
+        }
+                    /**
+         * Remove all apllied taxes from the taxes container of this cart.
+         *
+         * @param bool $withEvent Enable firing the event
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function clearTaxes($withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->clearTaxes($withEvent);
+        }
+                    /**
+         * Get the subtotal amount of all items in the items container.
+         *
+         * @return float 
+         * @static 
+         */        public static function getItemsSubtotal()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getItemsSubtotal();
+        }
+                    /**
+         * Get the sum amount of all items subtotal amount and all actions amount.
+         *
+         * @return float 
+         * @static 
+         */        public static function getSubtotal()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getSubtotal();
+        }
+                    /**
+         * Calculate total taxable amounts include the taxable amount of cart and all items.
+         *
+         * @return float 
+         * @static 
+         */        public static function getTaxableAmount()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getTaxableAmount();
+        }
+                    /**
+         * Get the total tax rate applied to the current cart.
+         *
+         * @return float 
+         * @static 
+         */        public static function getTaxRate()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getTaxRate();
+        }
+                    /**
+         * Get the total tax amount applied to the current cart.
+         *
+         * @return float 
+         * @static 
+         */        public static function getTaxAmount()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getTaxAmount();
+        }
+                    /**
+         * Get the total amount of the current cart.
+         *
+         * @return float 
+         * @static 
+         */        public static function getTotal()
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getTotal();
+        }
+                    /**
+         * Get all information of cart as a collection.
+         *
+         * @param bool $withItems Include details of added items in the result
+         * @param bool $withActions Include details of applied actions in the result
+         * @param bool $withTaxes Include details of applied taxes in the result
+         * @return \Jackiedo\Cart\Details 
+         * @static 
+         */        public static function getDetails($withItems = true, $withActions = true, $withTaxes = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getDetails($withItems, $withActions, $withTaxes);
+        }
+                    /**
+         * Get all information of cart group as a collection.
+         *
+         * @param null|string $groupName The group part from cart name
+         * @param bool $withCartsHaveNoItems Include carts have no items in the result
+         * @param bool $withItems Include details of added items in the result
+         * @param bool $withActions Include details of applied actions in the result
+         * @param bool $withTaxes Include details of applied taxes in the result
+         * @return \Jackiedo\Cart\Details 
+         * @static 
+         */        public static function getGroupDetails($groupName = null, $withCartsHaveNoItems = false, $withItems = true, $withActions = true, $withTaxes = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getGroupDetails($groupName, $withCartsHaveNoItems, $withItems, $withActions, $withTaxes);
+        }
+                    /**
+         * Add an action into the actions container.
+         *
+         * @param array $attributes The action attributes
+         * @param bool $withEvent Enable firing the event
+         * @return null|\Jackiedo\Cart\Action 
+         * @static 
+         */        public static function applyAction($attributes = [], $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->applyAction($attributes, $withEvent);
+        }
+                    /**
+         * Update an action in the actions container.
+         *
+         * @param string $actionHash The unique identifier of the action
+         * @param array $attributes The new attributes
+         * @param bool $withEvent Enable firing the event
+         * @return null|\Jackiedo\Cart\Action 
+         * @static 
+         */        public static function updateAction($actionHash, $attributes = [], $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->updateAction($actionHash, $attributes, $withEvent);
+        }
+                    /**
+         * Determines if the action exists in the actions container by given action hash.
+         *
+         * @param string $actionHash The unique identifier of the action
+         * @return bool 
+         * @static 
+         */        public static function hasAction($actionHash)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->hasAction($actionHash);
+        }
+                    /**
+         * Get an action in the actions container.
+         *
+         * @param string $actionHash The unique identifier of the action
+         * @return \Jackiedo\Cart\Action 
+         * @static 
+         */        public static function getAction($actionHash)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getAction($actionHash);
+        }
+                    /**
+         * Get all actions in the actions container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return array 
+         * @static 
+         */        public static function getActions($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->getActions($filter, $complyAll);
+        }
+                    /**
+         * Remove an action from the actions container.
+         *
+         * @param string $actionHash The unique identifier of the action
+         * @param bool $withEvent Enable firing the event
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function removeAction($actionHash, $withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->removeAction($actionHash, $withEvent);
+        }
+                    /**
+         * Remove all actions from the actions container.
+         *
+         * @param bool $withEvent Enable firing the event
+         * @return \Jackiedo\Cart\Cart 
+         * @static 
+         */        public static function clearActions($withEvent = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->clearActions($withEvent);
+        }
+                    /**
+         * Count all actions in the actions container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return int 
+         * @static 
+         */        public static function countActions($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->countActions($filter, $complyAll);
+        }
+                    /**
+         * Calculate the sum of action amounts in the actions container that match the given filter.
+         *
+         * @param mixed $filter Search filter
+         * @param bool $complyAll indicates that the results returned must satisfy
+         *                         all the conditions of the filter at the same time
+         *                         or that only parts of the filter
+         * @return float 
+         * @static 
+         */        public static function sumActionsAmount($filter = null, $complyAll = true)
+        {
+                        /** @var \Jackiedo\Cart\Cart $instance */
+                        return $instance->sumActionsAmount($filter, $complyAll);
+        }
+            }
+    }
+
 namespace Intervention\Image\Facades {
             /**
      * 
@@ -18148,6 +19002,24 @@ namespace Illuminate\Validation {
          */        public static function phone()
         {
                         return \Illuminate\Validation\Rule::phone();
+        }
+            }
+    }
+
+namespace Illuminate\Database\Schema {
+            /**
+     * 
+     *
+     */        class Blueprint {
+                    /**
+         * 
+         *
+         * @see \Spatie\SchemalessAttributes\SchemalessAttributesServiceProvider::registeringPackage()
+         * @param string $columnName
+         * @static 
+         */        public static function schemalessAttributes($columnName = 'schemaless_attributes')
+        {
+                        return \Illuminate\Database\Schema\Blueprint::schemalessAttributes($columnName);
         }
             }
     }
@@ -21782,12 +22654,20 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
+            class DNS1D extends \Milon\Barcode\Facades\DNS1DFacade {}
+            class DNS2D extends \Milon\Barcode\Facades\DNS2DFacade {}
+            class Cart extends \Jackiedo\Cart\Facades\Cart {}
             class Image extends \Intervention\Image\Facades\Image {}
             class Livewire extends \Livewire\Livewire {}
             class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
     }
 
 
+namespace Facades\Livewire\Features\SupportFileUploads {
+    /**
+     * @mixin \Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl     */
+    class GenerateSignedUploadUrl extends \Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl {}
+}
 
 namespace {
     

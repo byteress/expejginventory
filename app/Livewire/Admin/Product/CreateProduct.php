@@ -9,6 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use OrderContracts\IOrderService;
 use ProductManagementContracts\IProductManagementService;
 use Str;
 use SupplierManagement\Models\Supplier;
@@ -63,7 +64,7 @@ class CreateProduct extends Component
         $this->featuredImage = null;
     }
 
-    public function save(IProductManagementService $productManagementService)
+    public function save(IProductManagementService $productManagementService, IOrderService $orderService)
     {
         $this->validate();
 
@@ -76,8 +77,8 @@ class CreateProduct extends Component
             $this->model,
             $this->description,
             $this->supplier,
-            $this->regularPrice,
-            $this->salePrice
+            $this->regularPrice * 100,
+            $this->salePrice * 100
         );
 
         if ($createResult->isFailure()) {
@@ -101,6 +102,13 @@ class CreateProduct extends Component
         if ($galleryResult->isFailure()) {
             DB::rollBack();
             session()->flash('alert', ErrorHandler::getErrorMessage($galleryResult->getError()));
+            return;
+        }
+
+        $orderResult = $orderService->setPrice($productId, $this->regularPrice * 100, $this->salePrice * 100);
+        if ($orderResult->isFailure()) {
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($orderResult->getError()));
             return;
         }
 

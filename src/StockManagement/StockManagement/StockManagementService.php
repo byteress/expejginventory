@@ -37,6 +37,20 @@ class StockManagementService implements IStockManagementService
         }
     }
 
+    public function cancelReservation(string $productId, string $reservationId, string $actor): Result
+    {
+        try{
+            $product = Product::retrieve($productId);
+            $product->cancelReservation($reservationId, $actor);
+            $product->persist();
+
+            return Result::success(null);
+        }catch(Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
     public function release(string $productId, int $quantity, string $branchId, string $actor): Result
     {
         try{

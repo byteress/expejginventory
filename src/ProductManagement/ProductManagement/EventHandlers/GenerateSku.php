@@ -27,7 +27,7 @@ class GenerateSku implements ShouldQueue
             $skuNumber = 1;
         }
 
-        $skuNumber = str_pad((string) $skuNumber, 8, '0', STR_PAD_LEFT);
+        $skuNumber = str_pad((string) $skuNumber, 12, '0', STR_PAD_LEFT);
         $product = Product::find($event->productId);
 
         if(!$product) throw new Exception('Product not found');

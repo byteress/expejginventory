@@ -1,5 +1,6 @@
 <?php
 
+use Order\Projectors\OrderProjector;
 use StockManagement\Projectors\ReceiveHistoryProjector;
 use StockManagement\Projectors\StockProjector;
 use Transfer\Projectors\ProductRequestsProjector;
@@ -32,7 +33,8 @@ return [
         ReceiveHistoryProjector::class,
         TransferRequestsProjector::class,
         TransferDetailsProjector::class,
-        ProductRequestsProjector::class
+        ProductRequestsProjector::class,
+        OrderProjector::class
     ],
 
     /*

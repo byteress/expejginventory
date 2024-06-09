@@ -6,6 +6,7 @@ use App\Livewire\Admin\Branch\CreateBranch;
 use App\Livewire\Admin\Branch\EditBranch;
 use App\Livewire\Admin\User\CreateUser;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Order\History;
 use App\Livewire\Admin\Product\CreateProduct;
 use App\Livewire\Admin\Product\EditProduct;
 use App\Livewire\Admin\Product\Products;
@@ -28,10 +29,6 @@ use App\Livewire\Admin\Order\OrderCashier;
 use App\Livewire\Admin\Order\OrderCashierDetails;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
-Route::get('/order-product', OrderProduct::class)->name('order.product');
-Route::get('/orders', Orders::class)->name('orders');
-Route::get('/order-cashier', OrderCashier::class)->name('order.cashier');
-Route::get('/order-cashier-details', OrderCashierDetails::class)->name('order.cashier.details');
 
 Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/product', Products::class)->name('product');
@@ -61,4 +58,15 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/for-transfer', ForTransfer::class)->name('for.transfer');
     Route::get('/incoming', Incoming::class)->name('incoming');
     Route::get('/request-history', RequestHistory::class)->name('request.history');
+});
+
+Route::group(['middleware' => ['role:admin|sales_rep']], function () {
+    Route::get('/browse', OrderProduct::class)->name('browse.product');
+    Route::get('/cart', Orders::class)->name('cart');
+});
+
+Route::group(['middleware' => ['role:admin|cashier']], function () {
+    Route::get('/orders', OrderCashier::class)->name('orders');
+    Route::get('/orders-history', History::class)->name('orders.history');
+    Route::get('/orders/{order_id}', OrderCashierDetails::class)->name('order.details');
 });

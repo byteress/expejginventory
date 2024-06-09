@@ -80,7 +80,7 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($selectedProducts as $product)
-                                            <tr>
+                                            <tr wire:key="{{ $product->id }}">
                                                 <td>{{ $product->code }}</td>
                                                 <td>{{ $product->sku_number }}</td>
                                                 <td>{{ $product->model }}</td>

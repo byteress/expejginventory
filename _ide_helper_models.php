@@ -92,6 +92,73 @@ namespace BranchManagement\Models{
 	class Branch extends \Eloquent {}
 }
 
+namespace CustomerManagement\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string|null $email
+ * @property string $phone
+ * @property string $address
+ * @property string $branch_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereBranchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Customer whereUpdatedAt($value)
+ */
+	class Customer extends \Eloquent {}
+}
+
+namespace Order\Infrastructure\EventStore{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string|null $aggregate_uuid
+ * @property int|null $aggregate_version
+ * @property int $event_version
+ * @property string $event_class
+ * @property array $event_properties
+ * @property \Spatie\SchemalessAttributes\SchemalessAttributes $meta_data
+ * @property string $created_at
+ * @property-read \Spatie\EventSourcing\StoredEvents\ShouldBeStored|null $event
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent afterVersion(int $version)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> all($columns = ['*'])
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> get($columns = ['*'])
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent lastEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent newModelQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent newQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent query()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent startingFrom(int $storedEventId)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereAggregateRoot(string $uuid)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereAggregateUuid($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereAggregateVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereCreatedAt($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEventClass($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEventProperties($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEventVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereId($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereMetaData($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent wherePropertyIs(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent wherePropertyIsNot(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|EloquentStoredEvent withMetaDataAttributes()
+ */
+	final class OrderEvent extends \Eloquent {}
+}
+
 namespace ProductManagement\Models{
 /**
  * 
@@ -106,12 +173,16 @@ namespace ProductManagement\Models{
  * @property int $sale_price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read \SupplierManagement\Models\Supplier|null $supplier
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Product query()
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereModel($value)
@@ -121,8 +192,48 @@ namespace ProductManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereSkuNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereSupplierId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product withoutTrashed()
  */
 	class Product extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
+}
+
+namespace StockManagement\Infrastructure\EventStore{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string|null $aggregate_uuid
+ * @property int|null $aggregate_version
+ * @property int $event_version
+ * @property string $event_class
+ * @property array $event_properties
+ * @property \Spatie\SchemalessAttributes\SchemalessAttributes $meta_data
+ * @property string $created_at
+ * @property-read \Spatie\EventSourcing\StoredEvents\ShouldBeStored|null $event
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent afterVersion(int $version)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> all($columns = ['*'])
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> get($columns = ['*'])
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent lastEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent newModelQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent newQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent query()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent startingFrom(int $storedEventId)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereAggregateRoot(string $uuid)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereAggregateUuid($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereAggregateVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereCreatedAt($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereEventClass($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereEventProperties($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereEventVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereId($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent whereMetaData($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent wherePropertyIs(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|StockManagementEvent wherePropertyIsNot(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|EloquentStoredEvent withMetaDataAttributes()
+ */
+	final class StockManagementEvent extends \Eloquent {}
 }
 
 namespace SupplierManagement\Models{
@@ -148,5 +259,43 @@ namespace SupplierManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Supplier whereUpdatedAt($value)
  */
 	class Supplier extends \Eloquent {}
+}
+
+namespace Transfer\Infrastructure\EventStore{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string|null $aggregate_uuid
+ * @property int|null $aggregate_version
+ * @property int $event_version
+ * @property string $event_class
+ * @property array $event_properties
+ * @property \Spatie\SchemalessAttributes\SchemalessAttributes $meta_data
+ * @property string $created_at
+ * @property-read \Spatie\EventSourcing\StoredEvents\ShouldBeStored|null $event
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent afterVersion(int $version)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> all($columns = ['*'])
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> get($columns = ['*'])
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent lastEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent newModelQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent newQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent query()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent startingFrom(int $storedEventId)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereAggregateRoot(string $uuid)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereAggregateUuid($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereAggregateVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereCreatedAt($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereEventClass($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereEventProperties($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereEventVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereId($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent whereMetaData($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent wherePropertyIs(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|TransferEvent wherePropertyIsNot(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|EloquentStoredEvent withMetaDataAttributes()
+ */
+	final class TransferEvent extends \Eloquent {}
 }
 

@@ -2,68 +2,335 @@
 
 namespace App\Livewire\Admin\Order;
 
+use App\Exceptions\ErrorHandler;
+use CustomerManagementContracts\ICustomerManagementService;
+use IdentityAndAccessContracts\IIdentityAndAccessService;
+use Illuminate\Support\Facades\DB;
+use Jackiedo\Cart\Facades\Cart;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use OrderContracts\IOrderService;
+use ProductManagement\Models\Product;
+use StockManagement\StockManagementService;
+use StockManagementContracts\IStockManagementService;
+use Str;
 
 #[Title('Orders')]
-class Orders extends Component
+class   Orders extends Component
 {
-    public $cartItems = [];
-    public $totalPrice = 0;
+    public $prices = [];
+
+    public $quantities = [];
+
+    /**
+     * @var array<string, float>
+     */
+    public array $discounts = [];
+
+    public string $firstName = '';
+    public string $lastName = '';
+    public string $phone = '';
+    public string $email = '';
+    public string $address = '';
+
+    public ?string $branch = null;
+
+    public ?string $username = null;
+    public ?string $password = null;
 
     public function mount()
     {
-        // Sample data for demonstration purposes
-        $this->cartItems = [
-            ['id' => 1, 'title' => 'Product 1', 'description' => 'Description for Product 1', 'quantity' => 1, 'price' => 215000, 'image' => asset('assets/img/prod1.JPEG')],
-            ['id' => 2, 'title' => 'Product 2', 'description' => 'Description for Product 2', 'image' => 'path/to/image2.jpg', 'quantity' => 2, 'price' => 150000, 'image' => asset('assets/img/prod1.JPEG')],
-            // Add more items as needed
-        ];
-
-        $this->updateTotalPrice();
-    }
-
-    public function incrementQuantity($productId)
-    {
-        foreach ($this->cartItems as &$item) {
-            if ($item['id'] == $productId) {
-                $item['quantity']++;
-                break;
-            }
+        if (auth()->user()->branch_id) {
+            $this->branch = auth()->user()->branch_id;
+        } else {
+            $this->branch = session()->get('branch');
         }
-        $this->updateTotalPrice();
-    }
 
-    public function decrementQuantity($productId)
-    {
-        foreach ($this->cartItems as &$item) {
-            if ($item['id'] == $productId && $item['quantity'] > 1) {
-                $item['quantity']--;
-                break;
-            }
+        $items = Cart::getItems();
+        foreach ($items as $item) {
+            $this->calculateDiscount($item->getHash(), $item->getPrice() * 100);
         }
-        $this->updateTotalPrice();
     }
 
-    public function removeItem($productId)
+    public function placeOrder(
+        ICustomerManagementService $customerManagementService,
+        IOrderService $orderService,
+        IIdentityAndAccessService $identityAndAccessService,
+        bool $authorizing = false
+    )
     {
-        $this->cartItems = array_filter($this->cartItems, function ($item) use ($productId) {
-            return $item['id'] != $productId;
+        $this->validate([
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'phone' => 'required',
+            'email' => 'email',
+            'address' => 'required',
+        ]);
+
+        if(empty(Cart::getItems())) return session()->flash('alert', 'No items added to cart.');
+
+        if(!$authorizing) $this->reset('username', 'password');
+
+        DB::beginTransaction();
+
+        $customerId = Str::uuid()->toString();
+        $customerResult = $customerManagementService->createCustomer(
+            $customerId,
+            $this->firstName,
+            $this->lastName,
+            $this->phone,
+            $this->address,
+            $this->branch,
+            $this->email
+        );
+
+        if ($customerResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', $customerResult->getError());
+        }
+
+        $items = [];
+
+        foreach (Cart::getItems() as $item) {
+            $items[] = [
+                'productId' => $item->getId(),
+                'title' => $item->getTitle(),
+                'quantity' => $item->getQuantity(),
+                'price' => $item->getPrice() * 100,
+                'reservationId' => $item->getExtraInfo()['reservation_id']
+            ];
+        }
+
+        $authorization = null;
+        if($this->username && $this->password){
+            $authorizationResult = $identityAndAccessService->authorize($this->username, $this->password, serialize($items));
+            if($authorizationResult->isFailure()){
+                DB::rollBack();
+                $this->reset('username', 'password');
+                return session()->flash('alert-authorization', ErrorHandler::getErrorMessage($authorizationResult->getError()));
+            }
+
+            $authorization = $authorizationResult->getValue();
+        }
+
+        $this->reset('username', 'password');
+
+        $orderId = Str::uuid()->toString();
+        $orderResult = $orderService->placeOrder(
+            $orderId,
+            $customerId,
+            auth()->user()->id,
+            $this->branch,
+            $items,
+            $authorization
+        );
+
+        if($orderResult->isFailure()){
+            DB::rollBack();
+
+            $error = $orderResult->getError();
+            if(in_array($error->getCode(), [1001, 1002])){
+                session()->flash('alert-authorization', ErrorHandler::getErrorMessage($error));
+                $this->dispatch('authorizationRequired');
+                return;
+            }
+
+            return session()->flash('alert', ErrorHandler::getErrorMessage($error));
+        }
+
+        Cart::destroy();
+        session()->flash('success', 'Order placed successfully');
+
+        DB::commit();
+    }
+
+    public function incrementQuantity(IStockManagementService $stockManagementService, $hash)
+    {
+        $quantity = $this->quantities[$hash];
+        $quantity = $quantity + 1;
+
+        $item = Cart::getItem($hash);
+        $reservationId = $item->getExtraInfo()['reservation_id'];
+
+        DB::beginTransaction();
+
+        $cancelResult = $stockManagementService->cancelReservation(
+            $item->getId(),
+            $reservationId,
+            auth()->user()->id
+        );
+
+        if ($cancelResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($cancelResult->getError()));
+        }
+
+        $newReservationId = Str::uuid()->toString();
+        $reserveResult = $stockManagementService->reserve(
+            $item->getId(),
+            $newReservationId,
+            $quantity,
+            $this->branch,
+            auth()->user()->id
+        );
+
+        if ($reserveResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($reserveResult->getError()));
+        }
+
+        Cart::updateItem($hash, [
+            'quantity' => $quantity,
+            'extra_info' => [
+                'reservation_id' => $newReservationId
+            ]
+        ]);
+
+        DB::commit();
+    }
+
+    public function decrementQuantity(StockManagementService $stockManagementService, $hash)
+    {
+        $quantity = $this->quantities[$hash];
+
+        if ($quantity == 1) return;
+
+        $quantity = $quantity - 1;
+
+        $item = Cart::getItem($hash);
+        $reservationId = $item->getExtraInfo()['reservation_id'];
+
+        DB::beginTransaction();
+
+        $cancelResult = $stockManagementService->cancelReservation(
+            $item->getId(),
+            $reservationId,
+            auth()->user()->id
+        );
+
+        if ($cancelResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($cancelResult->getError()));
+        }
+
+        $newReservationId = Str::uuid()->toString();
+        $reserveResult = $stockManagementService->reserve(
+            $item->getId(),
+            $newReservationId,
+            $quantity,
+            $this->branch,
+            auth()->user()->id
+        );
+
+        if ($reserveResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($reserveResult->getError()));
+        }
+
+        Cart::updateItem($hash, [
+            'quantity' => $quantity,
+            'extra_info' => [
+                'reservation_id' => $newReservationId
+            ]
+        ]);
+
+        DB::commit();
+    }
+
+    public function removeItem(IStockManagementService $stockManagementService, $hash)
+    {
+        $item = Cart::getItem($hash);
+        $reservationId = $item->getExtraInfo()['reservation_id'];
+
+        $cancelResult = $stockManagementService->cancelReservation(
+            $item->getId(),
+            $reservationId,
+            auth()->user()->id
+        );
+
+        if ($cancelResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($cancelResult->getError()));
+        }
+
+        Cart::removeItem($hash);
+    }
+
+    public function calculateDiscount(string $hash, int $price)
+    {
+        $product = $this->getProduct($hash);
+
+        $discount = 0;
+        if($product->regular_price > $price)
+            $discount = ($product->regular_price - $price) / $product->regular_price;
+
+        $this->discounts[$hash] = round($discount * 100, 2);
+    }
+
+    public function updatedPrices($price, $hash)
+    {
+        $this->updateCartItemPrice($price, $hash, true);
+    }
+
+    public function updatedDiscounts(float $percentage, string $hash): void
+    {
+        $product = $this->getProduct($hash);
+
+        $rate = $percentage / 100;
+        $price = $product->regular_price / 100;
+        $discount = $price * $rate;
+        $discountedPrice = $price - $discount;
+
+        $this->updateCartItemPrice(round($discountedPrice, 2), $hash, false);
+    }
+
+    private function updateCartItemPrice(float $price, string $hash, bool $calculateDiscount): void
+    {
+        $discount = $this->discounts[$hash];
+        $item = Cart::updateItem($hash, [
+            'price' => $price
+        ]);
+
+        if(!$calculateDiscount) {
+            $this->discounts[$item->getHash()] = $discount;
+            return;
+        }
+
+        $this->calculateDiscount($item->getHash(), $price * 100);
+    }
+
+    public function getProduct($hash)
+    {
+        $item = Cart::getItem($hash);
+        $product = Product::find($item->getId());
+
+        return $product;
+    }
+
+    public function getItems()
+    {
+        $items = Cart::getItems();
+
+        $this->reset('prices', 'quantities');
+        foreach ($items as $hash => $item) {
+            $this->prices[$hash] = $item->getPrice();
+            $this->quantities[$hash] = $item->getQuantity();
+        }
+
+        usort($items, function($a, $b)
+        {
+            return strcmp($a->getTitle(), $b->getTitle());
         });
-        $this->updateTotalPrice();
-    }
 
-    private function updateTotalPrice()
-    {
-        $this->totalPrice = array_reduce($this->cartItems, function ($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
-        }, 0);
+        return $items;
     }
 
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
-        return view('livewire.admin.order.orders');
+        return view('livewire.admin.order.orders', [
+            'items' => $this->getItems()
+        ]);
     }
 }

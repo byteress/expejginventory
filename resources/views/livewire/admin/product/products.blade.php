@@ -78,8 +78,8 @@
                                 <td>{{ $product->model }}</td>
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->supplier->name }}</td>
-                                <td>{{ $product->regular_price }}</td>
-                                <td>{{ $product->sale_price }}</td>
+                                <td>@money($product->regular_price)</td>
+                                <td>@money($product->sale_price)</td>
 
                                 <td>
                                     <div class="btn-group">

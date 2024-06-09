@@ -8,6 +8,8 @@ use IdentityAndAccessContracts\Enums\Role;
 use IdentityAndAccessContracts\Exceptions\InvalidDomainException;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use IdentityAndAccessContracts\Utils\Result;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -73,6 +75,31 @@ class IdentityAndAccessService implements IIdentityAndAccessService
             $user?->delete();
 
             return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    public function authorize(string $email, string $password, string $key): Result
+    {
+        try {
+            $attempt = Auth::validate([
+                'email' => $email,
+                'password' => $password
+            ]);
+
+            if(!$attempt) throw new InvalidDomainException('Authorization failed.', ['email' => 'Authorization failed.']);
+
+            $user = User::where('email', $email)
+                ->first();
+
+            if(!$user) throw new InvalidDomainException('Authorization failed.', ['email' => 'Authorization failed.']);
+            if(!$user->hasRole(Role::Admin->value)) throw new InvalidDomainException('Authorization failed.', ['email' => 'Authorization failed.']);
+
+            $encrypted = Crypt::encryptString($key);
+
+            return Result::success($encrypted);
         } catch (Exception $e) {
             report($e);
             return Result::failure($e);

@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use BranchManagement\BranchManagementService;
 use BranchManagementContracts\IBranchManagementService;
+use CustomerManagement\CustomerManagementService;
+use CustomerManagementContracts\ICustomerManagementService;
 use IdentityAndAccess\IdentityAndAccessService;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Order\OrderService;
+use OrderContracts\IOrderService;
 use ProductManagement\EventHandlers\GenerateSku;
 use ProductManagement\ProductManagementService;
 use ProductManagementContracts\IProductManagementService;
@@ -39,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IProductManagementService::class, ProductManagementService::class);
         $this->app->bind(IStockManagementService::class, StockManagementService::class);
         $this->app->bind(ITransferService::class, TransferService::class);
+        $this->app->bind(IOrderService::class, OrderService::class);
+        $this->app->bind(ICustomerManagementService::class, CustomerManagementService::class);
 
         Event::subscribe(GenerateSku::class);
     }

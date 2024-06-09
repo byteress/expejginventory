@@ -132,6 +132,35 @@
         </div>
     </li>
     @endhasanyrole
+
+    @hasanyrole('admin|sales_rep')
+    <hr class="sidebar-divider">
+
+    <li class="nav-item ">
+        <a wire:navigate class="nav-link" href="{{ route('admin.browse.product') }}">
+            <i class="fas fa-fw fa-store"></i>
+            <span>Browse Products</span></a>
+    </li>
+    @endhasanyrole
+
+    @hasanyrole('admin|cashier')
+    <hr class="sidebar-divider">
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
+            aria-expanded="true" aria-controls="collapseSix">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Orders</span>
+        </a>
+        <div id="collapseSix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders') }}">Pending</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders.history') }}">History</a>
+            </div>
+        </div>
+    </li>
+    @endhasanyrole
+
     <!-- Divider -->
     <hr class="sidebar-divider">
 

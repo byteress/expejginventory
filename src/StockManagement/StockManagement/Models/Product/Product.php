@@ -6,6 +6,7 @@ use StockManagement\Models\Aggregate;
 use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
+use StockManagementContracts\Events\ReservationCancelled;
 use StockManagementContracts\Exceptions\InvalidDomainException;
 
 class Product extends Aggregate
@@ -15,6 +16,9 @@ class Product extends Aggregate
 
     /** @var array<string, int> */
     public array $reserved = [];
+
+    /** @var array<string, ProductReserved> */
+    public array $reservations = [];
 
     public function receive(
         string $branchId,
@@ -58,6 +62,28 @@ class Product extends Aggregate
         return $this;
     }
 
+    public function cancelReservation(
+        string $reservationId,
+        string $actor
+    ): self
+    {
+        if(!array_key_exists($reservationId, $this->reservations)) throw new InvalidDomainException('Reservation not found.', ['reserve' => 'Reservation not found.']);
+
+        $reservation = $this->reservations[$reservationId];
+
+        $event = new ReservationCancelled(
+            $this->uuid(),
+            $reservationId,
+            $reservation->branchId,
+            $reservation->quantity,
+            $actor
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
     public function release(
         string $branchId,
         int $quantity,
@@ -92,7 +118,20 @@ class Product extends Aggregate
         $this->available[$event->branchId] = $oldQuantity - $event->quantity;
 
         $oldQuantity = $this->reserved[$event->branchId] ?? 0;
+        $this->reserved[$event->branchId] = $oldQuantity + $event->quantity;
+        
+        $this->reservations[$event->reservationId] = $event;
+    }
+
+    public function applyReservationCancelled(ReservationCancelled $event): void
+    {
+        $oldQuantity = $this->available[$event->branchId] ?? 0;
+        $this->available[$event->branchId] = $oldQuantity + $event->quantity;
+
+        $oldQuantity = $this->reserved[$event->branchId] ?? 0;
         $this->reserved[$event->branchId] = $oldQuantity - $event->quantity;
+        
+        unset($this->reservations[$event->reservationId]);
     }
 
     public function applyProductReleased(ProductReleased $event): void
