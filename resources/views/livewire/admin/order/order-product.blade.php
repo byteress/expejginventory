@@ -183,7 +183,11 @@
         console.log('init');
         if( isMobile.any() ) {
             var html5QrcodeScanner = new Html5QrcodeScanner(
-                "qr-reader", {fps: 10, qrbox: 250});
+                "qr-reader", {fps: 10, qrbox: 250, videoConstraints: {
+                        facingMode: { exact: "environment" },
+                    },
+                }
+            );
             html5QrcodeScanner.render(onScanSuccess);
         }
     });
