@@ -1,5 +1,9 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap");
+
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 .bg-login-image {
@@ -8,33 +12,25 @@ body {
     background-size: cover;
 }
 
+.bg-gradient-basic {
+    background-color: #f7f7f7;
+}
 .bg-gradient-primary {
-    background-color: #3f6652;
-    background-image: linear-gradient(180deg, #527563 10%, #0D5E35 100%);
+    background-color: #2f3dff;
+    background-image: linear-gradient(180deg, #2934db 10%, #171F82 100%);
     background-size: cover;
 }
 
 .primary-text{
-    color: #1abc9c;
+    color: #171F82;
 }
 
 .secondary-text{
-    color: #f1c40f;
+    color: #FF6529;
 }
 
 .sidebar .sidebar-brand .sidebar-brand-icon i {
     font-size: 1.6rem;
-}
-
-.btn-primary{
-    color: #fff;
-    background-color: #0D5E35;
-    border: #083820;
-}
-
-
-.btn-primary:hover{
-    background-color: #149957;
 }
 
 
@@ -154,3 +150,17 @@ body {
     border: solid 3px #0D5E35;
     font-size: 12px;
 }
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.mt-10{
+    margin-top:12rem;
+}
+
+.user .form-control,.btn{
+    border-radius: 0 !important;
+    border-color: #2934db;
+}
+

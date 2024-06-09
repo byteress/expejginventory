@@ -15,6 +15,8 @@ use App\Livewire\Frontend\Login;
 */
 
 Route::get('/', Login::class)->name('login');
+
+Route::view('/test-home', 'frontend.homepage')->name('test.home');
 Route::get('/logout', function () {
     Auth::logout();
     return redirect(route('login'));

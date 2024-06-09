@@ -6,7 +6,8 @@
         <div class="sidebar-brand-icon">
             <i class="fas fa-couch"></i>
         </div>
-        <div class="sidebar-brand-text mx-2"><span class ="primary-text">April</span><span class ="secondary-text">Joy</span><sup>Admin</sup></div>
+        {{-- <div class="sidebar-brand-text mx-2"><span class ="primary-text">JENNY</span><span class ="secondary-text">Joy</span><sup>GRACE</sup></div> --}}
+        <h5>JENNYGRACE</h5>
     </a>
 
     <!-- Divider -->

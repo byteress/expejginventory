@@ -1,0 +1,210 @@
+/* Custom styles for the header */
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap");
+
+body {
+    font-family: 'Montserrat', sans-serif !important;
+}
+   .header {
+    background-color: #2934db;
+  }
+  .main-content{
+    background-color: #f7f7f7;
+  }
+  .navbar-brand {
+    color: #FFF !important;
+    font-weight: 400 !important;
+    letter-spacing: 10px;
+    font-size: 26px;
+  }
+
+  .navbar-nav .nav-link {
+    color: #FFF;
+  }
+
+  .navbar-nav.nav-link.active {
+    color: #FFF;
+    background-color: #2934db;
+    border-bottom: 2px solid #FFF;
+  }
+
+  .navbar-nav.nav-link:hover {
+    color: #FFF;
+    background-color: #2934db;
+    border-bottom: 2px solid #FFF;
+  }
+
+  .form-control {
+    border: 1px solid #2934db;
+    border-radius: 0;
+  }
+
+  .btn-outline-success {
+    border-color: #FFF;
+    color: #FFF;
+    border-radius: 0;
+  }
+
+  .btn-outline-success:hover {
+    background-color: #2934db;
+    border-color: #FF6529;
+    color: #FF6529;
+  }
+  body {
+    font-family: 'Open Sans', sans-serif;
+  }
+  .display-1 {
+    font-size: 36px;
+    font-weight: 300;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  .container {
+    margin: 5px auto;
+    padding: 0px 20px;
+  }
+  .navbar {
+    background-color: #2934db;
+    padding: 0px;
+  }
+  .sidebar {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border: 1px solid #ddd;
+  }
+
+  .product-card {
+    background-color: #FFF;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+
+  .navbar-link{
+    font-weight: 800;
+  }
+
+  .top-header{
+    font-size:12px;
+    background-color:#171F82;
+  }
+
+  .top-nav{
+    color:#FFF;
+  }
+
+  .main-nav{
+    background-color: #FFF;
+  }
+
+  .top-nav .form-control {
+    width: 400px;
+    max-width: 400px !important; /* Adjust width as needed */
+    margin: auto;
+}
+
+.banner {
+    background-color: #f0f0f0;
+    padding: 0 0;
+}
+
+.banner-text {
+    position: absolute;
+    top: 25%;
+    left: 5%; /* adjust the left value to position the text */
+    text-align: left;
+    z-index: 1;
+}
+
+.banner-custom-text{
+    font-weight: 400 !important;
+    text-shadow: 4px 4px 4px rgba(0,0,0,0.5); /* add a cool shadow effect */
+}
+
+.banner img {
+    width: 100%;
+    height: 270px; /* adjust the height according to your needs */
+    object-fit: cover;
+    object-position: center 60%;
+    filter: blur(1px);
+    opacity: 0.8;
+}
+
+.home-cards{
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-cards img{
+    border-radius: 0;
+    height:350px;
+    object-fit: cover;
+    border-bottom: 1px solid #DDD;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.text-main{
+    color: #2934db !important;
+}
+
+/* Styles for the hover effect on cards */
+.home-cards {
+    overflow: hidden;
+}
+.home-cards .card-img-container {
+    position: relative;
+    overflow: hidden;
+}
+.home-cards img {
+    transition: transform 0.3s ease, filter 0.3s ease;
+    width: 100%;
+}
+.home-cards .card-img-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.home-cards:hover .card-img-overlay {
+    opacity: 1;
+}
+.home-cards:hover img {
+    transform: scale(1.1);
+    filter: brightness(50%);
+}
+.home-cards .card-img-overlay button {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.home-cards .card-img-overlay button:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+.main-nav .navbar-nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.main-nav .nav-item {
+    flex: 1;
+    text-align: center;
+}
+.main-nav .nav-link {
+    width: 100%;
+}
+.main-nav .nav-link:hover {
+    background-color: #DDD;
+    color: #333;
+}
