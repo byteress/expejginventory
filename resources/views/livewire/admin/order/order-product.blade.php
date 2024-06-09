@@ -154,7 +154,7 @@
             lastResult = decodedText;
 
             const result = validateEAN13(decodedText);
-            if(result.valid) $wire.set('search', result.data)
+            $wire.set('search', barcode.slice(0, 12))
         }
     }
 
