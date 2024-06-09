@@ -26,9 +26,12 @@
                         @endif
                         <div class="row mb-3">
                             <div class="col-md-3">
+                                <div wire:ignore class="form-group mt-1 d-sm-block d-md-none" id="qr-reader">
+
+                                </div>
                                 <div class="form-group mt-1">
                                     <input type="text" class="float-left form-control" placeholder="Search..."
-                                        wire:model.live="search">
+                                           wire:model.live="search">
                                 </div>
                             </div>
 
@@ -112,3 +115,77 @@
     <!-- /.container-fluid -->
 
 </div>
+
+@assets
+<script src="https://unpkg.com/html5-qrcode"></script>
+@endassets
+
+@script
+<script>
+    let lastResult, countResults = 0;
+
+    function validateEAN13(barcode) {
+        if (barcode.length !== 13 || !/^\d+$/.test(barcode)) {
+            return { valid: false, data: null };
+        }
+
+        const dataPart = barcode.slice(0, 12);
+        const providedChecksum = parseInt(barcode.slice(-1), 10);
+
+        let sum = 0;
+        for (let i = 0; i < 12; i++) {
+            const digit = parseInt(dataPart[i], 10);
+            sum += (i % 2 === 0) ? digit : digit * 3;
+        }
+
+        const calculatedChecksum = (10 - (sum % 10)) % 10;
+
+        if (providedChecksum === calculatedChecksum) {
+            return { valid: true, data: dataPart };
+        } else {
+            return { valid: false, data: null };
+        }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log('test')
+        if (decodedText !== lastResult) {
+            ++countResults;
+            lastResult = decodedText;
+
+            const result = validateEAN13(decodedText);
+            if(result.valid) $wire.set('search', result.data)
+        }
+    }
+
+    const isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        }
+    };
+
+    Livewire.hook('component.init', ({ component, cleanup }) => {
+        console.log('init');
+        if( isMobile.any() ) {
+            var html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader", {fps: 10, qrbox: 250});
+            html5QrcodeScanner.render(onScanSuccess);
+        }
+    });
+</script>
+@endscript
