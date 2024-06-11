@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AprilJoy</title>
+    <title>JennyGrace</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}"> <!-- custom styles will go here -->
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="header animate__animated animate__fadeIn">
         <nav class="top-header" style = "background-color: ">
             <div class="container mt-0" style = "padding-right: 0">
               <div class="row w-100">
@@ -35,9 +36,10 @@
           </nav>
         <nav class="navbar navbar-expand-lg navbar-light top-nav">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand animate__animated animate__fadeIn" href="#">
                 {{-- <img src="{{ asset('assets/img/logo.png') }}" alt="" class ="home-logo" style = "width: 50px;">  --}}
                 JENNYGRACE
+                <span class="navbar-subtitle">Furniture Homestore</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -99,10 +101,16 @@
             <div class="row mt-3 mb-3">
                 <div class="col-lg-3">
                 <!-- Sidebar -->
-                <div class="card mb-3">
-                    <div class="card-header bg-main">
-                        <h4 class = "mt-1 mb-1 text-white fw-light">Categories</h4>
+                <div class="card mb-3 shadow">
+                    <div class="card-header">
+                        <h4 class = "mt-1 mb-1 fw-light"><i class="fas fa-filter"></i> Filter</h4>
+
                     </div>
+                </div>
+                <div class="card mb-3 shadow">
+                    {{-- <div class="card-header bg-main">
+                        <h4 class = "mt-1 mb-1 text-white fw-light">Categories</h4>
+                    </div> --}}
                     <ul class="list-group">
                     <a href="#">
                         <li class="list-group-item">
@@ -136,10 +144,10 @@
                     </a>
                     </ul>
                 </div>
-                <div class="card mb-3">
-                    <div class="card-header bg-main">
+                <div class="card mb-3 shadow">
+                    {{-- <div class="card-header bg-main">
                         <h4 class = "mt-1 mb-1 text-white fw-light">Brands</h4>
-                    </div>
+                    </div> --}}
                     <ul class="list-group">
                     <a href="#">
                         <li class="list-group-item">
@@ -402,7 +410,10 @@
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <!-- About Us -->
-                    <h4 class="fw-light mb-4">JENNYGRACE</h4>
+                    <h5 class="footer-title-logo fw-light mb-4">
+                        JENNYGRACE
+                        <span class="footer-subtitle-logo">Furniture Homestore</span>
+                    </h5>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">

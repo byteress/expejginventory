@@ -5,6 +5,7 @@
 
 body {
     font-family: 'Montserrat', sans-serif !important;
+    background-color: #f7f7f7;
 }
    .header {
     background-color: #2934db;
@@ -17,8 +18,18 @@ body {
     font-weight: 400 !important;
     letter-spacing: 10px;
     font-size: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
   }
-
+  .navbar-subtitle {
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    color: #FFF;
+    text-transform: uppercase;
+  }
   .navbar-nav .nav-link {
     color: #FFF;
   }
@@ -379,4 +390,20 @@ body {
 .footer-bottom {
     background-color: #171f82;
     color: #fff;
+}
+.footer-title-logo {
+    color: #FFF !important;
+    font-weight: 400 !important;
+    letter-spacing: 10px;
+    font-size: 26px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+}
+.footer-subtitle-logo {
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.41rem;
+    color: #FFF;
+    text-transform: uppercase;
 }

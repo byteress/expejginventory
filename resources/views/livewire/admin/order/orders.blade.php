@@ -24,22 +24,22 @@
                 <div class="card shadow mb-4 d-none d-md-block">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <h5 class="mt-3 text-primary">Product</h5>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 text-center">
                                 <h5 class="mt-3 text-primary">Unit Price</h5>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 text-center">
                                 <h5 class="mt-3 text-primary">Discount</h5>
                             </div>
                             <div class="col-md-2">
-                                <h5 class="mt-3 text-primary">Quantity</h5>
+                                <h5 class="mt-3 text-primary" style = "margin-left:20px;">Quantity</h5>
                             </div>
                             <div class="col-md-2 text-center">
                                 <h5 class="mt-3 text-primary">Total Price</h5>
                             </div>
-                            <div class="col-md-2 text-center">
+                            <div class="col-md-1 text-center">
                                 <h5 class="mt-3 text-primary">Actions</h5>
                             </div>
                         </div>
@@ -53,20 +53,31 @@
                                 <div class="col-md-1">
                                     {{ $this->getProduct($item->getHash())->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'img-fluid']) }}
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <h5 class="card-title mt-5 text-primary"><strong>{{ $item->getTitle() }}</strong>
                                     </h5>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="d-flex justify-content-center">
-                                        <input type="number" wire:model.blur="prices.{{ $item->getHash() }}"
-                                            class ="form-control mt-5 col-md-4 text-center">
+                                        <div class="input-group mt-5" style = "width:150px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Php</span>
+                                            </div>
+                                            <input type="number" wire:model.blur="prices.{{ $item->getHash() }}"
+                                                class ="form-control">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="d-flex justify-content-center">
-                                        <input type="number" wire:model.blur="discounts.{{ $item->getHash() }}"
-                                               class ="form-control mt-5 col-md-4 text-center">
+
+                                        <div class="input-group mt-5" style = "width:120px;">
+                                            <input type="number" wire:model.blur="discounts.{{ $item->getHash() }}"
+                                                   class ="form-control">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -87,7 +98,7 @@
                                 <div class="col-md-2 text-center">
                                     <h5 class="font-weight-bold mt-5">@money($item->getTotalPrice(), 'PHP', true)</h5>
                                 </div>
-                                <div class="col-md-2 text-center">
+                                <div class="col-md-1 text-center">
                                     <button class="btn btn-danger mt-5"
                                         wire:click="removeItem('{{ $item->getHash() }}')"
                                         wire:confirm="Are you sure you want to remove this item?">

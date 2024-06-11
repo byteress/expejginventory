@@ -113,23 +113,23 @@
                 <div class="card shadow mb-4 d-none d-md-block">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <h5 class="mt-3 text-primary">Product</h5>
                             </div>
                             <div class="col-md-2">
-                                <h5 class="mt-3 text-primary">Unit Price</h5>
+                                <h5 class="mt-3 text-primary text-center">Unit Price</h5>
                             </div>
                             <div class="col-md-2">
-                                <h5 class="mt-3 text-primary">Discount</h5>
+                                <h5 class="mt-3 text-primary text-center">Discount</h5>
                             </div>
                             <div class="col-md-2">
-                                <h5 class="mt-3 text-primary">Quantity</h5>
+                                <h5 class="mt-3 text-primary" style = "margin-left:20px;">Quantity</h5>
                             </div>
                             <div class="col-md-2 text-center">
                                 <h5 class="mt-3 text-primary">Total Price</h5>
                             </div>
                             @if(!$completed)
-                            <div class="col-md-2 text-center">
+                            <div class="col-md-1 text-center">
                                 <h5 class="mt-3 text-primary">Actions</h5>
                             </div>
                             @endif
@@ -144,7 +144,7 @@
                                 <div class="col-md-1">
                                     {{ $this->getProduct($item->product_id)->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'img-fluid']) }}
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <h5 class="card-title mt-5 text-primary"><strong>{{ $item->title }}</strong></h5>
                                 </div>
                                 <div class="col-md-2">
@@ -190,7 +190,7 @@
                                 <div class="col-md-2 text-center">
                                     <h5 class="font-weight-bold mt-5">@money($item->price * $item->quantity)</h5>
                                 </div>
-                                <div class="col-md-2 text-center">
+                                <div class="col-md-1 text-center">
                                     @if(!$completed)
                                     <button class="btn btn-danger mt-5"
                                         wire:click="removeItem('{{ $item->product_id }}')">
