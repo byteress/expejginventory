@@ -194,7 +194,7 @@
                                     @if(!$completed)
                                     <button class="btn btn-danger mt-5"
                                         wire:click="removeItem('{{ $item->product_id }}')">
-                                        <i class="fas fa-trash-alt"></i> Remove
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                     @endif
                                 </div>
@@ -266,26 +266,34 @@
                                     <h5 class ="mb-2 text-primary admin-title">Payment Options</h5>
                                 </div>
                                 <hr>
-                                <div class="d-flex">
-                                    <div class="col-md-3 mb-3">
-                                    <label>Receipt Number</label>
-                                    <input type="text" class="form-control" wire:model="receiptNumber" placeholder="Receipt Number" @if($completed) disabled @endif>
-                                    @error('receiptNumber')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Receipt Number</span>
+                                                </div>
+                                                <input type="text" class="form-control" wire:model="receiptNumber" placeholder="Receipt Number" @if($completed) disabled @endif>
+                                            </div>
+                                            @error('receiptNumber')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        @if(!$completed)
+                                        <div class="d-flex justify-content-end mt-1">
+                                            <button wire:click="newPaymentMethod"
+                                                class="btn btn-primary btn-icon-split btn-sm">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-plus"></i>
+                                                </span>
+                                                <span class="text">New Payment Method</span>
+                                            </button>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
-                                @if(!$completed)
-                                <div class="d-flex justify-content-end">
-                                    <button wire:click="newPaymentMethod"
-                                        class="btn btn-primary btn-icon-split float-right btn-sm">
-                                        <span class="icon text-white-50">
-                                            <i class="fas fa-plus"></i>
-                                        </span>
-                                        <span class="text">New Payment Method</span>
-                                    </button>
-                                </div>
-                                @endif
                             </div>
                             <div class="col-md-12 mt-2">
                                 <div class="card shadow d-none d-md-block">
@@ -294,10 +302,10 @@
                                             <div class="col-md-4">
                                                 <p class="text-primary mb-0">Payment Type</p>
                                             </div>
-                                            <div class="col-md-2 offset-md-1 text-center">
+                                            <div class="col-md-3 text-center">
                                                 <p class="text-primary mb-0">Reference #</p>
                                             </div>
-                                            <div class="col-md-2 offset-md-1 text-center">
+                                            <div class="col-md-3 text-center">
                                                 <p class="text-primary mb-0">Amount</p>
                                             </div>
                                             <div class="col-md-2 text-center">
@@ -332,7 +340,7 @@
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                                <div class="col-md-4 mt-1">
+                                                <div class="col-md-3 mt-1">
                                                     <div class="d-flex justify-content-center">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -346,7 +354,7 @@
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                                <div class="col-md-2 mt-1">
+                                                <div class="col-md-3 mt-1">
                                                     <div class="d-flex justify-content-center">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -366,7 +374,7 @@
                                                             <button
                                                                 wire:click="removePaymentMethod({{ $loop->index }})"
                                                                 class="btn btn-danger btn-sm mt-1">
-                                                                <i class="fas fa-trash-alt"></i> Remove
+                                                                <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -376,17 +384,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 offset-md-7">
-                                <h4 class="text-secondary mt-1"><small>Order Total:</small> <strong
-                                        class ="text-primary">@money($order->total)</strong></h4>
-                            </div>
+                            <div class="col-md-4 offset-md-8">
+                                <h4 class="text-secondary mt-1"><small>Order Total:</small><br>
+                                    <strong class ="text-primary">@money($order->total)</strong></h4>
 
-                            <div class="col-md-3 offset-md-7">
-                                <h4 class="text-secondary mt-1"><small>Payment Total:</small> <strong
-                                        class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
+
+                                <h4 class="text-secondary mt-1"><small>Payment Total:</small><br>
+                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
                                         @error('total')<span class="text-danger">{{ $message }}</span>@enderror
-                            </div>
-                            <div class="col-md-2">
+
                                 @if ($order->requires_authorization)
                                     <button class="btn btn-danger btn-block" data-toggle="modal"
                                         data-target="#confirmLogin">
