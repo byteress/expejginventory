@@ -131,11 +131,11 @@ body {
 }
 
 .text-primary{
-    color:#0D5E35 !important;
+    color:#2934db !important;
 }
 
 .admin-title{
-    font-weight: 100;
+    font-weight: 400;
 }
 
 .card-img-top {
@@ -147,7 +147,7 @@ body {
 
 .price-box{
     padding: 3px 10px;
-    border: solid 3px #0D5E35;
+    border: solid 3px #2934db;
     font-size: 12px;
 }
 

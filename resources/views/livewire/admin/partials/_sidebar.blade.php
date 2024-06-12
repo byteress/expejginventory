@@ -7,7 +7,7 @@
             <i class="fas fa-couch"></i>
         </div>
         {{-- <div class="sidebar-brand-text mx-2"><span class ="primary-text">JENNY</span><span class ="secondary-text">Joy</span><sup>GRACE</sup></div> --}}
-        <h6 style = "margin-left: 5px;margin-top:5px">JENNYGRACE<sup>admin</sup></h6>
+        <div class="sidebar-brand-text mx-2"><h6>JENNYGRACE<sup>admin</sup></h6></div>
     </a>
 
     <!-- Divider -->

@@ -65,8 +65,8 @@
                             </div>
                         @endif
                         <form wire:submit="submit">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" width="100%" cellspacing="0">
+                            <div class = " table-responsive">
+                                <table class="table table-bordered" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>Supplier</th>
@@ -87,7 +87,7 @@
                                                 <td>{{ $product->description }}</td>
                                                 <td>{{ $product->quantity }}</td>
                                                 <td>
-                                                    <div class="input-group mb-3">
+                                                    <div class="input-group mb-3" style = "width:130px;">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3">Qty.</span>
                                                         </div>
@@ -98,7 +98,7 @@
                                                     </div>
                                                 </td>
                                                 <td><button wire:click="remove('{{ $product->id }}')" type="button"
-                                                        class="btn btn-danger" data-dismiss="modal">Remove</button></td>
+                                                        class="btn btn-danger" data-dismiss="modal"><i class="fas fa-trash-alt"></i></button></td>
                                             </tr>
                                         @empty
                                             <tr>
@@ -107,24 +107,31 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                                <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
-                                    <div class="form-group">
-                                        <label for="supplier">Branch</label>
-                                        <select class="form-control" id="supplier" wire:model="branch">
-                                            <option selected value="">Select Branch</option>
-                                            @foreach ($branches as $branch)
-                                                <option value="{{ $branch->id }}"
-                                                    @if (auth()->user()->branch_id == $branch->id) selected @endif>
-                                                    {{ $branch->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('branch')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                <div class="row" style = "margin: 0 0">
+                                    <div class="col-md-4 mb-3" @unlessrole('admin') style="display:none;" @endunlessrole>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text"
+                                                    for="inputGroupSelect01">Branch</label>
+                                            </div>
+                                            <select class="form-control" id="supplier" wire:model="branch">
+                                                <option selected value="">Select Branch</option>
+                                                @foreach ($branches as $branch)
+                                                    <option value="{{ $branch->id }}"
+                                                        @if (auth()->user()->branch_id == $branch->id) selected @endif>
+                                                        {{ $branch->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('branch')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Receive</button>
+                                    <div class="col-md-3 offset-md-5 mb-3">
+                                        <div class="d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-primary btn-block">Receive</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>

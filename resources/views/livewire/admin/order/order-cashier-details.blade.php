@@ -284,7 +284,7 @@
                                         @if(!$completed)
                                         <div class="d-flex justify-content-end mt-1">
                                             <button wire:click="newPaymentMethod"
-                                                class="btn btn-primary btn-icon-split btn-sm">
+                                                class="btn btn-primary btn-icon-split">
                                                 <span class="icon text-white-50">
                                                     <i class="fas fa-plus"></i>
                                                 </span>
