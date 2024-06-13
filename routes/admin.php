@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Admin\Stock\StockManagement;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Branch\Branches;
 use App\Livewire\Admin\Branch\CreateBranch;
@@ -49,8 +50,10 @@ Route::group(['middleware' => ['role:admin']], function () {
 
 });
 Route::group(['middleware' => ['role:admin|inventory_head']], function () {
-    Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
-    Route::get('/receive-product-history', ReceiveProductsHistory::class)->name('receive.product.history');
+    Route::get('/manage-stock', StockManagement::class)->name('manage.stock');
+
+//    Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
+    Route::get('/stock-history', ReceiveProductsHistory::class)->name('receive.product.history');
 
     Route::get('/request-transfer', RequestTransfer::class)->name('request.transfer');
     Route::get('/view-request', ViewRequest::class)->name('view.request');

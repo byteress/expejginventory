@@ -23,6 +23,34 @@ class StockManagementService implements IStockManagementService
         }
     }
 
+    public function receiveDamaged(string $productId, int $quantity, string $branchId, string $actor): Result
+    {
+        try{
+            $product = Product::retrieve($productId);
+            $product->receiveDamaged($branchId, $quantity, $actor);
+            $product->persist();
+
+            return Result::success(null);
+        }catch(Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    public function setDamaged(string $productId, int $quantity, string $branchId, string $actor): Result
+    {
+        try{
+            $product = Product::retrieve($productId);
+            $product->setDamaged($branchId, $quantity, $actor);
+            $product->persist();
+
+            return Result::success(null);
+        }catch(Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
     public function reserve(string $productId, string $reservationId, int $quantity, string $branchId, string $actor): Result
     {
         try{

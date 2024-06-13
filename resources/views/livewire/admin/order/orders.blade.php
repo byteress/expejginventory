@@ -102,7 +102,7 @@
                                     <button class="btn btn-danger mt-5"
                                         wire:click="removeItem('{{ $item->getHash() }}')"
                                         wire:confirm="Are you sure you want to remove this item?">
-                                        <i class="fas fa-trash-alt"></i> Remove
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
                             </div>

@@ -100,15 +100,29 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
+{{--    <li class="nav-item">--}}
+{{--        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"--}}
+{{--            aria-expanded="true" aria-controls="collapseFour">--}}
+{{--            <i class="fas fa-fw fa-users"></i>--}}
+{{--            <span>Receive Product</span>--}}
+{{--        </a>--}}
+{{--        <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">--}}
+{{--            <div class="bg-white py-2 collapse-inner rounded">--}}
+{{--                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product') }}">Receive</a>--}}
+{{--                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product.history') }}">History</a>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </li>--}}
+
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
-            aria-expanded="true" aria-controls="collapseFour">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStockManage"
+           aria-expanded="true" aria-controls="collapseStockManage">
             <i class="fas fa-fw fa-users"></i>
-            <span>Receive Product</span>
+            <span>Manage</span>
         </a>
-        <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseStockManage" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product') }}">Receive</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.manage.stock') }}">Products</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product.history') }}">History</a>
             </div>
         </div>

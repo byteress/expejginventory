@@ -259,6 +259,7 @@ class   Orders extends Component
 
     public function calculateDiscount(string $hash, int $price)
     {
+
         $product = $this->getProduct($hash);
 
         $discount = 0;
