@@ -7,12 +7,13 @@ use Spatie\EventSourcing\StoredEvents\ShouldBeStored;
 class ProductReceived extends ShouldBeStored
 {
     public function __construct(
+        public string $transferId,
         public string $productId,
-        public int $quantity,
-        public string $receiver,
+        public int $received,
+        public int $damaged,
         public string $actor
     )
     {
-        
+
     }
 }

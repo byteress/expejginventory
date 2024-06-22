@@ -38,7 +38,7 @@ class ProductRequestsProjector extends Projector
             ]);
         }
 
-        
+
     }
 
     public function onProductTransferred(ProductTransferred $event): void
@@ -46,17 +46,17 @@ class ProductRequestsProjector extends Projector
         DB::table('product_requests')
             ->where('product_id', $event->productId)
             ->where('receiver', $event->receiver)
-            ->increment('incoming', $event->quantity);
+            ->decrement('quantity', $event->quantity);
     }
 
-    public function onProductReceived(ProductReceived $event): void
-    {
-        DB::table('product_requests')
-            ->where('product_id', $event->productId)
-            ->where('receiver', $event->receiver)
-            ->update([
-                'quantity' => DB::raw("GREATEST(quantity - {$event->quantity}, 0)"),
-                'incoming' => DB::raw("GREATEST(incoming - {$event->quantity}, 0)")
-            ]);
-    }
+//    public function onProductReceived(ProductReceived $event): void
+//    {
+//        DB::table('product_requests')
+//            ->where('product_id', $event->productId)
+//            ->where('receiver', $event->receiver)
+//            ->update([
+//                'quantity' => DB::raw("GREATEST(quantity - {$event->quantity}, 0)"),
+//                'incoming' => DB::raw("GREATEST(incoming - {$event->quantity}, 0)")
+//            ]);
+//    }
 }

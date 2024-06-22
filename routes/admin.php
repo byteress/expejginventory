@@ -1,6 +1,10 @@
 <?php
 
+use App\Livewire\Admin\Stock\BatchDetails;
+use App\Livewire\Admin\Stock\BatchHistory;
 use App\Livewire\Admin\Stock\StockManagement;
+use App\Livewire\Admin\Stock\TransferHistory;
+use App\Livewire\Admin\Stock\TransferHistoryDetails;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Branch\Branches;
 use App\Livewire\Admin\Branch\CreateBranch;
@@ -52,7 +56,9 @@ Route::group(['middleware' => ['role:admin']], function () {
 Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/manage-stock', StockManagement::class)->name('manage.stock');
 
-//    Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
+    Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
+    Route::get('/receive-history', BatchHistory::class)->name('receive.history');
+    Route::get('/receive-history/{batch}', BatchDetails::class)->name('receive.history.details');
     Route::get('/stock-history', ReceiveProductsHistory::class)->name('receive.product.history');
 
     Route::get('/request-transfer', RequestTransfer::class)->name('request.transfer');
@@ -60,6 +66,8 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/view-request/{transferId}', TransferDetails::class)->name('view.request.details');
     Route::get('/for-transfer', ForTransfer::class)->name('for.transfer');
     Route::get('/incoming', Incoming::class)->name('incoming');
+    Route::get('/transfer-history', TransferHistory::class)->name('transfer.history');
+    Route::get('/transfer-history/{transfer}', TransferHistoryDetails::class)->name('transfer.history.details');
     Route::get('/request-history', RequestHistory::class)->name('request.history');
 });
 

@@ -72,7 +72,7 @@
                                                 <div class="col-5">
                                                     <div class="d-flex justify-content-start">
                                                         <div class="mb-0 font-weight-bold text-gray-800 price-box">
-                                                            <i class="fas fa-tag"></i> @money($product->regular_price)
+                                                            <i class="fas fa-tag"></i> @money($product->sale_price)
                                                         </div>
                                                     </div>
                                                 </div>

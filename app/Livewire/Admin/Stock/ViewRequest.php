@@ -11,6 +11,9 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use StockManagementContracts\IStockManagementService;
+use Str;
+use TransferContracts\Exceptions\ErrorCode;
+use TransferContracts\Exceptions\InvalidDomainException;
 use TransferContracts\ITransferService;
 
 #[Title('ViewRequest')]
@@ -29,6 +32,7 @@ class ViewRequest extends Component
 
     #[Validate('required')]
     public $truck = null;
+    public string $notes;
 
     public function mount()
     {
@@ -75,23 +79,33 @@ class ViewRequest extends Component
             ->get();
     }
 
-    public function transfer(IStockManagementService $stockManagementService, ITransferService $transferService)
+    /**
+     * @throws \Throwable
+     */
+    public function transfer(IStockManagementService $stockManagementService, ITransferService $transferService): void
     {
         $this->validate();
+
+        $user = auth()->user();
+        if(!$user) return;
 
         if(empty($this->quantities)){
             $this->addError('quantities', 'No request selected');
             return;
         }
-        
+
         DB::beginTransaction();
+
+        $transferId = Str::uuid()->toString();
+        $receiverBranch = '';
+        $transferProducts = [];
         foreach($this->quantities as $productId => $value){
             foreach($value as $branchId => $quantity){
                 $releaseResult = $stockManagementService->release(
                     $productId,
                     $quantity,
                     $this->branch,
-                    auth()->user()->id
+                    $user->id
                 );
 
                 if($releaseResult->isFailure()){
@@ -100,26 +114,41 @@ class ViewRequest extends Component
                     return;
                 }
 
-                $transferResult = $transferService->transfer(
-                    $productId,
-                    $branchId,
-                    $quantity,
-                    $this->branch,
-                    auth()->user()->id
-                );
-
-                if($transferResult->isFailure()){
-                    DB::rollBack();
-                    $this->addError("request.$productId.$branchId", ErrorHandler::getErrorMessage($transferResult->getError()));
-                    return;
-                }
+                $receiverBranch = $branchId;
+                $transferProducts[$productId] = $quantity;
             }
         }
 
-        $this->getRequests();
-        session()->flash('success', 'Product/s transferred successfully');
+        $transferResult = $transferService->transfer(
+            $transferId,
+            $transferProducts,
+            $receiverBranch,
+            $this->branch,
+            $this->driver,
+            $this->truck,
+            $user->id,
+            $this->notes
+        );
+
+        if($transferResult->isFailure()){
+            DB::rollBack();
+            $error = $transferResult->getError();
+            if($error instanceof InvalidDomainException && in_array($error->getCode(), [ErrorCode::CANNOT_TRANSFER_TO_SELF->value, ErrorCode::EXCEEDED_REQUESTED_QUANTITY->value])){
+                $errorData = $error->getData();
+                $errorProductId = $errorData['product_id'] ?? null;
+                if(is_string($errorProductId)){
+                    $this->addError("request.$errorProductId.$receiverBranch", ErrorHandler::getErrorMessage($transferResult->getError()));
+                    return;
+                }
+            }
+
+            session()->flash('alert', ErrorHandler::getErrorMessage($transferResult->getError()));
+            return;
+        }
 
         DB::commit();
+        $this->getRequests();
+        session()->flash('success', 'Product/s transferred successfully');
     }
 
     #[Layout('livewire.admin.base_layout')]

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Stock;
 
+use App\Exceptions\ErrorHandler;
 use BranchManagement\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -28,6 +29,10 @@ class ReceiveProducts extends Component
     #[Validate('required')]
     public ?string $branch;
 
+    #[Validate('required')]
+    public string $requestedBy = '';
+    public string $notes;
+
     public function mount()
     {
         $this->branch = auth()->user()->branch_id;
@@ -47,15 +52,27 @@ class ReceiveProducts extends Component
         }
     }
 
-    public function submit(IStockManagementService $stockManagementService)
+    /**
+     * @throws \Throwable
+     */
+    public function submit(IStockManagementService $stockManagementService): void
     {
+        if(is_null(auth()->user())) return;
         $this->validate();
 
-        foreach($this->quantities as $key => $value){
-            $stockManagementService->receive($key, $value, $this->branch, auth()->user()->id);
+        DB::beginTransaction();
+
+        $batchId = \Str::uuid()->toString();
+        $result = $stockManagementService->batchReceive($batchId, $this->quantities, $this->branch, auth()->user()->id, $this->requestedBy, $this->notes);
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            return;
         }
 
+        DB::commit();
         session()->flash('success', 'Products received');
+        $this->redirect(route('admin.receive.history.details', ['batch' => $batchId]));
     }
 
     private function getSelectedProducts()

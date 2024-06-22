@@ -6,13 +6,22 @@ use Transfer\Models\Aggregate;
 use TransferContracts\Events\ProductReceived;
 use TransferContracts\Events\ProductRequested;
 use TransferContracts\Events\ProductTransferred;
+use TransferContracts\Exceptions\ErrorCode;
 use TransferContracts\Exceptions\InvalidDomainException;
 
 class Product extends Aggregate
-{   
+{
     /** @var array<string, array<string, int>> */
     private array $state = [];
 
+    /**
+     * @var array<string, int>
+     */
+    private array $transferred = [];
+
+    /**
+     * @throws InvalidDomainException
+     */
     public function request(
         int $quantity,
         string $receiver,
@@ -35,28 +44,30 @@ class Product extends Aggregate
         return $this;
     }
 
+    /**
+     * @throws InvalidDomainException
+     */
     public function transfer(
         int $quantity,
         string $receiver,
         string $sender,
-        string $actor
+        string $actor,
+        string $transferId
     ): self
     {
-        if($receiver == $sender) throw new InvalidDomainException('Cannot transfer to yourself', ['request' => 'Cannot transfer to yourselft']);
+        if($receiver == $sender) throw new InvalidDomainException('Cannot transfer to yourself', ['request' => 'Cannot transfer to yourself'], ErrorCode::CANNOT_TRANSFER_TO_SELF->value, ['product_id' => $this->uuid()]);
 
         $requested = $this->state[$receiver]['requested'] ?? 0;
-        $transferred = $this->state[$receiver]['transferred'] ?? 0;
 
-        $pending = $requested - $transferred;
-
-        if($pending < $quantity) throw new InvalidDomainException('Cannot transfer more than the requested quantity', ['request' => 'Cannot transfer more than the requested quantity']);
+        if($requested < $quantity) throw new InvalidDomainException('Cannot transfer more than the requested quantity', ['request' => 'Cannot transfer more than the requested quantity'], ErrorCode::EXCEEDED_REQUESTED_QUANTITY->value, ['product_id' => $this->uuid()]);
 
         $event = new ProductTransferred(
             $this->uuid(),
             $quantity,
             $receiver,
             $sender,
-            $actor
+            $actor,
+            $transferId
         );
 
         $this->recordThat($event);
@@ -64,16 +75,33 @@ class Product extends Aggregate
         return $this;
     }
 
+    /**
+     * @throws InvalidDomainException
+     */
     public function receive(
-        int $quantity,
-        string $receiver,
+        string $transferId,
+        int $received,
+        int $damaged,
         string $actor
     ): self
     {
+        if(!isset($this->transferred[$transferId])) throw new InvalidDomainException(
+            'Transfer already completed.',
+            ['transfer' => 'Transfer already completed.']
+        );
+
+        if($this->transferred[$transferId] != ($received + $damaged)) throw new InvalidDomainException(
+            'Received and damaged should be equal to the transferred quantity.',
+            ['transfer' => 'Received and damaged should be equal to the transferred quantity.'],
+            ErrorCode::EXCEEDED_TRANSFERRED_QUANTITY->value,
+            ['product_id' => $this->uuid()]
+        );
+
         $event = new ProductReceived(
+            $transferId,
             $this->uuid(),
-            $quantity,
-            $receiver,
+            $received,
+            $damaged,
             $actor
         );
 
@@ -89,16 +117,14 @@ class Product extends Aggregate
 
     public function applyProductTransferred(ProductTransferred $event): void
     {
-        $transferred = $this->state[$event->receiver]['transferred'] ?? 0;
-        $this->state[$event->receiver]['transferred'] = $transferred + $event->quantity;
+        $requested = $this->state[$event->receiver]['requested'] ?? 0;
+        $this->state[$event->receiver]['requested'] = $requested - $event->quantity;
+
+        $this->transferred[$event->transferId] = $event->quantity;
     }
 
     public function applyEventsProductReceived(ProductReceived $event): void
     {
-        $requested = $this->state[$event->receiver]['requested'] ?? 0;
-        $this->state[$event->receiver]['requested'] = max(0, ($requested - $event->quantity));
-
-        $transferred = $this->state[$event->receiver]['transferred'] ?? 0;
-        $this->state[$event->receiver]['transferred'] = max(0, ($transferred - $event->quantity));
+        unset($this->transferred[$event->transferId]);
     }
 }

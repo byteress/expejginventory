@@ -34,7 +34,8 @@ return [
         TransferRequestsProjector::class,
         TransferDetailsProjector::class,
         ProductRequestsProjector::class,
-        OrderProjector::class
+        OrderProjector::class,
+        \StockManagement\Projectors\BatchItemsProjector::class
     ],
 
     /*

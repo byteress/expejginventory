@@ -3,6 +3,7 @@
 namespace StockManagement;
 
 use Exception;
+use StockManagement\Models\Batch\Batch;
 use StockManagement\Models\Product\Product;
 use StockManagementContracts\IStockManagementService;
 use StockManagementContracts\Utils\Result;
@@ -88,6 +89,32 @@ class StockManagementService implements IStockManagementService
 
             return Result::success(null);
         }catch(Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    public function batchReceive(string $batchId, array $products, string $branchId, string $actor, string $requestedBy, string $notes): Result
+    {
+        try {
+            $batch = new Batch();
+
+            $batch->id = $batchId;
+            $batch->branch_id = $branchId;
+            $batch->requested_by = $requestedBy;
+            $batch->notes = $notes;
+            $batch->approved_by = $actor;
+            $batch->batch_number = Batch::generateBatchNumber();
+            $batch->save();
+
+            foreach ($products as $productId => $quantity) {
+                $receive = Product::retrieve($productId);
+                $receive->receive($branchId, $quantity, $actor, $batchId);
+                $receive->persist();
+            }
+
+            return Result::success(null);
+        } catch (Exception $e) {
             report($e);
             return Result::failure($e);
         }

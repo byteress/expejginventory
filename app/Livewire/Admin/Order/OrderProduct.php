@@ -90,7 +90,7 @@ class OrderProduct extends Component
         Cart::addItem([
             'id' => $productId,
             'title' => "{$product->model} {$product->description}",
-            'price' => $product->regular_price / 100,
+            'price' => $product->sale_price / 100,
             'extra_info' => [
                 'reservation_id' => $reservationId
             ]

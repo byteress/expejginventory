@@ -78,8 +78,8 @@ class OrderCashierDetails extends Component
         $product = $this->getProduct($productId);
 
         $discount = 0;
-        if($product->regular_price > $price)
-            $discount = ($product->regular_price - $price) / $product->regular_price;
+        if($product->sale_price > $price)
+            $discount = ($product->sale_price - $price) / $product->sale_price;
 
         $this->discounts[$productId] = round($discount * 100, 2);
     }
@@ -95,8 +95,8 @@ class OrderCashierDetails extends Component
         $product = $this->getProduct($productId);
 
         $rate = $percentage / 100;
-        $discount = $product->regular_price * $rate;
-        $discountedPrice = $product->regular_price - $discount;
+        $discount = $product->sale_price * $rate;
+        $discountedPrice = $product->sale_price - $discount;
 
         $orderService->updateItemPrice($this->orderId, $productId, $discountedPrice);
     }
@@ -212,7 +212,7 @@ class OrderCashierDetails extends Component
             return session()->flash('alert', ErrorHandler::getErrorMessage($reserveResult->getError()));
         }
 
-        $addResult = $orderService->addItem($this->orderId, $productId, "{$product->model} {$product->description}", $product->regular_price, 1, $newReservationId);
+        $addResult = $orderService->addItem($this->orderId, $productId, "{$product->model} {$product->description}", $product->sale_price, 1, $newReservationId);
         if ($addResult->isFailure()) {
             DB::rollBack();
             return session()->flash('alert', ErrorHandler::getErrorMessage($addResult->getError()));

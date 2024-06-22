@@ -111,7 +111,7 @@
                                                         <div class="input-group mb-3">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"
-                                                                    id="basic-addon3">Qty.</span>
+                                                                      id="basic-addon3">Qty.</span>
                                                             </div>
                                                             <input
                                                                 wire:model="quantities.{{ $request->product_id }}.{{ $request->receiver }}"
@@ -120,7 +120,7 @@
                                                                 style = "width:50px;">
                                                         </div>
                                                         @error("request.{$request->product_id}.{$request->receiver}")
-                                                            <span class="text-danger">{{ $message }}</span>
+                                                        <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </td>
                                                     <td>
@@ -169,6 +169,18 @@
                                                 wire:model="truck" placeholder="">
                                             @error('truck')
                                                 <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="regular-price">Notes</label>
+                                            <input type="text" class="form-control" id="regular-price"
+                                                   wire:model="notes" placeholder="">
+                                            @error('notes')
+                                            <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>

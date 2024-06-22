@@ -42,9 +42,9 @@ class Product extends Aggregate
     public function needsAuthorization(int $price): bool
     {
         $authorization = false;
-        if ($this->regular >= $price) {
-            $diff = $this->regular - $price;
-            $rate = ($diff / $this->regular) * 100;
+        if ($this->sale >= $price) {
+            $diff = $this->sale - $price;
+            $rate = ($diff / $this->sale) * 100;
             if ($rate > 5) $authorization = true;
         }
 

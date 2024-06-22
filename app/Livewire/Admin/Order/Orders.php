@@ -263,8 +263,8 @@ class   Orders extends Component
         $product = $this->getProduct($hash);
 
         $discount = 0;
-        if($product->regular_price > $price)
-            $discount = ($product->regular_price - $price) / $product->regular_price;
+        if($product->sale_price > $price)
+            $discount = ($product->sale_price - $price) / $product->sale_price;
 
         $this->discounts[$hash] = round($discount * 100, 2);
     }
@@ -279,7 +279,7 @@ class   Orders extends Component
         $product = $this->getProduct($hash);
 
         $rate = $percentage / 100;
-        $price = $product->regular_price / 100;
+        $price = $product->sale_price / 100;
         $discount = $price * $rate;
         $discountedPrice = $price - $discount;
 

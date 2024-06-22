@@ -27,15 +27,17 @@ class Product extends Aggregate
 
     public function receive(
         string $branchId,
-        int $quantity,
-        string $actor
+        int    $quantity,
+        string $actor,
+        ?string $batchId = null
     ): self
     {
         $event = new ProductReceived(
             $this->uuid(),
             $branchId,
             $quantity,
-            $actor
+            $actor,
+            $batchId
         );
 
         $this->recordThat($event);

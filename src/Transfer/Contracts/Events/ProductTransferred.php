@@ -11,9 +11,10 @@ class ProductTransferred extends ShouldBeStored
         public int $quantity,
         public string $receiver,
         public string $sender,
-        public string $actor
+        public string $actor,
+        public string $transferId
     )
     {
-        
+
     }
 }

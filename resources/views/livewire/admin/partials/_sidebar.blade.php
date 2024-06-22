@@ -128,6 +128,20 @@
         </div>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBatchReceive"
+           aria-expanded="true" aria-controls="collapseBatchReceive">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Batch Receive</span>
+        </a>
+        <div id="collapseBatchReceive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product') }}">Receive</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.history') }}">History</a>
+            </div>
+        </div>
+    </li>
+
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
@@ -140,8 +154,8 @@
                 <a wire:navigate class="collapse-item" href="{{ route('admin.request.transfer') }}">Request Transfer</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.view.request') }}">View Requests</a>
                 {{-- <a wire:navigate class="collapse-item" href="{{ route('admin.for.transfer') }}">For Transfer</a> --}}
-                <a wire:navigate class="collapse-item" href="{{ route('admin.incoming') }}">Incoming</a>
-                <a wire:navigate class="collapse-item" href="{{ route('admin.request.history') }}">History</a>
+{{--                <a wire:navigate class="collapse-item" href="{{ route('admin.incoming') }}">Incoming</a>--}}
+                <a wire:navigate class="collapse-item" href="{{ route('admin.transfer.history') }}">Transfer History</a>
             </div>
         </div>
     </li>

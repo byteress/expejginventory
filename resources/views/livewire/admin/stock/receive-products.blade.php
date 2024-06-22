@@ -64,6 +64,11 @@
                                 {{ session('success') }}
                             </div>
                         @endif
+                            @if (session('alert'))
+                                <div class="alert alert-danger" role="alert">
+                                    {{ session('alert') }}
+                                </div>
+                            @endif
                         <form wire:submit="submit">
                             <div class = " table-responsive">
                                 <table class="table table-bordered" cellspacing="0">
@@ -74,7 +79,7 @@
                                             <th>Model</th>
                                             <th>Description</th>
                                             <th>On Hand</th>
-                                            <th>Request</th>
+                                            <th>Receive</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -107,6 +112,28 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="product_name">Requested</label>
+                                            <input type="text" class="form-control" id="product_name" wire:model="requestedBy"
+                                                   placeholder="">
+                                            @error('requestedBy')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="product_code">Notes</label>
+                                            <input type="text" class="form-control" id="product_code" wire:model="notes"
+                                                   placeholder="">
+                                            @error('notes')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row" style = "margin: 0 0">
                                     <div class="col-md-4 mb-3" @unlessrole('admin') style="display:none;" @endunlessrole>
                                         <div class="input-group">

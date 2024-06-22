@@ -2,77 +2,48 @@
 
 namespace Transfer\Models\Transfer;
 
-use Transfer\Models\Aggregate;
-use TransferContracts\Events\Contributed;
-use TransferContracts\Events\TransferRequested;
-use TransferContracts\Exceptions\InvalidDomainException;
+use App\Models\User;
+use BranchManagement\Models\Branch;
+use Illuminate\Database\Eloquent\Model;
 
-class Transfer extends Aggregate
+class Transfer extends Model
 {
-    /** @var array<string, int> */
-    public array $products = [];
+    protected $guarded = [];
+    protected $keyType = 'string';
+    public $incrementing = false;
 
-    /** @var array<string, array<string, int>> */
-    private array $contributions = [];
-
-    /**
-     * @param array<string, int> $products
-     */
-    public function request(array $products, string $branchId, string $actor): self
+    public function source()
     {
-        $event = new TransferRequested($this->uuid(), $products, $branchId, $actor);
-
-        $this->recordThat($event);
-
-        return $this;
+        return $this->belongsTo(Branch::class, 'sender_branch');
     }
 
-    public function contribute(
-        string $productId,
-        int $quantity,
-        string $reservationId,
-        string $branchId,
-        string $actor
-    ): self
+    public function receiving()
     {
-        $requestedQuantity = $this->products[$productId];
-        $contributedQuantity = $this->getContributedQuantity($productId);
-        $toSatisfyQuantity = $requestedQuantity - $contributedQuantity;
-
-        if($toSatisfyQuantity < $quantity) throw new InvalidDomainException('Specified quantity is more than the requested.', ['quantity' => 'Specified quantity is more than the requested.']);
-
-        $event = new Contributed(
-            $this->uuid(),
-            $productId,
-            $quantity,
-            $reservationId,
-            $branchId,
-            $actor
-        );
-
-        $this->recordThat($event);
-
-        return $this;
+        return $this->belongsTo(Branch::class, 'receiver_branch');
     }
 
-    public function applyTransferRequested(TransferRequested $event): void
+    public function truckDriver()
     {
-        $this->products = $event->products;
+        return $this->belongsTo(User::class, 'driver');
     }
 
-    public function applyContributed(Contributed $event): void
+    public function requestedBy()
     {
-        $curentQuantity = $this->contributions[$event->branchId][$event->productId] ?? 0;
-        $this->contributions[$event->branchId][$event->productId] = $curentQuantity + $event->quantity;
+        return $this->belongsTo(User::class, 'requested');
     }
 
-    private function getContributedQuantity(string $productId): int
+    public static function generateTransferNumber(): string
     {
-        $quantity = 0;
-        foreach($this->contributions as $key => $value){
-            $quantity = $quantity + ($value[$productId] ?? 0);
+        $latestBatch = self::orderBy('transfer_number', 'desc')
+            ->first();
+
+        if ($latestBatch) {
+            $lastNumber = $latestBatch->transfer_number;
+            $nextNumber = intval($lastNumber) + 1;
+        } else {
+            $nextNumber = 1;
         }
 
-        return $quantity;
+        return str_pad(''. $nextNumber, 4, '0', STR_PAD_LEFT);
     }
 }
