@@ -262,8 +262,22 @@
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-12">
-                                <div class="d-flex justify-content-start">
-                                    <h5 class ="mb-2 text-primary admin-title">Payment Options</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5 class ="mt-2 text-primary admin-title">Payment Options</h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex justify-content-end">
+                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                <label class="btn btn-secondary btn-option mr-2">
+                                                  <input type="radio" name="options" id="option2"> Pay Now
+                                                </label>
+                                                <label class="btn btn-secondary btn-option">
+                                                  <input type="radio" name="options" id="option3"> Installment
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -384,7 +398,57 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 offset-md-8">
+                            <div class="col-md-8">
+                                <div class="card shadow mb-2">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5 class ="text-primary admin-title mt-2">Installment</h5>
+                                            </div>
+                                            <div class="col-md-6">
+                                            </div>
+                                            <div class="col-md-12 mt-2">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Option</th>
+                                                                <th>Interest(%)</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <label class="input-group-text"
+                                                                                for="inputGroupSelect01">Option</label>
+                                                                        </div>
+                                                                        <select class="custom-select" id="inputGroupSelect01">
+                                                                            <option disabled selected>Select Installment Option</option>
+                                                                            <option value="6">6 months</option>
+                                                                            <option value="12">12 months</option>
+                                                                            <option value="24">24 months</option>
+                                                                            <option value="36">36 months</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">%</span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <h4 class="text-secondary mt-1"><small>Order Total:</small><br>
                                     <strong class ="text-primary">@money($order->total)</strong></h4>
 

@@ -32,6 +32,7 @@ use App\Livewire\Admin\Order\OrderProduct;
 use App\Livewire\Admin\Order\Orders;
 use App\Livewire\Admin\Order\OrderCashier;
 use App\Livewire\Admin\Order\OrderCashierDetails;
+use App\Livewire\Admin\Installment\InstallmentDetails;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
@@ -69,6 +70,8 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/transfer-history', TransferHistory::class)->name('transfer.history');
     Route::get('/transfer-history/{transfer}', TransferHistoryDetails::class)->name('transfer.history.details');
     Route::get('/request-history', RequestHistory::class)->name('request.history');
+
+    Route::get('/installment/installment-details', InstallmentDetails::class)->name('installment.details');
 });
 
 Route::group(['middleware' => ['role:admin|sales_rep']], function () {

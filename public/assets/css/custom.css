@@ -161,6 +161,18 @@ body {
 
 .user .form-control,.btn{
     border-radius: 0 !important;
-    border-color: #2934db;
 }
 
+.btn-option.active{
+    background-color: #2e59d9 !important;
+}
+
+.br-g{
+    border-right: 1px solid #ddd;
+}
+
+.upcoming-section{
+    height: 78vh;
+    max-height: 78vh;
+    overflow-y: auto;
+}
