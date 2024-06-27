@@ -9,7 +9,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                            <h4 class="mt-3"><strong>Stephan Sutter</strong> <span class="badge badge-success">Active</span></h4>
+                            <h4 class="mt-3"><strong>{{ $customer->first_name }} {{ $customer->last_name }}</strong> <span class="badge badge-success">Active</span></h4>
                             </div>
                         </div>
                         <hr>
