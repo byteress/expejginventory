@@ -14,18 +14,18 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-md-2 br-g">
-                                <h6>Total Orders</h6>
-                                <h6><b><u>20</u></b></h6>
-                            </div>
-                            <div class="col-md-2 br-g">
-                                <h6>Last Payment</h6>
-                                <h6><b><u>Aug 25 2024</u></b></h6>
-                            </div>
-                            <div class="col-md-2">
-                                <h6 class ="ml-3">Next Payment</h6>
-                                <h6 class ="ml-3"><b><u>Sept 31 2024</u></b></h6>
-                            </div>
+{{--                            <div class="col-md-2 br-g">--}}
+{{--                                <h6>Total Orders</h6>--}}
+{{--                                <h6><b><u>20</u></b></h6>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-md-2 br-g">--}}
+{{--                                <h6>Last Payment</h6>--}}
+{{--                                <h6><b><u>Aug 25 2024</u></b></h6>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-md-2">--}}
+{{--                                <h6 class ="ml-3">Next Payment</h6>--}}
+{{--                                <h6 class ="ml-3"><b><u>Sept 31 2024</u></b></h6>--}}
+{{--                            </div>--}}
                         </div>
                     </div>
                 </div>
@@ -198,32 +198,30 @@
                                         <thead>
                                             <tr>
                                                 <th>Receipt #</th>
-                                                <th>Option</th>
+                                                <th>Type</th>
                                                 <th>Amount</th>
-                                                <th>Due Date</th>
+                                                <th>Cashier</th>
                                                 <th>Payment Date</th>
-                                                <th>Penalty</th>
                                             </tr>
+                                            @foreach($transaction_history as $history)
                                             <tr>
                                                 <td>
-                                                    <h6 class ="mt-2"><b>R-0303043</b></h6>
+                                                    <h6 class ="mt-2"><b>{{ $history->or_number  }}</b></h6>
                                                 </td>
                                                 <td>
-                                                    <h6 class ="mt-2"><b>Cash</b></h6>
+                                                    <h6 class ="mt-2"><b>{{ ucfirst($history->type)  }}</b></h6>
                                                 </td>
                                                 <td>
-                                                    <h6 class ="mt-2"><b>₱3000.00</b></h6>
+                                                    <h6 class ="mt-2"><b>@money($history->amount)</b></h6>
                                                 </td>
                                                 <td>
-                                                    <h6 class ="mt-2"><b><u>Aug 25 2024</u></b></h6>
+                                                    <h6 class ="mt-2"><b>{{ $history->first_name  }}</b></h6>
                                                 </td>
                                                 <td>
-                                                    <h6 class ="mt-2"><b><u>Aug 27 2024</u></b></h6>
-                                                </td>
-                                                <td>
-                                                    <h5 class ="mt-1"><span class="badge badge-danger">200.00</span></h5>
+                                                    <h6 class ="mt-2"><b><u>{{ date('F j, Y', strtotime($history->created_at)) }}</u></b></h6>
                                                 </td>
                                             </tr>
+                                            @endforeach
                                         </thead>
                                     </table>
                                 </div>

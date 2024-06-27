@@ -24,6 +24,8 @@ class TransactionProjector extends Projector
                 'cashier' => $event->cashier,
                 'type' => 'down',
                 'amount' => $total,
+                'created_at' => now(),
+                'or_number' => $event->orNumber,
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){
@@ -52,6 +54,8 @@ class TransactionProjector extends Projector
                 'cashier' => $event->cashier,
                 'type' => 'installment',
                 'amount' => $total,
+                'created_at' => now(),
+                'or_number' => $event->orNumber,
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){

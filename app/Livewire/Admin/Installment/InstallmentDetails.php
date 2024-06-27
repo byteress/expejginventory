@@ -109,12 +109,22 @@ class InstallmentDetails extends Component
         return $balance->balance;
     }
 
+    public function getTransactionHistory()
+    {
+        return DB::table('transactions')
+            ->join('users', 'transactions.cashier', '=', 'users.id')
+            ->where('transactions.customer_id', $this->customer->id)
+            ->orderBy('transactions.created_at', 'desc')
+            ->get();
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
         return view('livewire.admin.installment.installment-details', [
             'installment_bills' => $this->getInstallmentBills(),
-            'balance' => $this->getBalance()
+            'balance' => $this->getBalance(),
+            'transaction_history' => $this->getTransactionHistory(),
         ]);
     }
 }

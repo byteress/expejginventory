@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->uuid('customer_id');
             $table->uuid('cashier');
             $table->integer('amount');
+            $table->string('or_number');
 
             $table->timestamps();
         });

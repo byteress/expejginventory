@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('reference');
             $table->integer('amount');
             $table->uuid('order_id')->nullable();
+            $table->uuid('transaction_id');
             $table->timestamps();
         });
     }
