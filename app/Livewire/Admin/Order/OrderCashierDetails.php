@@ -487,7 +487,9 @@ class OrderCashierDetails extends Component
                     'order_id' => $this->orderId,
                     'customer_id' => $order->customer_id,
                     'cashier' => auth()->user()?->id,
-                    'type' => 'full'
+                    'type' => 'full',
+                    'amount' => $total,
+                    'or_number' => $this->receiptNumber,
                 ]);
 
             for($i = 0; $i < count($this->amounts); $i++){
