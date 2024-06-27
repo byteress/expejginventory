@@ -71,10 +71,6 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/transfer-history', TransferHistory::class)->name('transfer.history');
     Route::get('/transfer-history/{transfer}', TransferHistoryDetails::class)->name('transfer.history.details');
     Route::get('/request-history', RequestHistory::class)->name('request.history');
-
-    Route::get('/customer/{customer}', InstallmentDetails::class)->name('customer.details');
-
-    Route::get('/customers', CustomerList::class)->name('customer.list');
 });
 
 Route::group(['middleware' => ['role:admin|sales_rep']], function () {
@@ -86,4 +82,8 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
     Route::get('/orders', OrderCashier::class)->name('orders');
     Route::get('/orders-history', History::class)->name('orders.history');
     Route::get('/orders/{order_id}', OrderCashierDetails::class)->name('order.details');
+
+    Route::get('/customer/{customer}', InstallmentDetails::class)->name('customer.details');
+
+    Route::get('/customers', CustomerList::class)->name('customer.list');
 });
