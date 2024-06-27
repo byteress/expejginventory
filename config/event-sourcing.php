@@ -35,7 +35,11 @@ return [
         TransferDetailsProjector::class,
         ProductRequestsProjector::class,
         OrderProjector::class,
-        \StockManagement\Projectors\BatchItemsProjector::class
+        \StockManagement\Projectors\BatchItemsProjector::class,
+        \Payment\Projectors\OrderProjector::class,
+        \Payment\Projectors\TransactionProjector::class,
+        \Payment\Projectors\CustomerBalanceProjector::class,
+        \Payment\Projectors\InstallmentBillsProjector::class
     ],
 
     /*
@@ -73,7 +77,8 @@ return [
      * it should implement \Spatie\EventSourcing\StoredEvents\Repositories\EloquentStoredEventRepository.
      */
 //    'stored_event_repository' => Spatie\EventSourcing\StoredEvents\Repositories\EloquentStoredEventRepository::class,
-    'stored_event_repository' => \StockManagement\Infrastructure\EventStore\StockManagementEventsRepository::class,
+//    'stored_event_repository' => \StockManagement\Infrastructure\EventStore\StockManagementEventsRepository::class,
+    'stored_event_repository' => \Payment\Infrastructure\EventStore\PaymentEventsRepository::class,
 
     /*
      * This class is responsible for storing snapshots. To add extra behaviour you

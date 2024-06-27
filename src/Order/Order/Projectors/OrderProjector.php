@@ -9,6 +9,7 @@ use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
 use OrderContracts\Events\OrderPlaced;
+use PaymentContracts\Events\InstallmentInitialized;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class OrderProjector extends Projector

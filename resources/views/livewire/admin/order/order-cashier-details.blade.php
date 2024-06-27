@@ -269,11 +269,11 @@
                                     <div class="col-md-6">
                                         <div class="d-flex justify-content-end">
                                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                <label class="btn btn-secondary btn-option mr-2">
-                                                  <input type="radio" name="options" id="option2"> Pay Now
+                                                <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'full') active @endif">
+                                                  <input type="radio" name="options" id="option2" value="full" wire:model.live="paymentType" @if($completed) disabled @endif> Pay Now
                                                 </label>
-                                                <label class="btn btn-secondary btn-option">
-                                                  <input type="radio" name="options" id="option3"> Installment
+                                                <label class="btn btn-secondary btn-option @if($paymentType == 'installment') active @endif">
+                                                  <input type="radio" name="options" id="option3" value="installment" wire:model.live="paymentType" @if($completed) disabled @endif> Installment
                                                 </label>
                                               </div>
                                         </div>
@@ -398,6 +398,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @if($paymentType == 'installment')
                             <div class="col-md-8">
                                 <div class="card shadow mb-2">
                                     <div class="card-body">
@@ -422,12 +423,14 @@
                                                                             <label class="input-group-text"
                                                                                 for="inputGroupSelect01">Option</label>
                                                                         </div>
-                                                                        <select class="custom-select" id="inputGroupSelect01">
+                                                                        <select wire:model="months" class="custom-select" id="inputGroupSelect01" @if($completed) disabled @endif>
                                                                             <option disabled selected>Select Installment Option</option>
+                                                                            <option value="1">1 month</option>
+                                                                            <option value="2">2 months</option>
+                                                                            <option value="3">3 months</option>
+                                                                            <option value="4">4 months</option>
+                                                                            <option value="5">5 months</option>
                                                                             <option value="6">6 months</option>
-                                                                            <option value="12">12 months</option>
-                                                                            <option value="24">24 months</option>
-                                                                            <option value="36">36 months</option>
                                                                         </select>
                                                                     </div>
                                                                 </td>
@@ -436,7 +439,7 @@
                                                                         <div class="input-group-prepend">
                                                                             <span class="input-group-text">%</span>
                                                                         </div>
-                                                                        <input type="text" class="form-control">
+                                                                        <input wire:model="rate" type="number" min="0" class="form-control" required @if($completed) disabled @endif>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -448,13 +451,14 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                             <div class="col-md-4">
                                 <h4 class="text-secondary mt-1"><small>Order Total:</small><br>
                                     <strong class ="text-primary">@money($order->total)</strong></h4>
 
 
                                 <h4 class="text-secondary mt-1"><small>Payment Total:</small><br>
-                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
+                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', !$completed)</strong></h4>
                                         @error('total')<span class="text-danger">{{ $message }}</span>@enderror
 
                                 @if ($order->requires_authorization)

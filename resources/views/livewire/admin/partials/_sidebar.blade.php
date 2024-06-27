@@ -187,6 +187,19 @@
             </div>
         </div>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#customer"
+           aria-expanded="true" aria-controls="customer">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Customer</span>
+        </a>
+        <div id="customer" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.customer.list') }}">List</a>
+            </div>
+        </div>
+    </li>
     @endhasanyrole
 
     <!-- Divider -->

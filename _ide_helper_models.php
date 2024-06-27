@@ -13,7 +13,7 @@
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $first_name
@@ -67,7 +67,7 @@ namespace App\Models{
 
 namespace BranchManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -94,7 +94,7 @@ namespace BranchManagement\Models{
 
 namespace CustomerManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $first_name
@@ -123,7 +123,7 @@ namespace CustomerManagement\Models{
 
 namespace Order\Infrastructure\EventStore{
 /**
- * 
+ *
  *
  * @property int $id
  * @property string|null $aggregate_uuid
@@ -134,26 +134,26 @@ namespace Order\Infrastructure\EventStore{
  * @property \Spatie\SchemalessAttributes\SchemalessAttributes $meta_data
  * @property string $created_at
  * @property-read \Spatie\EventSourcing\StoredEvents\ShouldBeStored|null $event
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent afterVersion(int $version)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent afterVersion(int $version)
  * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> all($columns = ['*'])
  * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventCollection<int, static> get($columns = ['*'])
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent lastEvent(string ...$eventClasses)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent newModelQuery()
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent newQuery()
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent query()
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent startingFrom(int $storedEventId)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereAggregateRoot(string $uuid)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereAggregateUuid($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereAggregateVersion($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereCreatedAt($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEvent(string ...$eventClasses)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEventClass($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEventProperties($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereEventVersion($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereId($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent whereMetaData($value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent wherePropertyIs(string $property, ?mixed $value)
- * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|OrderEvent wherePropertyIsNot(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent lastEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent newModelQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent newQuery()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent query()
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent startingFrom(int $storedEventId)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereAggregateRoot(string $uuid)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereAggregateUuid($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereAggregateVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereCreatedAt($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereEvent(string ...$eventClasses)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereEventClass($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereEventProperties($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereEventVersion($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereId($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent whereMetaData($value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent wherePropertyIs(string $property, ?mixed $value)
+ * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|PaymentEvent wherePropertyIsNot(string $property, ?mixed $value)
  * @method static \Spatie\EventSourcing\StoredEvents\Models\EloquentStoredEventQueryBuilder|EloquentStoredEvent withMetaDataAttributes()
  */
 	final class OrderEvent extends \Eloquent {}
@@ -161,7 +161,7 @@ namespace Order\Infrastructure\EventStore{
 
 namespace ProductManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $sku_code
@@ -200,7 +200,7 @@ namespace ProductManagement\Models{
 
 namespace StockManagement\Infrastructure\EventStore{
 /**
- * 
+ *
  *
  * @property int $id
  * @property string|null $aggregate_uuid
@@ -238,7 +238,7 @@ namespace StockManagement\Infrastructure\EventStore{
 
 namespace SupplierManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $code
@@ -263,7 +263,7 @@ namespace SupplierManagement\Models{
 
 namespace Transfer\Infrastructure\EventStore{
 /**
- * 
+ *
  *
  * @property int $id
  * @property string|null $aggregate_uuid

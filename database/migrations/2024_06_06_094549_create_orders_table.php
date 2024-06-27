@@ -23,6 +23,11 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->string('receipt_number')->nullable();
             $table->uuid('cashier')->nullable();
+            $table->string('order_type')->default('regular');
+            $table->string('payment_type')->default('full');
+            $table->integer('status')->default(0);
+            $table->integer('months')->nullable();
+            $table->float('rate')->nullable();
         });
     }
 

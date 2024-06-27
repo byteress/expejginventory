@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use PaymentContracts\Exceptions\InvalidDomainException;
 
 class ErrorHandler
 {
@@ -16,6 +17,7 @@ class ErrorHandler
             case $exception instanceof \OrderContracts\Exceptions\InvalidDomainException:
             case $exception instanceof \TransferContracts\Exceptions\InvalidDomainException:
             case $exception instanceof \ProductManagementContracts\Exceptions\InvalidDomainException:
+            case $exception instanceof InvalidDomainException:
                 return $exception->getMessage();
             default:
                 return 'Something went wrong. Please try again later.';

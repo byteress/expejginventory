@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Admin\Payment\CustomerList;
 use App\Livewire\Admin\Stock\BatchDetails;
 use App\Livewire\Admin\Stock\BatchHistory;
 use App\Livewire\Admin\Stock\StockManagement;
@@ -71,7 +72,9 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/transfer-history/{transfer}', TransferHistoryDetails::class)->name('transfer.history.details');
     Route::get('/request-history', RequestHistory::class)->name('request.history');
 
-    Route::get('/installment/installment-details', InstallmentDetails::class)->name('installment.details');
+    Route::get('/customer/{customer}', InstallmentDetails::class)->name('customer.details');
+
+    Route::get('/customers', CustomerList::class)->name('customer.list');
 });
 
 Route::group(['middleware' => ['role:admin|sales_rep']], function () {

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Order\OrderService;
 use OrderContracts\IOrderService;
+use Payment\PaymentService;
+use PaymentContracts\IPaymentService;
 use ProductManagement\EventHandlers\GenerateSku;
 use ProductManagement\ProductManagementService;
 use ProductManagementContracts\IProductManagementService;
@@ -45,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ITransferService::class, TransferService::class);
         $this->app->bind(IOrderService::class, OrderService::class);
         $this->app->bind(ICustomerManagementService::class, CustomerManagementService::class);
+        $this->app->bind(IPaymentService::class, PaymentService::class);
 
         Event::subscribe(GenerateSku::class);
     }

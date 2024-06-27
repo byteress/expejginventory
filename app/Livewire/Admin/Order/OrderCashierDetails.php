@@ -10,9 +10,9 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
-use Livewire\Attributes\Validate;
 use Livewire\WithPagination;
 use OrderContracts\IOrderService;
+use PaymentContracts\IPaymentService;
 use ProductManagement\Models\Product;
 use StockManagementContracts\IStockManagementService;
 use Str;
@@ -44,15 +44,21 @@ class OrderCashierDetails extends Component
     public $receiptNumber = '';
 
     public $completed = false;
+    public string $paymentType = 'full';
+    public int $months = 5;
+    public $rate = 0;
 
     public function mount($order_id)
     {
         $this->orderId = $order_id;
 
         $order = $this->getOrder();
-        $this->completed = $order->completed_at;
+        $this->completed = $order->status;
         $this->branch = $order->branch_id;
         $this->receiptNumber = $order->receipt_number;
+        $this->paymentType = $order->payment_type ?? 'full';
+        $this->months = $order->months ?? 5;
+        $this->rate = $order->rate ?? 0;
 
         $paymentMethods = $this->getPaymentMethods();
         if($paymentMethods->isNotEmpty()){
@@ -390,7 +396,67 @@ class OrderCashierDetails extends Component
         $this->amounts = array_values($this->amounts);
     }
 
-    public function submitPayment()
+    /**
+     * @throws \Throwable
+     */
+    public function submitPayment(IPaymentService $paymentService): void
+    {
+        $this->resetErrorBag();
+
+        if($this->paymentType == 'full'){
+            $this->fullPayment();
+        }else{
+            $this->installmentPayment($paymentService);
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function installmentPayment(IPaymentService $paymentService): void
+    {
+        DB::beginTransaction();
+
+        $order = $this->getOrder();
+
+        $downPayment = [];
+        for($i = 0; $i < count($this->amounts); $i++){
+            if($this->amounts[$i] > 0) {
+                $downPayment[] = [
+                    'amount' => $this->amounts[$i] * 100,
+                    'reference' => $this->referenceNumbers[$i],
+                    'method' => $this->paymentMethods[$i],
+                ];
+            }
+        }
+
+        $result = $paymentService->initializeInstallment(
+            $order->customer_id,
+            Str::uuid()->toString(),
+            $order->total,
+            $this->months,
+            $this->rate,
+            $order->order_id,
+            $downPayment,
+            auth()->user()?->id,
+            Str::uuid()->toString(),
+            $this->receiptNumber,
+        );
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+        $this->redirect(route('admin.order.details', ['order_id' => $this->orderId]), true);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function fullPayment(): void
     {
         $this->validate([
             'receiptNumber' => 'required',
@@ -413,6 +479,17 @@ class OrderCashierDetails extends Component
 
         DB::beginTransaction();
         try{
+            $transactionId = Str::uuid()->toString();
+
+            DB::table('transactions')
+                ->insert([
+                    'id' => $transactionId,
+                    'order_id' => $this->orderId,
+                    'customer_id' => $order->customer_id,
+                    'cashier' => auth()->user()?->id,
+                    'type' => 'full'
+                ]);
+
             for($i = 0; $i < count($this->amounts); $i++){
                 DB::table('payment_methods')
                     ->insert([
@@ -420,7 +497,7 @@ class OrderCashierDetails extends Component
                         'reference' => $this->referenceNumbers[$i],
                         'amount' => $this->amounts[$i],
                         'order_id' => $this->orderId,
-                        'user_id' => auth()->user()->id
+                        'transaction_id' => $transactionId
                     ]);
             }
 
@@ -429,12 +506,15 @@ class OrderCashierDetails extends Component
                 ->update([
                     'completed_at' => now(),
                     'receipt_number' => $this->receiptNumber,
-                    'cashier' => auth()->user()->id
+                    'cashier' => auth()->user()?->id,
+                    'status' => 2,
+                    'payment_type' => 'full',
                 ]);
         }catch(Exception $e){
             DB::rollBack();
             report($e);
-            return session()->flash('alert', ErrorHandler::getErrorMessage($e));
+            session()->flash('alert', ErrorHandler::getErrorMessage($e));
+            return;
         }
 
         DB::commit();
