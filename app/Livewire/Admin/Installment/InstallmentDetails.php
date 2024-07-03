@@ -113,6 +113,7 @@ class InstallmentDetails extends Component
     {
         return DB::table('transactions')
             ->join('users', 'transactions.cashier', '=', 'users.id')
+            ->select('transactions.*', 'users.first_name')
             ->where('transactions.customer_id', $this->customer->id)
             ->orderBy('transactions.created_at', 'desc')
             ->get();

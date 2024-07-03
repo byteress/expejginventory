@@ -48,12 +48,20 @@ class OrderCashierDetails extends Component
     public int $months = 5;
     public $rate = 0;
 
+    public $paymentMethodsCod = ['Cash'];
+    public $referenceNumbersCod = [''];
+    public $amountsCod = [null];
+    public $receiptNumberCod = '';
+
+    public $completedCod = false;
+
     public function mount($order_id)
     {
         $this->orderId = $order_id;
 
         $order = $this->getOrder();
         $this->completed = $order->status;
+        $this->completedCod = $order->status == 2;
         $this->branch = $order->branch_id;
         $this->receiptNumber = $order->receipt_number;
         $this->paymentType = $order->payment_type ?? 'full';
@@ -69,7 +77,24 @@ class OrderCashierDetails extends Component
             foreach($paymentMethods as $methods){
                 $this->referenceNumbers[] = $methods->reference;
                 $this->paymentMethods[] = $methods->method;
-                $this->amounts[] = $methods->amount;
+                $this->amounts[] = $methods->amount / 100;
+            }
+        }
+
+        if($this->completedCod){
+
+
+            $paymentMethods = $this->getCodPaymentMethods();
+            if($paymentMethods->isNotEmpty()){
+                $this->paymentMethodsCod = [];
+                $this->referenceNumbersCod = [];
+                $this->amountsCod = [];
+
+                foreach($paymentMethods as $methods){
+                    $this->referenceNumbersCod[] = $methods->reference;
+                    $this->paymentMethodsCod[] = $methods->method;
+                    $this->amountsCod[] = $methods->amount / 100;
+                }
             }
         }
 
@@ -288,9 +313,23 @@ class OrderCashierDetails extends Component
 
     private function getPaymentMethods()
     {
+        $transaction = DB::table('transactions')->where('order_id', $this->orderId)->first();
+
         return DB::table('payment_methods')
             ->where('order_id', $this->orderId)
+            ->where('transaction_id', $transaction->id)
             ->get();;
+    }
+
+    private function getCodPaymentMethods()
+    {
+        $transaction = DB::table('transactions')->where('order_id', $this->orderId)->latest()->first();
+        $this->receiptNumberCod = $transaction->or_number;
+
+        return DB::table('payment_methods')
+            ->where('order_id', $this->orderId)
+            ->where('transaction_id', $transaction->id)
+            ->get();
     }
 
     private function getItems()
@@ -385,6 +424,14 @@ class OrderCashierDetails extends Component
         $this->amounts[] = null;
     }
 
+    public function newPaymentMethodCod(): void
+    {
+        $this->paymentMethodsCod[] = 'Cash';
+        $this->referenceNumbersCod[] = '';
+        $this->amountsCod[] = null;
+    }
+
+
     public function removePaymentMethod(int $index): void
     {
         unset($this->paymentMethods[$index]);
@@ -396,6 +443,17 @@ class OrderCashierDetails extends Component
         $this->amounts = array_values($this->amounts);
     }
 
+    public function removePaymentMethodCod(int $index): void
+    {
+        unset($this->paymentMethodsCod[$index]);
+        unset($this->referenceNumbersCod[$index]);
+        unset($this->amountsCod[$index]);
+
+        $this->paymentMethodsCod = array_values($this->paymentMethodsCod);
+        $this->referenceNumbersCod = array_values($this->referenceNumbersCod);
+        $this->amountsCod = array_values($this->amountsCod);
+    }
+
     /**
      * @throws \Throwable
      */
@@ -405,9 +463,51 @@ class OrderCashierDetails extends Component
 
         if($this->paymentType == 'full'){
             $this->fullPayment();
-        }else{
+        }else if($this->paymentType == 'installment'){
             $this->installmentPayment($paymentService);
+        }else if($this->paymentType == 'cod'){
+            $this->codPayment($paymentService);
         }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function codPayment(IPaymentService $paymentService): void
+    {
+        DB::beginTransaction();
+
+        $order = $this->getOrder();
+
+        $downPayment = [];
+        for($i = 0; $i < count($this->amounts); $i++){
+            if($this->amounts[$i] > 0) {
+                $downPayment[] = [
+                    'amount' => $this->amounts[$i] * 100,
+                    'reference' => $this->referenceNumbers[$i],
+                    'method' => $this->paymentMethods[$i],
+                ];
+            }
+        }
+
+        $result = $paymentService->requestCod(
+            $order->customer_id,
+            $order->total,
+            $order->order_id,
+            $downPayment,
+            auth()->user()?->id,
+            Str::uuid()->toString(),
+            $this->receiptNumber,
+        );
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+        $this->redirect(route('admin.order.details', ['order_id' => $this->orderId]), true);
     }
 
     /**
@@ -516,6 +616,65 @@ class OrderCashierDetails extends Component
             DB::rollBack();
             report($e);
             session()->flash('alert', ErrorHandler::getErrorMessage($e));
+            return;
+        }
+
+        DB::commit();
+        $this->redirect(route('admin.order.details', ['order_id' => $this->orderId]), true);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function submitCodPayment(IPaymentService $paymentService): void
+    {
+        $this->validate([
+            'receiptNumberCod' => 'required',
+            'amountsCod.*' => 'required|numeric',
+            'referenceNumbersCod.*' => 'required',
+        ], [
+            'amountsCod.*' => 'Amount is required',
+            'referenceNumbersCod.*' => 'Reference Number is required',
+        ]);
+
+        $order = $this->getOrder();
+
+        $total = $order->total - (array_sum($this->amounts) * 100);
+        $codTotal = array_sum($this->amountsCod) * 100;
+
+        if($codTotal != $total)
+        {
+            $this->addError('totalCod', 'Full payment should be equal to the order balance');
+            return;
+        }
+
+        DB::beginTransaction();
+
+        $order = $this->getOrder();
+
+        $downPayment = [];
+        for($i = 0; $i < count($this->amountsCod); $i++){
+            if($this->amountsCod[$i] > 0) {
+                $downPayment[] = [
+                    'amount' => $this->amountsCod[$i] * 100,
+                    'reference' => $this->referenceNumbersCod[$i],
+                    'method' => $this->paymentMethodsCod[$i],
+                ];
+            }
+        }
+
+        $result = $paymentService->payCod(
+            $order->customer_id,
+            $downPayment,
+            auth()->user()?->id,
+            Str::uuid()->toString(),
+            $this->receiptNumber,
+            $order->order_id
+        );
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
             return;
         }
 

@@ -272,8 +272,11 @@
                                                 <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'full') active @endif">
                                                   <input type="radio" name="options" id="option2" value="full" wire:model.live="paymentType" @if($completed) disabled @endif> Pay Now
                                                 </label>
-                                                <label class="btn btn-secondary btn-option @if($paymentType == 'installment') active @endif">
+                                                <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'installment') active @endif">
                                                   <input type="radio" name="options" id="option3" value="installment" wire:model.live="paymentType" @if($completed) disabled @endif> Installment
+                                                </label>
+                                                <label class="btn btn-secondary btn-option @if($paymentType == 'cod') active @endif">
+                                                    <input type="radio" name="options" id="option4" value="cod" wire:model.live="paymentType" @if($completed) disabled @endif> COD
                                                 </label>
                                               </div>
                                         </div>
@@ -398,6 +401,140 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if($paymentType == 'cod' && $completed)
+
+                            <div class="row">
+                                <hr>
+                                <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        <h3>Full Payment</h3>
+                                        <div class="d-flex">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Receipt Number</span>
+                                                </div>
+                                                <input type="text" class="form-control" wire:model="receiptNumberCod" placeholder="Receipt Number" @if($completedCod) disabled @endif>
+                                            </div>
+                                            @error('receiptNumberCod')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        @if(!$completedCod)
+                                            <div class="d-flex justify-content-end mt-1">
+                                                <button wire:click="newPaymentMethodCod"
+                                                        class="btn btn-primary btn-icon-split">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-plus"></i>
+                                                </span>
+                                                    <span class="text">New Payment Method</span>
+                                                </button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <div class="card shadow d-none d-md-block">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p class="text-primary mb-0">Payment Type</p>
+                                            </div>
+                                            <div class="col-md-3 text-center">
+                                                <p class="text-primary mb-0">Reference #</p>
+                                            </div>
+                                            <div class="col-md-3 text-center">
+                                                <p class="text-primary mb-0">Amount</p>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <p class="text-primary mb-0">Actions</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2 mb-3">
+                                <div class="card shadow mb-2">
+                                    <div class="card-body">
+                                        @foreach ($amountsCod as $amount)
+                                            <div class="row" wire:key="payment-methods-{{ $loop->index }}">
+                                                <div class="col-md-4 mt-1">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <label class="input-group-text"
+                                                                   for="inputGroupSelect01">Type</label>
+                                                        </div>
+                                                        <select class="custom-select" id="inputGroupSelect01" @if($completedCod) disabled @endif
+                                                        wire:model="paymentMethodsCod.{{ $loop->index }}">
+                                                            <option disabled selected>Select Payment Method</option>
+                                                            <option value="Cash">Cash</option>
+                                                            <option value="Gcash">Gcash</option>
+                                                            <option value="Paymaya">Paymaya</option>
+                                                            <option value="Bank Transfer">Bank Transfer</option>
+                                                            <option value="Others">Others</option>
+                                                        </select>
+                                                    </div>
+                                                    @error('paymentMethodsCod.' . $loop->index)
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-md-3 mt-1">
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">#</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" @if($completedCod) disabled @endif
+                                                            wire:model="referenceNumbersCod.{{ $loop->index }}">
+                                                        </div>
+                                                    </div>
+                                                    @error('referenceNumbersCod.' . $loop->index)
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-md-3 mt-1">
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Php</span>
+                                                            </div>
+                                                            <input type="number" class="form-control" @if($completedCod) disabled @endif
+                                                            wire:model.live="amountsCod.{{ $loop->index }}">
+                                                        </div>
+                                                    </div>
+                                                    @error('amountsCod.' . $loop->index)
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                @if (!$loop->first)
+                                                    <div class="col-md-2">
+                                                        <div class="d-flex justify-content-center">
+                                                            <button
+                                                                wire:click="removePaymentMethodCod({{ $loop->index }})"
+                                                                class="btn btn-danger btn-sm mt-1">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @if(!$completedCod)
+                                <div class="col-md-4 fa-pull-right">
+                                    <button wire:click="submitCodPayment" class="btn btn-primary btn-block">
+                                        Complete COD Payment
+                                    </button>
+                                </div>
+                                @endif
+                            </div>
+                            </div>
+                        @endif
+
                             @if($paymentType == 'installment')
                             <div class="col-md-8">
                                 <div class="card shadow mb-2">
@@ -457,9 +594,15 @@
                                     <strong class ="text-primary">@money($order->total)</strong></h4>
 
 
-                                <h4 class="text-secondary mt-1"><small>Payment Total:</small><br>
-                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', !$completed)</strong></h4>
+                                <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Payment Total:@else Down Payment: @endif</small><br>
+                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
                                         @error('total')<span class="text-danger">{{ $message }}</span>@enderror
+
+                                @if($paymentType == 'cod' && $completed)
+                                <h4 class="text-secondary mt-1"><small>Full Payment</small><br>
+                                    <strong class ="text-primary">@money(array_sum($amountsCod), 'PHP', true)</strong></h4>
+                                @error('totalCod')<span class="text-danger">{{ $message }}</span>@enderror
+                                @endif
 
                                 @if ($order->requires_authorization)
                                     <button class="btn btn-danger btn-block" data-toggle="modal"

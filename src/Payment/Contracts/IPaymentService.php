@@ -14,6 +14,7 @@ interface IPaymentService
      * @param float $interestRate
      * @param string $orderId
      * @param array<array{'method': string, 'reference': string, 'amount': int}> $downPayment
+     * @param string $cashier
      * @param string|null $transactionId
      * @param string|null $orNumber
      * @return Result
@@ -45,5 +46,43 @@ interface IPaymentService
         string $cashier,
         string $transactionId,
         string $orNumber
+    ): Result;
+
+    /**
+     * @param string $customerId
+     * @param int $orderTotal
+     * @param string $orderId
+     * @param array<array{'method': string, 'reference': string, 'amount': int}> $downPayment
+     * @param string $cashier
+     * @param string|null $transactionId
+     * @param string|null $orNumber
+     * @return Result
+     */
+    public function requestCod(
+        string $customerId,
+        int $orderTotal,
+        string $orderId,
+        array $downPayment,
+        string $cashier,
+        ?string $transactionId,
+        ?string $orNumber
+    ): Result;
+
+    /**
+     * @param string $customerId
+     * @param array<array{'method': string, 'reference': string, 'amount': int}> $paymentMethods
+     * @param string $cashier
+     * @param string $transactionId
+     * @param string $orNumber
+     * @param string $orderId
+     * @return Result
+     */
+    public function payCod(
+        string $customerId,
+        array $paymentMethods,
+        string $cashier,
+        string $transactionId,
+        string $orNumber,
+        string $orderId,
     ): Result;
 }
