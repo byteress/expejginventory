@@ -311,7 +311,6 @@
                                         @endif
                                     </div>
                                 </div>
-                            </div>
                             <div class="col-md-12 mt-2">
                                 <div class="card shadow d-none d-md-block">
                                     <div class="card-body">
@@ -532,23 +531,22 @@
                                 </div>
                                 @endif
                             </div>
-                            </div>
                         @endif
-
+                        <div class="row">
                             @if($paymentType == 'installment')
-                            <div class="col-md-8">
-                                <div class="card shadow mb-2">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <h5 class ="text-primary admin-title mt-2">Installment</h5>
-                                            </div>
-                                            <div class="col-md-6">
-                                            </div>
-                                            <div class="col-md-12 mt-2">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered" width="100%" cellspacing="0">
-                                                        <thead>
+                                <div class="col-md-8">
+                                    <div class="card shadow mb-2">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h5 class ="text-primary admin-title mt-2">Installment</h5>
+                                                </div>
+                                                <div class="col-md-6">
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" width="100%" cellspacing="0">
+                                                            <thead>
                                                             <tr>
                                                                 <th>Option</th>
                                                                 <th>Interest(%)</th>
@@ -558,7 +556,7 @@
                                                                     <div class="input-group">
                                                                         <div class="input-group-prepend">
                                                                             <label class="input-group-text"
-                                                                                for="inputGroupSelect01">Option</label>
+                                                                                   for="inputGroupSelect01">Option</label>
                                                                         </div>
                                                                         <select wire:model="months" class="custom-select" id="inputGroupSelect01" @if($completed) disabled @endif>
                                                                             <option disabled selected>Select Installment Option</option>
@@ -580,33 +578,33 @@
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                        </thead>
-                                                    </table>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                             @endif
-                            <div class="col-md-4">
+                            <div class="col-md-4 fa-pull-right">
                                 <h4 class="text-secondary mt-1"><small>Order Total:</small><br>
                                     <strong class ="text-primary">@money($order->total)</strong></h4>
 
 
                                 <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Payment Total:@else Down Payment: @endif</small><br>
                                     <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
-                                        @error('total')<span class="text-danger">{{ $message }}</span>@enderror
+                                @error('total')<span class="text-danger">{{ $message }}</span>@enderror
 
                                 @if($paymentType == 'cod' && $completed)
-                                <h4 class="text-secondary mt-1"><small>Full Payment</small><br>
-                                    <strong class ="text-primary">@money(array_sum($amountsCod), 'PHP', true)</strong></h4>
-                                @error('totalCod')<span class="text-danger">{{ $message }}</span>@enderror
+                                    <h4 class="text-secondary mt-1"><small>Full Payment</small><br>
+                                        <strong class ="text-primary">@money(array_sum($amountsCod), 'PHP', true)</strong></h4>
+                                    @error('totalCod')<span class="text-danger">{{ $message }}</span>@enderror
                                 @endif
 
                                 @if ($order->requires_authorization)
                                     <button class="btn btn-danger btn-block" data-toggle="modal"
-                                        data-target="#confirmLogin">
+                                            data-target="#confirmLogin">
                                         Authorization Required
                                     </button>
                                 @elseif(!$completed)
@@ -619,6 +617,8 @@
                                     </button>
                                 @endif
                             </div>
+                        </div>
+
                         </div>
                     </div>
                 </div>
