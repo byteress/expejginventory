@@ -315,10 +315,14 @@ class OrderCashierDetails extends Component
     {
         $transaction = DB::table('transactions')->where('order_id', $this->orderId)->first();
 
-        return DB::table('payment_methods')
-            ->where('order_id', $this->orderId)
-            ->where('transaction_id', $transaction->id)
-            ->get();;
+        $query = DB::table('payment_methods')
+            ->where('order_id', $this->orderId);
+
+        if ($transaction)
+            $query = $query->where('transaction_id', $transaction->id);
+
+
+        return $query->get();
     }
 
     private function getCodPaymentMethods()
