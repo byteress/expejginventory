@@ -47,6 +47,21 @@ interface IPaymentService
         string $transactionId,
         string $orNumber
     ): Result;
+    public function applyPenalty(
+        string $customerId,
+        string $installmentId,
+        int $index,
+        string $orderId,
+        int $amount,
+        string $actor
+    ): Result;
+    public function removePenalty(
+        string $customerId,
+        string $installmentId,
+        int $index,
+        string $orderId,
+        string $actor
+    ): Result;
 
     /**
      * @param string $customerId

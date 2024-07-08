@@ -20,6 +20,9 @@ class InstallmentDetails extends Component
     public $referenceNumbers = [''];
     public $amounts = [null];
     public $receiptNumber = '';
+
+    public array $rate;
+    public array $penalty;
     public function mount(Customer $customer): void
     {
         $this->customer = $customer;
@@ -86,6 +89,71 @@ class InstallmentDetails extends Component
         $this->paymentMethods = array_values($this->paymentMethods);
         $this->referenceNumbers = array_values($this->referenceNumbers);
         $this->amounts = array_values($this->amounts);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function submitPenalty(IPaymentService $paymentService, string $installmentId, int $index, string $orderId, int $balance): void
+    {
+        $this->validate([
+            "rate.$installmentId.$index" => 'required'
+        ], [
+            "rate.$installmentId.$index" => 'Rate is required',
+        ]);
+
+        $user = auth()->user();
+        if(!$user) return;
+
+        $penalty = round($balance * ($this->rate[$installmentId][$index] /100));
+
+        DB::beginTransaction();
+
+        $result = $paymentService->applyPenalty(
+            $this->customer->id,
+            $installmentId,
+            $index,
+            $orderId,
+            (int) $penalty,
+            $user->id,
+        );
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash("alert-$installmentId-$index", ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+        session()->flash("success-$installmentId-$index", 'Penalty applied.');
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function removePenalty(IPaymentService $paymentService, string $installmentId, int $index, string $orderId): void
+    {
+        $user = auth()->user();
+        if(!$user) return;
+
+        DB::beginTransaction();
+
+        $result = $paymentService->removePenalty(
+            $this->customer->id,
+            $installmentId,
+            $index,
+            $orderId,
+            $user->id,
+        );
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash("alert-$installmentId-$index", ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+        session()->flash("success-$installmentId-$index", 'Penalty applied.');
     }
 
     public function getInstallmentBills()

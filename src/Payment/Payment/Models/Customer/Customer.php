@@ -9,6 +9,8 @@ use PaymentContracts\Events\CodPaymentRequested;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\DownPaymentReceived;
 use PaymentContracts\Events\InstallmentPaymentReceived;
+use PaymentContracts\Events\PenaltyApplied;
+use PaymentContracts\Events\PenaltyRemoved;
 use PaymentContracts\Exceptions\InvalidDomainException;
 
 class Customer extends Aggregate
@@ -21,7 +23,7 @@ class Customer extends Aggregate
     public array $orders = [];
 
     /**
-     * @var array<array{'due': Carbon, 'balance': int, 'amount': int, 'index': int}>
+     * @var array<array{'due': Carbon, 'balance': int, 'amount': int, 'index': int, 'installmentId': string}>
      */
     public array $installments = [];
 
@@ -67,7 +69,7 @@ class Customer extends Aggregate
         $installments = [];
         for($i = 1; $i <= $months; $i++){
             $installments[] = [
-                'due' => \Date::now()->addMonths($i),
+                'due' => \Date::now()->addMinutes($i),
                 'amount' => round($withInterest / $months),
                 'penalty' => 0,
                 'balance' => round($withInterest / $months),
@@ -136,6 +138,56 @@ class Customer extends Aggregate
             $orNumber,
             $cashier,
              $total
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    public function applyPenalty(
+        string $installmentId,
+        int $index,
+        string $orderId,
+        int $amount,
+        string $actor
+    ): self
+    {
+        $event = new PenaltyApplied(
+            $installmentId,
+            $index,
+            $this->uuid(),
+            $orderId,
+            $amount,
+            $actor
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    public function removePenalty(
+        string $installmentId,
+        int $index,
+        string $orderId,
+        string $actor
+    ): self
+    {
+        $amount = 0;
+        foreach($this->installments as $installment){
+            if($installment['installmentId'] === $installmentId && $installment['index'] === $index) {
+                $amount = $installment['penalty'];
+            }
+        }
+
+        $event = new PenaltyRemoved(
+            $installmentId,
+            $index,
+            $this->uuid(),
+            $orderId,
+            $amount,
+            $actor
         );
 
         $this->recordThat($event);
@@ -227,12 +279,31 @@ class Customer extends Aggregate
     {
         $this->balance += (int) round($event->amount + ($event->amount * ($event->interestRate / 100)));
         $this->orders[$event->orderId] = (int) round($event->amount + ($event->amount * ($event->interestRate / 100)));
-        $merge = array_merge($this->installments, $event->installments);
+
+        $installments = [];
+        foreach($event->installments as $key => $installment){
+            $i = $installment;
+            $i['installmentId'] = $event->installmentId;
+            $i['index'] = $key;
+            $installments[] = $i;
+        }
+
+        $merge = array_merge($this->installments, $installments);
 
 //        usort($merge, function ($a, $b) {
 //            return $b['due']->gt($a['due']);
 //        });
 
         $this->installments = $merge;
+    }
+
+    public function applyPenaltyApplied(PenaltyApplied $event): void
+    {
+        foreach ($this->installments as $key => $installment){
+            if($installment['installmentId'] === $event->installmentId && $installment['index'] === $event->index){
+                $this->installments[$key]['penalty'] = $event->amount;
+                break;
+            }
+        }
     }
 }

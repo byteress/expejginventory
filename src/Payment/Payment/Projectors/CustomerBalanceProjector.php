@@ -7,6 +7,8 @@ use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\CodPaymentRequested;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\InstallmentPaymentReceived;
+use PaymentContracts\Events\PenaltyApplied;
+use PaymentContracts\Events\PenaltyRemoved;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class CustomerBalanceProjector extends Projector
@@ -27,6 +29,16 @@ class CustomerBalanceProjector extends Projector
     }
 
     public function onCodPaymentReceived(CodPaymentReceived $event): void
+    {
+        $this->updateBalance($event->customerId, $event->amount, 'decrement');
+    }
+
+    public function onPenaltyApplied(PenaltyApplied $event): void
+    {
+        $this->updateBalance($event->customerId, $event->amount, 'increment');
+    }
+
+    public function onPenaltyRemoved(PenaltyRemoved $event): void
     {
         $this->updateBalance($event->customerId, $event->amount, 'decrement');
     }

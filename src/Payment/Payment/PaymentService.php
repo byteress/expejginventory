@@ -67,6 +67,60 @@ class PaymentService implements IPaymentService
         }
     }
 
+    public function applyPenalty(
+        string $customerId,
+        string $installmentId,
+        int $index,
+        string $orderId,
+        int $amount,
+        string $actor
+    ): Result
+    {
+        try {
+            $customer = Customer::retrieve($customerId);
+            $customer->applyPenalty(
+                $installmentId,
+                $index,
+                $orderId,
+                $amount,
+                $actor
+            );
+
+            $customer->persist();
+
+            return Result::success(null);
+        } catch (Exception $exception) {
+            report($exception);
+            return Result::failure($exception);
+        }
+    }
+
+    public function removePenalty(
+        string $customerId,
+        string $installmentId,
+        int $index,
+        string $orderId,
+        string $actor
+    ): Result
+    {
+        try {
+            $customer = Customer::retrieve($customerId);
+            $customer->removePenalty(
+                $installmentId,
+                $index,
+                $orderId,
+                $actor
+            );
+
+            $customer->persist();
+
+            return Result::success(null);
+        } catch (Exception $exception) {
+            report($exception);
+            return Result::failure($exception);
+        }
+    }
+
     public function requestCod(
         string $customerId,
         int $orderTotal,

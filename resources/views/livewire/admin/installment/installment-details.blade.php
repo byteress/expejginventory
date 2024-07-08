@@ -285,33 +285,81 @@
                 <div class="card shadow mb-4">
                     <div class="card-body upcoming-section">
                         @foreach($installment_bills as $bills)
-                        <div class="card shadow mb-4">
+                        <div wire:key="{{ $bills->installment_id }}-{{ $bills->index }}" class="card shadow mb-4" x-data="{ balance: {{ $bills->balance / 100 }}, rate: 0 }">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                 <h5 class="mt-3 ml-1"><strong>Order #{{ str_pad((string) $bills->id, 12, '0', STR_PAD_LEFT) }}</strong> - Installment </h5>
 {{--                                <h5 class="mt-3 ml-1">Balance : <strong>₱32440.00</strong></h5>--}}
                                 </div>
+                                @if (session("alert-$bills->installment_id-$bills->index"))
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ session("alert-$bills->installment_id-$bills->index") }}
+                                    </div>
+                                @endif
+
+                                @if (session("success-$bills->installment_id-$bills->index"))
+                                    <div class="alert alert-success" role="alert">
+                                        {{ session("success-$bills->installment_id-$bills->index") }}
+                                    </div>
+                                @endif
                                 <div class="table-responsive mt-4">
                                     <table class="table table-bordered" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
                                                 <th>Amount</th>
-                                                <th>Penalty</th>
                                                 <th>Due Date</th>
+                                                @if($bills->due <= date('Y-m-d'))
+                                                <th>Penalty Rate</th>
+                                                @endif
+                                                <th>Penalty</th>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6 class ="mt-2"><b>@money($bills->balance)</b></h6>
                                                 </td>
                                                 <td>
-                                                    <h6 class ="mt-2"><b>@money($bills->penalty)</b></h6>
-                                                </td>
-                                                <td>
                                                     <h6 class ="mt-2"><b><u>{{ date('F j, Y', strtotime($bills->due)) }}</u></b></h6>
+                                                </td>
+                                                @if($bills->due <= date('Y-m-d'))
+                                                    <td>
+                                                        @if($bills->penalty == 0)
+                                                        <div class="input-group" style="width: 100px;">
+                                                            <input wire:model.live="rate.{{ $bills->installment_id  }}.{{ $bills->index }}" x-model.number="rate" type="number" min="0" class="form-control">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">%</span>
+                                                            </div>
+                                                        </div>
+                                                        @error("rate.$bills->installment_id.$bills->index")
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @else
+                                                            {{ round($bills->penalty / ($bills->balance - $bills->penalty ) * 100, 2) }}%
+                                                        @endif
+                                                    </td>
+                                                @endif
+                                                <td>
+                                                    @if($bills->penalty > 0)
+                                                        <h6 class ="mt-2"><b>@money($bills->penalty)</b></h6>
+                                                    @else
+                                                        <h6 class ="mt-2"><b>₱<span x-text="(balance * (rate/100)).toFixed(2)"></span></b></h6>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         </thead>
                                     </table>
+                                    @if($bills->due <= date('Y-m-d'))
+                                    <div class="d-flex justify-content-end mt-1">
+                                        @if($bills->penalty == 0)
+                                        <button wire:click="submitPenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}', {{ $bills->balance }})" class="btn btn-primary btn-icon-split">
+                                            <span class="text">Add Penalty</span>
+                                        </button>
+                                        @else
+                                            <button wire:click="removePenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}')" class="btn btn-danger btn-icon-split">
+                                                <span class="text">Remove Penalty</span>
+                                            </button>
+                                        @endif
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

@@ -5,6 +5,8 @@ namespace Payment\Projectors;
 use Illuminate\Support\Facades\DB;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\InstallmentPaymentReceived;
+use PaymentContracts\Events\PenaltyApplied;
+use PaymentContracts\Events\PenaltyRemoved;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class InstallmentBillsProjector extends Projector
@@ -54,6 +56,44 @@ class InstallmentBillsProjector extends Projector
             if($total <= 0)
                 break;
         }
+    }
+
+    public function onPenaltyApplied(PenaltyApplied $event): void
+    {
+        DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->where('customer_id', $event->customerId)
+            ->where('installment_id', $event->installmentId)
+            ->where('index', $event->index)
+            ->increment('balance', $event->amount);
+
+        DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->where('customer_id', $event->customerId)
+            ->where('installment_id', $event->installmentId)
+            ->where('index', $event->index)
+            ->update([
+                'penalty' => $event->amount,
+            ]);
+    }
+
+    public function onPenaltyRemoved(PenaltyRemoved $event): void
+    {
+        DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->where('customer_id', $event->customerId)
+            ->where('installment_id', $event->installmentId)
+            ->where('index', $event->index)
+            ->decrement('balance', $event->amount);
+
+        DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->where('customer_id', $event->customerId)
+            ->where('installment_id', $event->installmentId)
+            ->where('index', $event->index)
+            ->update([
+                'penalty' => 0,
+            ]);
     }
 
     public function onStartingEventReplay(): void
