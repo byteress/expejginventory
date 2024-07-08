@@ -324,7 +324,7 @@
                                                     <td>
                                                         @if($bills->penalty == 0)
                                                         <div class="input-group" style="width: 100px;">
-                                                            <input wire:model.live="rate.{{ $bills->installment_id  }}.{{ $bills->index }}" x-model.number="rate" type="number" min="0" class="form-control">
+                                                            <input wire:model="rate.{{ $bills->installment_id  }}.{{ $bills->index }}" x-model.number="rate" type="number" min="0" class="form-control">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">%</span>
                                                             </div>
