@@ -355,7 +355,7 @@
                                         </button>
                                         @else
                                             <button wire:click="removePenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}')" class="btn btn-danger btn-icon-split">
-                                                <span class="text">Remove Penalty</span>
+                                                <span class="text">Waive Penalty</span>
                                             </button>
                                         @endif
                                     </div>

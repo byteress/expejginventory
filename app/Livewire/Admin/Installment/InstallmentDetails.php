@@ -153,7 +153,7 @@ class InstallmentDetails extends Component
         }
 
         DB::commit();
-        session()->flash("success-$installmentId-$index", 'Penalty applied.');
+        session()->flash("success-$installmentId-$index", 'Penalty waived.');
     }
 
     public function getInstallmentBills()
@@ -163,6 +163,7 @@ class InstallmentDetails extends Component
             ->where('installment_bills.customer_id', $this->customer->id)
             ->where('balance', '>', 0)
             ->orderBy('due')
+            ->orderBy('index')
             ->get();
     }
 
