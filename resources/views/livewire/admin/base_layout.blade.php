@@ -21,6 +21,7 @@
     <link href="{{ asset('assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/virtual-select.min.css') }}">
 
 </head>
 
@@ -107,6 +108,7 @@
 
     <!-- Page level custom scripts -->
     <script data-navigate-once src="{{ asset('assets/js/demo/datatables-demo.js') }}"></script>
+    <script src="{{ asset('assets/js/virtual-select.min.js') }}"></script>
 
 </body>
 

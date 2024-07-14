@@ -176,3 +176,9 @@ body {
     max-height: 78vh;
     overflow-y: auto;
 }
+
+.select-customer .vscomp-toggle-button {
+    border-radius: 0px;
+    border: 1px solid #6d74d8;
+    padding: 0.8rem 0.7rem;
+}

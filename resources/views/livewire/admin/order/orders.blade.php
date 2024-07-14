@@ -116,6 +116,26 @@
             <div class="col-md-4">
                 <div class="card shadow mb-4">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="select-customer" id="select-customer">
+                                    <!-- Select -->
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-end">
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-secondary btn-option mr-2">
+                                          <input type="radio" name="options" id="option2"> New
+                                        </label>
+                                        <label class="btn btn-secondary btn-option">
+                                          <input type="radio" name="options" id="option3"> Existing
+                                        </label>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
                         <h5 class ="mb-2 text-primary admin-title">Customer Information</h5>
                         <hr>
                         <form class="needs-validation" novalidate>
@@ -250,6 +270,22 @@
         $wire.on('authorizationRequired', () => {
             console.log('test');
             $('#confirmLogin').modal('show');
+        });
+
+        VirtualSelect.init({
+            ele: '#select-customer',
+            search: true,
+            multiple: false,
+            placeholder: "Enter customer name",
+            name: 'selected_customer',
+            searchPlaceholderText: "Enter customer name",
+            maxWidth: '100%',
+            options: [
+                { label: 'Options 1', value: '1' },
+                { label: 'Options 2', value: '2' },
+                { label: 'Options 3', value: '3' },
+            ],
+            hasOptionDescription: true
         });
     </script>
 @endscript
