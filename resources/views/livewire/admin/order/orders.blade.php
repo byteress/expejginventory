@@ -164,13 +164,17 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label for="validationTooltip03">Phone Number</label>
                                     <input type="text" class="form-control" id="validationTooltip03"
                                         wire:model="phone">
                                     @error('phone')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationTooltip03">Date of Birth</label>
+                                    <input class = "form-control" data-date-format="dd/mm/yyyy" id="datepicker">
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label for="validationTooltip03">Email Address</label>
@@ -287,5 +291,13 @@
             ],
             hasOptionDescription: true
         });
+
+        $('#datepicker').datepicker({
+            weekStart: 1,
+            daysOfWeekHighlighted: "6,0",
+            autoclose: true,
+            todayHighlight: true,
+        });
+        $('#datepicker').datepicker("setDate", new Date());
     </script>
 @endscript
