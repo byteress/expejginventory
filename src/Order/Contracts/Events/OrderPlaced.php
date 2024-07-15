@@ -11,9 +11,10 @@ class OrderPlaced extends ShouldBeStored
         public string $customerId,
         public string $assistantId,
         public string $branchId,
-        public array $items
+        public array $items,
+        public string $orderType = 'regular'
     )
     {
-        
+
     }
 }

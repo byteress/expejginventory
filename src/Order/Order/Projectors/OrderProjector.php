@@ -38,7 +38,8 @@ class OrderProjector extends Projector
                 'customer_id' => $event->customerId,
                 'assistant_id' => $event->assistantId,
                 'total' => $total,
-                'placed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s') ?? ''
+                'placed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s') ?? '',
+                'order_type' => $event->orderType
             ]);
     }
 

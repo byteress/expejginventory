@@ -34,6 +34,8 @@ class ReceiveHistoryProjector extends Projector
 
     public function onProductReserved(ProductReserved $event): void
     {
+        if($event->advancedOrder) return;
+
         $latest = $this->getLastQuantities($event->productId, $event->branchId);
 
         DB::table('stock_history')
@@ -53,6 +55,8 @@ class ReceiveHistoryProjector extends Projector
 
     public function onReservationCancelled(ReservationCancelled $event): void
     {
+        if($event->advancedOrder) return;
+        
         $latest = $this->getLastQuantities($event->productId, $event->branchId);
 
         DB::table('stock_history')

@@ -15,10 +15,22 @@ class OrderCashier extends Component
     public $search;
 
     public $branch;
+    public $type;
+    public $status;
 
-    public function mount()
+    public function mount(string $type, string $status)
     {
         $this->branch = auth()->user()->branch_id;
+        $this->type = $type;
+
+        switch ($status){
+            case 'pending':
+                $this->status = [0];
+                break;
+            case 'processed':
+                $this->status = [1, 2];
+                break;
+        }
     }
 
     public function getOrders()
@@ -35,7 +47,8 @@ class OrderCashier extends Component
                     ->orWhere('users.first_name', 'LIKE', '%'.$this->search.'%')
                     ->orWhere('users.last_name', 'LIKE', '%'.$this->search.'%');
             })
-            ->whereNull('orders.completed_at');
+            ->where('orders.order_type', $this->type)
+            ->whereIn('orders.status', $this->status);
 
         if($this->branch) $query = $query->where('branches.id', $this->branch);
 

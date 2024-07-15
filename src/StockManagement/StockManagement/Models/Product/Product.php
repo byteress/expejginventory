@@ -95,19 +95,21 @@ class Product extends Aggregate
         string $reservationId,
         string $branchId,
         int $quantity,
-        string $actor
+        string $actor,
+        bool $advanceOrder
     ): self
     {
         $available = $this->available[$branchId] ?? 0;
 
-        if($available < $quantity) throw new InvalidDomainException('Insufficient quantity on hand.', ['reserve' => 'Insufficient quantity on hand.']);
+        if(!$advanceOrder && $available < $quantity) throw new InvalidDomainException('Insufficient quantity on hand.', ['reserve' => 'Insufficient quantity on hand.']);
 
         $event = new ProductReserved(
             $this->uuid(),
             $reservationId,
             $branchId,
             $quantity,
-            $actor
+            $actor,
+            $advanceOrder
         );
 
         $this->recordThat($event);
@@ -132,7 +134,8 @@ class Product extends Aggregate
             $reservationId,
             $reservation->branchId,
             $reservation->quantity,
-            $actor
+            $actor,
+            $reservation->advancedOrder
         );
 
         $this->recordThat($event);

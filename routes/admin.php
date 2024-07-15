@@ -73,13 +73,13 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/request-history', RequestHistory::class)->name('request.history');
 });
 
-Route::group(['middleware' => ['role:admin|sales_rep']], function () {
+Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/browse', OrderProduct::class)->name('browse.product');
     Route::get('/cart', Orders::class)->name('cart');
 });
 
 Route::group(['middleware' => ['role:admin|cashier']], function () {
-    Route::get('/orders', OrderCashier::class)->name('orders');
+    Route::get('/orders/{type}/{status}', OrderCashier::class)->name('orders');
     Route::get('/orders-history', History::class)->name('orders.history');
     Route::get('/orders/{order_id}', OrderCashierDetails::class)->name('order.details');
 

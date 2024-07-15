@@ -17,7 +17,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-10">
-                        <h1 class="h3 mb-2 text-primary admin-title">Order
+                        <h1 class="h3 mb-2 text-primary admin-title">@if($orderType != 'regular') {{ ucfirst($orderType) }} @endif Order
                             #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</h1>
                     </div>
                     @if(!$completed)
@@ -74,13 +74,25 @@
                                                     </div>
                                                     <div class="col-7">
                                                         <div class="d-flex justify-content-end">
-                                                            <a class="btn btn-primary btn-sm btn-icon-split"
-                                                                wire:click="addItem('{{ $product['id'] }}')">
+                                                            @if(!$product->quantity)
+                                                                <div class="btn-group">
+                                                                    <button wire:click="addItem('{{ $product['id'] }}', 'purchase')" type="button" class="btn btn-secondary">Purchase Order</button>
+                                                                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <a wire:click="addItem('{{ $product['id'] }}', 'custom')" class="dropdown-item" href="#">Custom Order</a>
+                                                                    </div>
+                                                                </div>
+                                                            @else
+                                                                <a class="btn btn-primary btn-sm btn-icon-split"
+                                                                   wire:click="addItem('{{ $product['id'] }}')">
                                                                 <span class="icon text-white-50">
                                                                     <i class="fas fa-cart-plus"></i>
                                                                 </span>
-                                                                <span class="text">Add to Order</span>
-                                                            </a>
+                                                                    <span class="text">Add to Cart</span>
+                                                                </a>
+                                                            @endif
 
                                                             {{-- <a class="btn btn-danger btn-icon-split" wire:click="addToCart({{ $product['id'] }})">
                                                                     <span class="icon text-white-50">
@@ -269,12 +281,14 @@
                                     <div class="col-md-6">
                                         <div class="d-flex justify-content-end">
                                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                @if($orderType == 'regular')
                                                 <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'full') active @endif">
                                                   <input type="radio" name="options" id="option2" value="full" wire:model.live="paymentType" @if($completed) disabled @endif> Pay Now
                                                 </label>
                                                 <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'installment') active @endif">
                                                   <input type="radio" name="options" id="option3" value="installment" wire:model.live="paymentType" @if($completed) disabled @endif> Installment
                                                 </label>
+                                                @endif
                                                 <label class="btn btn-secondary btn-option @if($paymentType == 'cod') active @endif">
                                                     <input type="radio" name="options" id="option4" value="cod" wire:model.live="paymentType" @if($completed) disabled @endif> COD
                                                 </label>
@@ -609,7 +623,7 @@
                                     </button>
                                 @elseif(!$completed)
                                     <button wire:click="submitPayment" class="btn btn-primary btn-block">
-                                        Place Order
+                                        Process Order
                                     </button>
                                 @else
                                     <button onclick="window.print()" class="btn btn-secondary btn-block" onclick="printPage()">

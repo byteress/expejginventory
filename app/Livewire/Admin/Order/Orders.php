@@ -123,7 +123,8 @@ class   Orders extends Component
             auth()->user()->id,
             $this->branch,
             $items,
-            $authorization
+            Cart::getExtraInfo('cart_type'),
+            $authorization,
         );
 
         if($orderResult->isFailure()){
@@ -166,13 +167,15 @@ class   Orders extends Component
             return session()->flash('alert', ErrorHandler::getErrorMessage($cancelResult->getError()));
         }
 
+        $cartType = Cart::getExtraInfo('cart_type');
         $newReservationId = Str::uuid()->toString();
         $reserveResult = $stockManagementService->reserve(
             $item->getId(),
             $newReservationId,
             $quantity,
             $this->branch,
-            auth()->user()->id
+            auth()->user()->id,
+            $cartType != 'regular'
         );
 
         if ($reserveResult->isFailure()) {
@@ -214,13 +217,15 @@ class   Orders extends Component
             return session()->flash('alert', ErrorHandler::getErrorMessage($cancelResult->getError()));
         }
 
+        $cartType = Cart::getExtraInfo('cart_type');
         $newReservationId = Str::uuid()->toString();
         $reserveResult = $stockManagementService->reserve(
             $item->getId(),
             $newReservationId,
             $quantity,
             $this->branch,
-            auth()->user()->id
+            auth()->user()->id,
+            $cartType != 'regular'
         );
 
         if ($reserveResult->isFailure()) {
@@ -255,6 +260,9 @@ class   Orders extends Component
         }
 
         Cart::removeItem($hash);
+        if(Cart::hasNoItems()){
+            Cart::destroy();
+        }
     }
 
     public function calculateDiscount(string $hash, int $price)

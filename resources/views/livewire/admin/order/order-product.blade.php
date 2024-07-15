@@ -79,6 +79,17 @@
                                                 <div class="col-7">
                                                     <div class="d-flex justify-content-end">
                                                         @if (empty(Cart::getItems(['id' => $product->id])))
+                                                            @if(!$product->quantity)
+                                                                <div class="btn-group">
+                                                                    <button wire:click="addToCart('{{ $product['id'] }}', 'purchase')" type="button" class="btn btn-secondary">Purchase Order</button>
+                                                                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <a wire:click="addToCart('{{ $product['id'] }}', 'custom')" class="dropdown-item" href="#">Custom Order</a>
+                                                                    </div>
+                                                                </div>
+                                                            @else
                                                             <a class="btn btn-primary btn-sm btn-icon-split"
                                                                 wire:click="addToCart('{{ $product['id'] }}')">
                                                                 <span class="icon text-white-50">
@@ -86,6 +97,7 @@
                                                                 </span>
                                                                 <span class="text">Add to Cart</span>
                                                             </a>
+                                                            @endif
                                                         @else
                                                             <a class="btn btn-danger btn-sm btn-icon-split"
                                                                 wire:click="removeFromCart('{{ $product['id'] }}')">

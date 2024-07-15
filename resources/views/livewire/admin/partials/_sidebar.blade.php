@@ -173,17 +173,48 @@
 
     @hasanyrole('admin|cashier')
     <hr class="sidebar-divider">
+    <div class="sidebar-heading">
+        Orders
+    </div>
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
             aria-expanded="true" aria-controls="collapseSix">
             <i class="fas fa-fw fa-users"></i>
-            <span>Orders</span>
+            <span>Regular Order</span>
         </a>
         <div id="collapseSix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a wire:navigate class="collapse-item" href="{{ route('admin.orders') }}">Pending</a>
-                <a wire:navigate class="collapse-item" href="{{ route('admin.orders.history') }}">History</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'regular', 'status' => 'pending']) }}">Pending</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'regular', 'status' => 'processed']) }}">Processed</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#purchaseOrder"
+           aria-expanded="true" aria-controls="purchaseOrder">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Purchase Order</span>
+        </a>
+        <div id="purchaseOrder" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'pending']) }}">Pending</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'processed']) }}">Processed</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#customORder"
+           aria-expanded="true" aria-controls="customORder">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Custom Order</span>
+        </a>
+        <div id="customORder" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'custom', 'status' => 'pending']) }}">Pending</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'custom', 'status' => 'processed']) }}">Processed</a>
             </div>
         </div>
     </li>

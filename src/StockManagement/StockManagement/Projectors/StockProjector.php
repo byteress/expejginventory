@@ -79,6 +79,8 @@ class StockProjector extends Projector
 
     public function onProductReserved(ProductReserved $event): void
     {
+        if($event->advancedOrder) return;
+
         DB::table('stocks')
             ->where('product_id', $event->productId)
             ->where('branch_id', $event->branchId)
@@ -92,6 +94,8 @@ class StockProjector extends Projector
 
     public function onReservationCancelled(ReservationCancelled $event): void
     {
+        if($event->advancedOrder) return;
+
         DB::table('stocks')
             ->where('product_id', $event->productId)
             ->where('branch_id', $event->branchId)

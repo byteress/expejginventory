@@ -33,7 +33,7 @@ class OrderService implements IOrderService
      *      'price': int,
      *      'reservationId': string
      * }> $items */
-    public function placeOrder(string $orderId, string $customerId, string $assistantId, string $branchId, array $items, ?string $authorization): Result
+    public function placeOrder(string $orderId, string $customerId, string $assistantId, string $branchId, array $items, string $orderType, ?string $authorization): Result
     {
         try {
             foreach ($items as $item) {
@@ -45,7 +45,7 @@ class OrderService implements IOrderService
             }
 
             $order = Order::retrieve($orderId);
-            $order->place($items, $customerId, $assistantId, $branchId);
+            $order->place($items, $customerId, $assistantId, $branchId, $orderType);
             $order->persist();
 
             return Result::success(null);
@@ -127,7 +127,7 @@ class OrderService implements IOrderService
             if ($decrypted != $orderId) {
                 throw new InvalidDomainException('Authorization from admin is invalid', ['authorization' => 'Authorization from admin is invalid'], 1002);
             }
-            
+
             $order = Order::retrieve($orderId);
             $order->authorize($actor);
 

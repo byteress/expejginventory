@@ -14,7 +14,7 @@ interface IOrderService
      *      'price': int,
      *      'reservationId': string
      * }> $items */
-    public function placeOrder(string $orderId, string $customerId, string $assistantId, string $branchId, array $items, ?string $authorization): Result;
+    public function placeOrder(string $orderId, string $customerId, string $assistantId, string $branchId, array $items, string $orderType, ?string $authorization): Result;
     public function addItem(
         string $orderId,
         string $productId,

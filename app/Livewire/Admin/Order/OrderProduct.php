@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Order;
 
+use App\Exceptions\ErrorHandler;
 use BranchManagement\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Jackiedo\Cart\Facades\Cart;
@@ -60,8 +61,20 @@ class OrderProduct extends Component
         return $query->paginate(9);
     }
 
-    public function addToCart(IStockManagementService $stockManagementService, $productId)
+    /**
+     * @throws \Exception
+     */
+    public function addToCart(IStockManagementService $stockManagementService, string $productId, string $type = 'regular'): void
     {
+        $this->resetErrorBag();
+        $cartType = Cart::getExtraInfo('cart_type');
+        if($cartType && $type != $cartType){
+            session()->flash('alert', "Can only add items for $cartType order.");
+            return;
+        }
+
+        Cart::setExtraInfo('cart_type', $type);
+
         $this->validateOnly('branch');
 
         session()->put('branch', $this->branch);
@@ -77,11 +90,12 @@ class OrderProduct extends Component
             $reservationId,
             1,
             $this->branch,
-            auth()->user()->id
+            auth()->user()->id,
+            $type != 'regular'
         );
 
         if ($hasStock->isFailure()) {
-            session()->flash('alert', 'Product is out of stock.');
+            session()->flash('alert', ErrorHandler::getErrorMessage($hasStock->getError()));
             return;
         }
 
@@ -111,6 +125,10 @@ class OrderProduct extends Component
             );
 
             Cart::removeItem($hash);
+        }
+
+        if(Cart::hasNoItems()){
+            Cart::destroy();
         }
     }
 

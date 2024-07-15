@@ -54,6 +54,7 @@ class OrderCashierDetails extends Component
     public $receiptNumberCod = '';
 
     public $completedCod = false;
+    public string $orderType = '';
 
     public function mount($order_id)
     {
@@ -67,6 +68,11 @@ class OrderCashierDetails extends Component
         $this->paymentType = $order->payment_type ?? 'full';
         $this->months = $order->months ?? 5;
         $this->rate = $order->rate ?? 0;
+        $this->orderType = $order->order_type;
+
+        if($order->order_type != 'regular'){
+            $this->paymentType = 'cod';
+        }
 
         $paymentMethods = $this->getPaymentMethods();
         if($paymentMethods->isNotEmpty()){
@@ -159,7 +165,8 @@ class OrderCashierDetails extends Component
             $newReservationId,
             $quantity,
             $this->branch,
-            auth()->user()->id
+            auth()->user()->id,
+            $this->orderType != 'regular'
         );
 
         if ($reserveResult->isFailure()) {
@@ -206,7 +213,8 @@ class OrderCashierDetails extends Component
             $newReservationId,
             $quantity,
             $this->branch,
-            auth()->user()->id
+            auth()->user()->id,
+            $this->orderType != 'regular'
         );
 
         if ($reserveResult->isFailure()) {
@@ -223,8 +231,14 @@ class OrderCashierDetails extends Component
         DB::commit();
     }
 
-    public function addItem(IStockManagementService $stockManagementService, IOrderService $orderService, $productId)
+    public function addItem(IStockManagementService $stockManagementService, IOrderService $orderService, $productId, $type = 'regular')
     {
+        $this->resetErrorBag();
+        if($type != $this->orderType){
+            session()->flash('alert', "Can only add items for $this->orderType order.");
+            return;
+        }
+
         $product = $this->getProduct($productId);
 
         DB::beginTransaction();
@@ -235,7 +249,8 @@ class OrderCashierDetails extends Component
             $newReservationId,
             1,
             $this->branch,
-            auth()->user()->id
+            auth()->user()->id,
+            $type != 'regular'
         );
 
         if ($reserveResult->isFailure()) {

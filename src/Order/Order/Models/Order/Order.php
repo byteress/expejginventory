@@ -23,18 +23,19 @@ class Order extends Aggregate
      *      'price': int,
      *      'reservationId': string
      * }> $items */
-    public function place(array $items, string $customerId, string $assistantId, string $branchId): self
+    public function place(array $items, string $customerId, string $assistantId, string $branchId, string $orderType): self
     {
         $event = new OrderPlaced(
             $this->uuid(),
             $customerId,
             $assistantId,
             $branchId,
-            $items
+            $items,
+            $orderType
         );
-        
+
         $this->recordThat($event);
-        
+
         return $this;
     }
 
@@ -82,7 +83,7 @@ class Order extends Aggregate
 
         $event = new ItemRemoved($this->uuid(), $productId, $authorizationRequired);
         $this->recordThat($event);
-        
+
         return $this;
     }
 
@@ -106,7 +107,7 @@ class Order extends Aggregate
         }
 
         if(!in_array($event->productId, $this->productNeedsAuthorization)) $this->productNeedsAuthorization[] = $event->productId;
-        
+
     }
 
     public function applyItemRemoved(ItemRemoved $event): void
