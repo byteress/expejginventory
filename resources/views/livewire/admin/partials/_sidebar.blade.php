@@ -161,7 +161,7 @@
     </li>
     @endhasanyrole
 
-    @hasanyrole('admin|sales_rep')
+    @hasanyrole('admin|sales_rep|cashier')
     <hr class="sidebar-divider">
 
     <li class="nav-item ">
