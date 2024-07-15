@@ -17,11 +17,13 @@ class OrderCashier extends Component
     public $branch;
     public $type;
     public $status;
+    public $displayStatus;
 
     public function mount(string $type, string $status)
     {
         $this->branch = auth()->user()->branch_id;
         $this->type = $type;
+        $this->displayStatus = $status;
 
         switch ($status){
             case 'pending':
