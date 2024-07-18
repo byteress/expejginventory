@@ -10,6 +10,7 @@ use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReserved;
 use StockManagementContracts\Events\ProductSetAsDamaged;
 use StockManagementContracts\Events\ReservationCancelled;
+use StockManagementContracts\Events\ReservationFulfilled;
 
 class ReceiveHistoryProjector extends Projector
 {
@@ -56,7 +57,7 @@ class ReceiveHistoryProjector extends Projector
     public function onReservationCancelled(ReservationCancelled $event): void
     {
         if($event->advancedOrder) return;
-        
+
         $latest = $this->getLastQuantities($event->productId, $event->branchId);
 
         DB::table('stock_history')
@@ -103,7 +104,7 @@ class ReceiveHistoryProjector extends Projector
                 'branch_id' => $event->branchId,
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
-                'action' => 'Set as Damaged ',
+                'action' => 'Set as Damaged',
                 'running_available' => $latest['available'] - $event->quantity,
                 'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'] + $event->quantity,
@@ -112,10 +113,38 @@ class ReceiveHistoryProjector extends Projector
             ]);
     }
 
+    public function onReservationFulfilled(ReservationFulfilled $event): void
+    {
+        $latest = $this->getLastQuantities($event->productId, $event->branchId);
+
+        $available = $latest['available'];
+        $reserved = $latest['reserved'];
+
+        if($event->advancedOrder){
+            $available = $available - $event->quantity;
+        }else{
+            $reserved = $reserved - $event->quantity;
+        }
+
+        DB::table('stock_history')
+            ->insert([
+                'product_id' => $event->productId,
+                'branch_id' => $event->branchId,
+                'quantity' => $event->quantity,
+                'action' => 'Sold',
+                'running_available' => $available,
+                'running_reserved' => $reserved,
+                'running_damaged' => $latest['damaged'],
+                'running_sold' => $latest['sold'] + $event->quantity,
+                'version' => $event->aggregateRootVersion() ?? 0,
+                'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
+            ]);
+    }
+
     /**
      * @param string $productId
      * @param string $branchId
-     * @return array{'available': int, 'reserved': int, 'damaged': int}
+     * @return array{'available': int, 'reserved': int, 'damaged': int, 'sold': int}
      */
     private function getLastQuantities(string $productId, string $branchId): array
     {
@@ -129,7 +158,8 @@ class ReceiveHistoryProjector extends Projector
         return [
             'available' => $latest?->running_available ?? 0,
             'reserved' => $latest?->running_reserved ?? 0,
-            'damaged' => $latest?->running_damaged ?? 0
+            'damaged' => $latest?->running_damaged ?? 0,
+            'sold' => $latest?->running_sold ?? 0
         ];
     }
 }

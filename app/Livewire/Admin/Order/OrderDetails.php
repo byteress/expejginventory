@@ -17,8 +17,8 @@ use ProductManagement\Models\Product;
 use StockManagementContracts\IStockManagementService;
 use Str;
 
-#[Title('Order Cashier Details')]
-class OrderCashierDetails extends Component
+#[Title('Order Details')]
+class OrderDetails extends Component
 {
     use WithPagination;
 
@@ -481,7 +481,7 @@ class OrderCashierDetails extends Component
         $this->resetErrorBag();
 
         if($this->paymentType == 'full'){
-            $this->fullPayment();
+            $this->fullPayment($paymentService);
         }else if($this->paymentType == 'installment'){
             $this->installmentPayment($paymentService);
         }else if($this->paymentType == 'cod'){
@@ -575,7 +575,7 @@ class OrderCashierDetails extends Component
     /**
      * @throws \Throwable
      */
-    public function fullPayment(): void
+    public function fullPayment(IPaymentService $paymentService): void
     {
         $this->validate([
             'receiptNumber' => 'required',
@@ -597,44 +597,30 @@ class OrderCashierDetails extends Component
         }
 
         DB::beginTransaction();
-        try{
-            $transactionId = Str::uuid()->toString();
 
-            DB::table('transactions')
-                ->insert([
-                    'id' => $transactionId,
-                    'order_id' => $this->orderId,
-                    'customer_id' => $order->customer_id,
-                    'cashier' => auth()->user()?->id,
-                    'type' => 'full',
-                    'amount' => $total,
-                    'or_number' => $this->receiptNumber,
-                ]);
-
-            for($i = 0; $i < count($this->amounts); $i++){
-                DB::table('payment_methods')
-                    ->insert([
-                        'method' => $this->paymentMethods[$i],
-                        'reference' => $this->referenceNumbers[$i],
-                        'amount' => $this->amounts[$i],
-                        'order_id' => $this->orderId,
-                        'transaction_id' => $transactionId
-                    ]);
+        $fullPayment = [];
+        for($i = 0; $i < count($this->amounts); $i++){
+            if($this->amounts[$i] > 0) {
+                $fullPayment[] = [
+                    'amount' => $this->amounts[$i] * 100,
+                    'reference' => $this->referenceNumbers[$i],
+                    'method' => $this->paymentMethods[$i],
+                ];
             }
+        }
 
-            DB::table('orders')
-                ->where('order_id', $this->orderId)
-                ->update([
-                    'completed_at' => now(),
-                    'receipt_number' => $this->receiptNumber,
-                    'cashier' => auth()->user()?->id,
-                    'status' => 2,
-                    'payment_type' => 'full',
-                ]);
-        }catch(Exception $e){
+        $result = $paymentService->pay(
+            $order->customer_id,
+            $fullPayment,
+            auth()->user()?->id,
+            Str::uuid()->toString(),
+            $this->receiptNumber,
+            $order->order_id
+        );
+
+        if($result->isFailure()){
             DB::rollBack();
-            report($e);
-            session()->flash('alert', ErrorHandler::getErrorMessage($e));
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
             return;
         }
 
@@ -704,7 +690,7 @@ class OrderCashierDetails extends Component
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
-        return view('livewire.admin.order.order-cashier-details', [
+        return view('livewire.admin.order.order-details', [
             'order' => $this->getOrder(),
             'products' => $this->getProducts(),
             'cartItems' => $this->getItems(),

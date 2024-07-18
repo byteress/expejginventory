@@ -9,6 +9,7 @@ interface IStockManagementService
     public function receive(string $productId, int $quantity, string $branchId, string $actor): Result;
 
     /**
+     * @param string $batchId
      * @param array<string, int> $products
      * @param string $branchId
      * @param string $actor
@@ -21,5 +22,6 @@ interface IStockManagementService
     public function setDamaged(string $productId, int $quantity, string $branchId, string $actor): Result;
     public function reserve(string $productId, string $reservationId, int $quantity, string $branchId, string $actor, bool $advanceOrder = false): Result;
     public function cancelReservation(string $productId, string $reservationId, string $actor): Result;
+    public function fulfillReservation(string $productId, string $reservationId): Result;
     public function release(string $productId, int $quantity, string $branchId, string $actor): Result;
 }

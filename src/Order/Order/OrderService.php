@@ -140,6 +140,50 @@ class OrderService implements IOrderService
         }
     }
 
+    /**
+     * @param string $shippingId
+     * @param string $driver
+     * @param string $truck
+     * @param string $branch
+     * @param array<string> $orders
+     * @param string|null $notes
+     * @return Result
+     */
+    public function shipOrders(string $shippingId, string $driver, string $truck, string $branch, array $orders, ?string $notes = null): Result
+    {
+        try {
+            foreach ($orders as $orderId) {
+                $order = Order::retrieve($orderId);
+                $order->ship(
+                    $shippingId,
+                    $driver,
+                    $truck,
+                    $notes
+                );
+                $order->persist();
+            }
+
+            return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    public function markAsDelivered(string $orderId): Result
+    {
+        try {
+            $order = Order::retrieve($orderId);
+            $order->markAsDelivered();
+            $order->persist();
+
+            return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
     /** @param array<array{
      *      'productId': string,
      *      'title': string,

@@ -17,8 +17,8 @@ use ProductManagement\Models\Product;
 use StockManagementContracts\IStockManagementService;
 use Str;
 
-#[Title('Order Products')]
-class OrderProduct extends Component
+#[Title('Browse Products')]
+class BrowseProducts extends Component
 {
     use WithPagination;
 
@@ -135,7 +135,7 @@ class OrderProduct extends Component
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
-        return view('livewire.admin.order.order-product', [
+        return view('livewire.admin.order.browse-products', [
             'products' => $this->getProducts(),
             'branches' => Branch::all()
         ]);

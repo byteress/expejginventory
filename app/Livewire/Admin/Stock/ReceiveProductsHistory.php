@@ -32,7 +32,7 @@ class ReceiveProductsHistory extends Component
         $query = DB::table('stock_history')
             ->join('products', 'stock_history.product_id', '=', 'products.id')
             ->join('branches', 'stock_history.branch_id', '=', 'branches.id')
-            ->join('users', 'stock_history.user_id', '=', 'users.id')
+            ->leftJoin('users', 'stock_history.user_id', '=', 'users.id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
             ->select('stock_history.*', 'products.*', 'suppliers.code', 'branches.name', 'users.first_name', 'users.last_name')
             ->where(function($q){

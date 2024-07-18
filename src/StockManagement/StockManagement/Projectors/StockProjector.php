@@ -10,6 +10,7 @@ use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
 use StockManagementContracts\Events\ProductSetAsDamaged;
 use StockManagementContracts\Events\ReservationCancelled;
+use StockManagementContracts\Events\ReservationFulfilled;
 
 class StockProjector extends Projector
 {
@@ -105,6 +106,22 @@ class StockProjector extends Projector
             ->where('product_id', $event->productId)
             ->where('branch_id', $event->branchId)
             ->decrement('reserved', $event->quantity);
+    }
+
+    public function onReservationFulfilled(ReservationFulfilled $event): void
+    {
+        DB::table('stocks')
+            ->where('product_id', $event->productId)
+            ->where('branch_id', $event->branchId)
+            ->increment('sold', $event->quantity);
+
+        $decrement = 'reserved';
+        if($event->advancedOrder) $decrement = 'available';
+
+        DB::table('stocks')
+            ->where('product_id', $event->productId)
+            ->where('branch_id', $event->branchId)
+            ->decrement($decrement, $event->quantity);
     }
 
     public function onProductReleased(ProductReleased $event): void

@@ -50,5 +50,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IPaymentService::class, PaymentService::class);
 
         Event::subscribe(GenerateSku::class);
+
+//        DB::listen(function($query) {
+//            Log::info(
+//                $query->sql,
+//                [
+//                    'bindings' => $query->bindings,
+//                    'time' => $query->time
+//                ]
+//            );
+//        });
     }
 }

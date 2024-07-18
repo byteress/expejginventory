@@ -33,6 +33,7 @@
                                     <th>Available</th>
                                     <th>Reserved</th>
                                     <th>Damaged</th>
+                                    <th>Sold</th>
                                     <th>Total</th>
                                     <th></th>
                                 </tr>
@@ -47,6 +48,7 @@
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-available-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" />
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-reserved-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="reserved" />
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-damaged-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="damaged" />
+                                        <td><livewire:admin.stock.partial.on-hand :key="now() . '-sold-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="sold" />
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-total-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="total" />
                                         <td>
                                             <div class="btn-group">

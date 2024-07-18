@@ -27,4 +27,16 @@ interface IOrderService
     public function updateItemQuantity(string $orderId, string $productId, int $newQuantity, string $reservationId): Result;
     public function removeItem(string $orderId, string $productId): Result;
     public function confirmOrder(string $orderId, string $actor, string $authorization): Result;
+
+    /**
+     * @param string $shippingId
+     * @param string $driver
+     * @param string $truck
+     * @param string $branch
+     * @param array<string> $orders
+     * @param string|null $notes
+     * @return Result
+     */
+    public function shipOrders(string $shippingId, string $driver, string $truck, string $branch, array $orders, ?string $notes = null): Result;
+    public function markAsDelivered(string $orderId): Result;
 }

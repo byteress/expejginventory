@@ -7,6 +7,7 @@ use CustomerManagementContracts\Exceptions\InvalidDomainException;
 use CustomerManagementContracts\ICustomerManagementService;
 use CustomerManagementContracts\Utils\Result;
 use Exception;
+use DateTime;
 
 class CustomerManagementService implements ICustomerManagementService
 {
@@ -17,7 +18,8 @@ class CustomerManagementService implements ICustomerManagementService
         string $phone,
         string $address,
         string $branchId,
-        ?string $email = null
+        ?string $email = null,
+        ?DateTime $dob = null
     ): Result
     {
         try{
@@ -29,6 +31,7 @@ class CustomerManagementService implements ICustomerManagementService
             $customer->phone = $phone;
             $customer->address = $address;
             $customer->branch_id = $branchId;
+            $customer->dob = $dob?->format('Y-m-d');
             $customer->save();
 
             return Result::success(null);
@@ -44,7 +47,8 @@ class CustomerManagementService implements ICustomerManagementService
         string $phone,
         string $address,
         string $branchId,
-        ?string $email = null
+        ?string $email = null,
+        ?DateTime $dob = null
     ): Result
     {
         try{
@@ -58,6 +62,7 @@ class CustomerManagementService implements ICustomerManagementService
             $customer->phone = $phone;
             $customer->address = $address;
             $customer->branch_id = $branchId;
+            $customer->dob = $dob?->format('Y-m-d');
             $customer->save();
 
             return Result::success(null);

@@ -7,15 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('advanced_reservations', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('reservation_id');
-            $table->uuid('product_id');
+        Schema::table('line_items', function (Blueprint $table) {
+            $table->boolean('confirmed')->default(false);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('advanced_reservations');
+        Schema::table('line_items', function (Blueprint $table) {
+            $table->dropColumn('confirmed');
+        });
     }
 };

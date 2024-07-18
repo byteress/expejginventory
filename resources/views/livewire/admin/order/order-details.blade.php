@@ -253,7 +253,7 @@
                             <div class="col-md-12 mb-3">
                                 <label for="validationTooltip03">Email Address</label>
                                 <input disabled type="text" class="form-control" id="validationTooltip03"
-                                    value="{{ $customer->email }}"">
+                                    value="{{ $customer->email }}">
                                 @error('email')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -280,17 +280,17 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="d-flex justify-content-end">
-                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                            <div class="btn-group btn-group-toggle">
                                                 @if($orderType == 'regular')
                                                 <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'full') active @endif">
-                                                  <input type="radio" name="options" id="option2" value="full" wire:model.live="paymentType" @if($completed) disabled @endif> Pay Now
+                                                  <input wire:model.live="paymentType" type="radio" id="option2" value="full"  @if($completed) disabled @endif> Pay Now
                                                 </label>
                                                 <label class="btn btn-secondary btn-option mr-2 @if($paymentType == 'installment') active @endif">
-                                                  <input type="radio" name="options" id="option3" value="installment" wire:model.live="paymentType" @if($completed) disabled @endif> Installment
+                                                  <input wire:model.live="paymentType" type="radio" id="option3" value="installment"  @if($completed) disabled @endif> Installment
                                                 </label>
                                                 @endif
                                                 <label class="btn btn-secondary btn-option @if($paymentType == 'cod') active @endif">
-                                                    <input type="radio" name="options" id="option4" value="cod" wire:model.live="paymentType" @if($completed) disabled @endif> COD
+                                                    <input type="radio" id="option4" value="cod" wire:model.live="paymentType" @if($completed) disabled @endif> COD
                                                 </label>
                                               </div>
                                         </div>

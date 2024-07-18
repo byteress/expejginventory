@@ -2,6 +2,7 @@
 
 namespace StockManagement\Models\Product;
 
+use Illuminate\Support\Facades\Log;
 use StockManagement\Models\Aggregate;
 use StockManagementContracts\Events\DamagedProductReceived;
 use StockManagementContracts\Events\ProductReceived;
@@ -9,6 +10,7 @@ use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
 use StockManagementContracts\Events\ReservationCancelled;
 use StockManagementContracts\Events\ProductSetAsDamaged;
+use StockManagementContracts\Events\ReservationFulfilled;
 use StockManagementContracts\Exceptions\InvalidDomainException;
 
 class Product extends Aggregate
@@ -146,6 +148,34 @@ class Product extends Aggregate
     /**
      * @throws InvalidDomainException
      */
+    public function fulfillReservation(
+        string $reservationId
+    ): self
+    {
+        if(!array_key_exists($reservationId, $this->reservations)) throw new InvalidDomainException('Reservation not found.', ['reserve' => 'Reservation not found.']);
+
+        $reservation = $this->reservations[$reservationId];
+
+        $available = $this->available[$reservation->branchId] ?? 0;
+        Log::info("$reservation->branchId: $available");
+        if($available < $reservation->quantity) throw new InvalidDomainException('Insufficient quantity on hand.', ['reserve' => 'Insufficient quantity on hand.']);
+
+        $event = new ReservationFulfilled(
+            $this->uuid(),
+            $reservationId,
+            $reservation->branchId,
+            $reservation->quantity,
+            $reservation->advancedOrder
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    /**
+     * @throws InvalidDomainException
+     */
     public function release(
         string $branchId,
         int $quantity,
@@ -191,13 +221,14 @@ class Product extends Aggregate
 
     public function applyProductReserved(ProductReserved $event): void
     {
+        $this->reservations[$event->reservationId] = $event;
+        if($event->advancedOrder) return;
+
         $oldQuantity = $this->available[$event->branchId] ?? 0;
         $this->available[$event->branchId] = $oldQuantity - $event->quantity;
 
         $oldQuantity = $this->reserved[$event->branchId] ?? 0;
         $this->reserved[$event->branchId] = $oldQuantity + $event->quantity;
-
-        $this->reservations[$event->reservationId] = $event;
     }
 
     public function applyReservationCancelled(ReservationCancelled $event): void
@@ -207,6 +238,19 @@ class Product extends Aggregate
 
         $oldQuantity = $this->reserved[$event->branchId] ?? 0;
         $this->reserved[$event->branchId] = $oldQuantity - $event->quantity;
+
+        unset($this->reservations[$event->reservationId]);
+    }
+
+    public function applyReservationFulfilled(ReservationFulfilled $event): void
+    {
+        if($event->advancedOrder){
+            $oldQuantity = $this->reserved[$event->branchId] ?? 0;
+            $this->reserved[$event->branchId] = $oldQuantity - $event->quantity;
+        }else{
+            $oldQuantity = $this->available[$event->branchId] ?? 0;
+            $this->available[$event->branchId] = $oldQuantity - $event->quantity;
+        }
 
         unset($this->reservations[$event->reservationId]);
     }

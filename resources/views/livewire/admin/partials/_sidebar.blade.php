@@ -159,6 +159,21 @@
             </div>
         </div>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDelivery"
+           aria-expanded="true" aria-controls="collapseDelivery">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Delivery</span>
+        </a>
+        <div id="collapseDelivery" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.to-ship') }}">To Ship</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.out-for-delivery') }}">Out for Delivery</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.delivered') }}">Delivered</a>
+            </div>
+        </div>
+    </li>
     @endhasanyrole
 
     @hasanyrole('admin|sales_rep|cashier')

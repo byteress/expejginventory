@@ -8,7 +8,9 @@ use OrderContracts\Events\ItemPriceUpdated;
 use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
+use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
+use OrderContracts\Events\OrderShipped;
 
 class Order extends Aggregate
 {
@@ -90,6 +92,32 @@ class Order extends Aggregate
     public function authorize(string $actor): self
     {
         $event = new OrderAuthorized($this->uuid(), $actor);
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    public function ship(string $shippingId, string $driver, string $truck, ?string $note = null): self
+    {
+        $event = new OrderShipped(
+            $this->uuid(),
+            $shippingId,
+            $driver,
+            $truck,
+            $note
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    public function markAsDelivered(): self
+    {
+        $event = new OrderDelivered(
+            $this->uuid(),
+        );
+
         $this->recordThat($event);
 
         return $this;

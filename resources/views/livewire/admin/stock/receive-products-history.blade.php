@@ -29,6 +29,7 @@
                                 <th>Running Available</th>
                                 <th>Running Reserved</th>
                                 <th>Running Damaged</th>
+                                <th>Running Sold</th>
                                 <th>User</th>
                                 <th>Date</th>
                             </tr>
@@ -46,6 +47,7 @@
                                     <td>{{ $history->running_available }}</td>
                                     <td>{{ $history->running_reserved }}</td>
                                     <td>{{ $history->running_damaged }}</td>
+                                    <td>{{ $history->running_sold }}</td>
                                     <td>{{ $history->first_name }} {{ $history->last_name }}</td>
                                     <td>{{ date('h:i a F j, Y', strtotime($history->date)) }}</td>
                                 </tr>

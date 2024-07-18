@@ -39,7 +39,9 @@ return [
         \Payment\Projectors\OrderProjector::class,
         \Payment\Projectors\TransactionProjector::class,
         \Payment\Projectors\CustomerBalanceProjector::class,
-        \Payment\Projectors\InstallmentBillsProjector::class
+        \Payment\Projectors\InstallmentBillsProjector::class,
+        \StockManagement\Projectors\AdvancedReservationsProjector::class,
+        \StockManagement\Projectors\ConfirmedItemProjector::class
     ],
 
     /*
@@ -49,6 +51,8 @@ return [
      */
     'reactors' => [
         // App\Reactors\YourReactor::class
+        \StockManagement\EventHandlers\AdvancedOrderEventHandler::class,
+        \StockManagement\EventHandlers\OrderProcessedEventHandler::class
     ],
 
     /*

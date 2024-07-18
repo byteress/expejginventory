@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\Admin\Delivery\Delivered;
+use App\Livewire\Admin\Delivery\OutForDelivery;
+use App\Livewire\Admin\Delivery\ToShip;
 use App\Livewire\Admin\Payment\CustomerList;
 use App\Livewire\Admin\Stock\BatchDetails;
 use App\Livewire\Admin\Stock\BatchHistory;
@@ -29,10 +32,10 @@ use App\Livewire\Admin\Stock\RequestHistory;
 use App\Livewire\Admin\Stock\TransferDetails;
 use App\Livewire\Admin\User\EditUser;
 use App\Livewire\Admin\User\Users;
-use App\Livewire\Admin\Order\OrderProduct;
+use App\Livewire\Admin\Order\BrowseProducts;
+use App\Livewire\Admin\Order\Cart;
 use App\Livewire\Admin\Order\Orders;
-use App\Livewire\Admin\Order\OrderCashier;
-use App\Livewire\Admin\Order\OrderCashierDetails;
+use App\Livewire\Admin\Order\OrderDetails;
 use App\Livewire\Admin\Installment\InstallmentDetails;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
@@ -71,17 +74,20 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/transfer-history', TransferHistory::class)->name('transfer.history');
     Route::get('/transfer-history/{transfer}', TransferHistoryDetails::class)->name('transfer.history.details');
     Route::get('/request-history', RequestHistory::class)->name('request.history');
+    Route::get('/delivery/to-ship', ToShip::class)->name('delivery.to-ship');
+    Route::get('/delivery/out-for-delivery', OutForDelivery::class)->name('delivery.out-for-delivery');
+    Route::get('/delivery/delivered', Delivered::class)->name('delivery.delivered');
 });
 
 Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
-    Route::get('/browse', OrderProduct::class)->name('browse.product');
-    Route::get('/cart', Orders::class)->name('cart');
+    Route::get('/browse', BrowseProducts::class)->name('browse.product');
+    Route::get('/cart', Cart::class)->name('cart');
 });
 
 Route::group(['middleware' => ['role:admin|cashier']], function () {
-    Route::get('/orders/{type}/{status}', OrderCashier::class)->name('orders');
+    Route::get('/orders/{type}/{status}', Orders::class)->name('orders');
     Route::get('/orders-history', History::class)->name('orders.history');
-    Route::get('/orders/{order_id}', OrderCashierDetails::class)->name('order.details');
+    Route::get('/orders/{order_id}', OrderDetails::class)->name('order.details');
 
     Route::get('/customer/{customer}', InstallmentDetails::class)->name('customer.details');
 

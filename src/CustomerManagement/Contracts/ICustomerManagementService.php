@@ -3,6 +3,7 @@
 namespace CustomerManagementContracts;
 
 use CustomerManagementContracts\Utils\Result;
+use DateTime;
 
 interface ICustomerManagementService
 {
@@ -13,7 +14,8 @@ interface ICustomerManagementService
         string $phone,
         string $address,
         string $branchId,
-        ?string $email = null
+        ?string $email = null,
+        ?DateTime $dob = null
     ): Result;
 
     public function updateCustomer(
@@ -23,6 +25,7 @@ interface ICustomerManagementService
         string $phone,
         string $address,
         string $branchId,
-        ?string $email = null
+        ?string $email = null,
+        ?DateTime $dob = null
     ): Result;
 }

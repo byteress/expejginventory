@@ -8,7 +8,9 @@ use OrderContracts\Events\ItemPriceUpdated;
 use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
+use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
+use OrderContracts\Events\OrderShipped;
 use PaymentContracts\Events\InstallmentInitialized;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
@@ -111,6 +113,24 @@ class OrderProjector extends Projector
             ->where('order_id', $event->orderId)
             ->update([
                 'requires_authorization' => false
+            ]);
+    }
+
+    public function onOrderShipped(OrderShipped $event): void
+    {
+        DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'shipping_status' => 1
+            ]);
+    }
+
+    public function onOrderDelivered(OrderDelivered $event): void
+    {
+        DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'shipping_status' => 2
             ]);
     }
 

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Payment\Models\Aggregate;
 use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\CodPaymentRequested;
+use PaymentContracts\Events\FullPaymentReceived;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\DownPaymentReceived;
 use PaymentContracts\Events\InstallmentPaymentReceived;
@@ -251,6 +252,7 @@ class Customer extends Aggregate
      * @param string $cashier
      * @param string $transactionId
      * @param string $orNumber
+     * @param string $orderId
      * @return $this
      */
     public function payCod(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId): self
@@ -261,6 +263,36 @@ class Customer extends Aggregate
         }
 
         $event = new CodPaymentReceived(
+            $transactionId,
+            $this->uuid(),
+            $paymentMethods,
+            $orNumber,
+            $cashier,
+            $total,
+            $orderId
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    /**
+     * @param array<array{'method': string, 'reference': string, 'amount': int}> $paymentMethods
+     * @param string $cashier
+     * @param string $transactionId
+     * @param string $orNumber
+     * @param string $orderId
+     * @return $this
+     */
+    public function pay(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId): self
+    {
+        $total = 0;
+        foreach($paymentMethods as $dp){
+            $total += $dp['amount'];
+        }
+
+        $event = new FullPaymentReceived(
             $transactionId,
             $this->uuid(),
             $paymentMethods,
