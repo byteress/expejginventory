@@ -20,7 +20,7 @@ class IdentityAndAccessService implements IIdentityAndAccessService
         try {
             DB::beginTransaction();
             if($role != Role::Admin->value && is_null($branch)) throw new InvalidDomainException('Branch is required.', ['branch' => 'Branch is required.']);
-            
+
             if (User::whereId($userId)->exists()) throw new InvalidDomainException('User ID already exists.', ['userId' => 'User ID already exists.']);
             if (User::whereEmail($email)->exists()) throw new InvalidDomainException('Email address already exists.', ['email' => 'Email address already exists.']);
 
@@ -46,12 +46,19 @@ class IdentityAndAccessService implements IIdentityAndAccessService
         }
     }
 
-    public function update(string $userId, string $firstName, string $lastName, string $email, ?string $phone, ?string $address,  string $role, ?string $branch): Result
+    /**
+     * @throws InvalidDomainException
+     */
+    public function update(string $userId, string $firstName, string $lastName, string $email, ?string $phone, ?string $address, string $role, ?string $branch): Result
     {
         try {
             if (User::whereEmail($email)->where('email', '!=', $email)->exists()) throw new InvalidDomainException('Email address already exists.', ['email' => 'Email address already exists.']);
 
-            User::whereId($userId)->update([
+            $user = User::find($userId);
+
+            if(!$user) throw new InvalidDomainException('User does not exist.', ['email' => 'User does not exist.']);
+
+            $user->update([
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'email' => $email,
@@ -59,6 +66,8 @@ class IdentityAndAccessService implements IIdentityAndAccessService
                 'address' => $address,
                 'branch_id' => $branch,
             ]);
+
+            $user->syncRoles($role);
 
             return Result::success(null);
         } catch (Exception $e) {
