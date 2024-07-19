@@ -44,13 +44,13 @@
                             <td>{{ $supplier->phone ?? '-' }}</td>
                             <td><a wire:navigate href="{{ route('admin.edit.supplier', ['supplier' => $supplier->id]) }}" class="btn btn-info btn-sm">Edit</a></td>
                             <td>
-                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal1">Delete</button>
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $supplier->id }}">Delete</button>
                                 <!-- Delete Modal -->
-                                <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1" role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                <div wire:ignore.self class="modal fade" id="deleteModal{{ $supplier->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModal{{ $supplier->id }}Label" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModal1Label">Delete Supplier</h5>
+                                                <h5 class="modal-title" id="deleteModal{{ $supplier->id }}Label">Delete Supplier</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
