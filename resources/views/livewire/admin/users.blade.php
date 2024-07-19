@@ -52,21 +52,21 @@
                                         class="btn btn-info btn-sm">Edit</a></td>
                                 <td>
                                     <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                        data-target="#deleteModal1">Delete</button>
+                                        data-target="#deleteModal{{ $user->id }}">Delete</button>
                                     <!-- Delete Modal -->
-                                    <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1"
-                                        role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                    <div wire:ignore.self class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1"
+                                        role="dialog" aria-labelledby="deleteModal{{ $user->id }}Label" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="deleteModal1Label">Delete Branch</h5>
+                                                    <h5 class="modal-title" id="deleteModal{{ $user->id }}Label">Delete {{ $user->first_name }} {{ $user->last_name }}</h5>
                                                     <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    Are you sure you want to delete this branch?
+                                                    Are you sure you want to delete this user?
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
