@@ -673,7 +673,7 @@ class OrderDetails extends Component
             $downPayment,
             auth()->user()?->id,
             Str::uuid()->toString(),
-            $this->receiptNumber,
+            $this->receiptNumberCod,
             $order->order_id
         );
 
