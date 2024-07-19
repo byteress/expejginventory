@@ -27,6 +27,11 @@
                                 @endhasrole
                                 <th>Total</th>
                                 <th>Placed At</th>
+                                @if($displayStatus == 'processed')
+                                    <th>Payment Type</th>
+                                    <th>Payment Status</th>
+                                    <th>Delivery Status</th>
+                                @endif
                                 <th></th>
                             </tr>
                         </thead>
@@ -41,6 +46,19 @@
                                     @endhasrole
                                     <td>@money($order->total)</td>
                                     <td>{{ date('F j, Y', strtotime($order->placed_at)) }}</td>
+                                    @if($displayStatus == 'processed')
+                                        <td>{{ ucfirst($order->payment_type) }}</td>
+                                        <td>{{ $this->getPaymentStatus($order->order_id) }}</td>
+                                        <td>
+                                            @if($order->shipping_status == 0)
+                                                To Ship
+                                                @elseif($order->shipping_status == 1)
+                                                Out for Delivery
+                                            @else
+                                                Delivered
+                                            @endif
+                                        </td>
+                                    @endif
                                     <td align = "center">
                                         <div class="btn-group">
                                             <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" type="button"
@@ -92,6 +110,7 @@
 
                         </tbody>
                     </table>
+                    {{ $orders->links() }}
                 </div>
             </div>
         </div>

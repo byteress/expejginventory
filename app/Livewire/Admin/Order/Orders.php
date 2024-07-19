@@ -7,10 +7,14 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
+use Livewire\WithPagination;
+use Order\Models\Order\Order;
 
 #[Title('Orders')]
 class Orders extends Component
 {
+    use WithPagination;
+
     #[Url]
     public $search;
 
@@ -50,11 +54,40 @@ class Orders extends Component
                     ->orWhere('users.last_name', 'LIKE', '%'.$this->search.'%');
             })
             ->where('orders.order_type', $this->type)
-            ->whereIn('orders.status', $this->status);
+            ->whereIn('orders.status', $this->status)
+            ->orderByDesc('orders.placed_at');
 
         if($this->branch) $query = $query->where('branches.id', $this->branch);
 
-        return $query->get();
+        return $query->paginate(10);
+    }
+
+    public function getPaymentStatus(string $orderId): string
+    {
+        $order = DB::table('orders')->where('order_id', $orderId)->first();
+        if(!$order) return 'Pending';
+
+        if($order->payment_type == 'full'){
+            if($order->status > 0) return 'Fully Paid';
+        }
+
+        if($order->payment_type == 'cod'){
+            if($order->status == 2) return 'Fully Paid';
+            if($order->status == 1) return 'Partially Paid';
+        }
+
+        if($order->payment_type == 'installment'){
+            $exists = DB::table('installment_bills')
+                ->where('order_id', $orderId)
+                ->where('balance', '>', 0)
+                ->exists();
+
+            if(!$exists) return 'Fully Paid';
+
+            return 'Partially Paid';
+        }
+
+        return 'Pending';
     }
 
     #[Layout('livewire.admin.base_layout')]
