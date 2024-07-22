@@ -5,7 +5,7 @@
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Receive Product</h1>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -55,7 +55,7 @@
             </div>
             {{-- Data Table --}}
 
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -112,6 +112,9 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -134,7 +137,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" style = "margin: 0 0">
+                                <div class="row">
                                     <div class="col-md-4 mb-3" @unlessrole('admin') style="display:none;" @endunlessrole>
                                         <div class="input-group">
                                             <div class="input-group-prepend">

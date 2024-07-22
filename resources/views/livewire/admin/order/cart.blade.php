@@ -124,7 +124,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-5">
-                                <div class="d-flex justify-content-end">
+                                <div class="d-flex justify-content-start">
                                     <div class="btn-group btn-group-toggle">
                                         <label class="btn btn-secondary btn-option mr-2 @if($customerType == 'new') active @endif">
                                             <input type="radio" id="option2" value="new" wire:model.live="customerType"> New
