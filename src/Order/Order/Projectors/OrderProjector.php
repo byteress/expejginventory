@@ -8,6 +8,7 @@ use OrderContracts\Events\ItemPriceUpdated;
 use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
+use OrderContracts\Events\OrderCancelled;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderShipped;
@@ -131,6 +132,15 @@ class OrderProjector extends Projector
             ->where('order_id', $event->orderId)
             ->update([
                 'shipping_status' => 2
+            ]);
+    }
+
+    public function onOrderCancelled(OrderCancelled $event): void
+    {
+        DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'status' => 3,
             ]);
     }
 

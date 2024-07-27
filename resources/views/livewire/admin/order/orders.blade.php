@@ -62,24 +62,24 @@
                                     <td align = "center">
                                         <div class="btn-group">
                                             <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" type="button"
-                                                class="btn btn-primary">Checkout</a>
+                                                class="btn btn-primary">@if($displayStatus != 'pending') View @else Checkout @endif</a>
+                                            @if($displayStatus != 'cancelled')
                                             <button type="button"
                                                 class="btn btn-primary dropdown-toggle dropdown-toggle-split"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a data-toggle="modal" data-target="#deleteModal1" class="dropdown-item"
+                                                <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"
                                                     href="#">Cancel</a>
                                             </div>
                                             <!-- Delete Modal -->
-                                            <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1"
-                                                role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                            <div wire:ignore.self class="modal fade" id="deleteModal{{ $order->order_id }}" tabindex="-1"
+                                                role="dialog" aria-labelledby="deleteModal{{ $order->order_id }}Label" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="deleteModal1Label">Delete
-                                                                Product
+                                                            <h5 class="modal-title" id="deleteModal{{ $order->order_id }}Label">Cancel Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}
                                                             </h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
@@ -87,18 +87,19 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Are you sure you want to delete this product?
+                                                            Are you sure you want to cancel this order?
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Cancel</button>
-                                                            <button type="button"
-                                                                class="btn btn-danger">Delete</button>
+                                                                data-dismiss="modal">No</button>
+                                                            <button wire:click="cancelOrder('{{ $order->order_id }}')" type="button"
+                                                                class="btn btn-danger">Yes</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <!-- End Delete Modal -->
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

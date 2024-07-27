@@ -184,13 +184,31 @@ class OrderService implements IOrderService
         }
     }
 
-    /** @param array<array{
+    public function cancel(string $orderId, string $actor): Result
+    {
+        try {
+            $order = Order::retrieve($orderId);
+            $order->cancel($actor);
+            $order->persist();
+
+            return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    /**
+     * @param string|null $authorization
+     * @param array<array{
      *      'productId': string,
      *      'title': string,
      *      'quantity': int,
      *      'price': int,
      *      'reservationId': string
-     * }> $items */
+     * }> $items
+     * @throws InvalidDomainException
+     */
     private function validateAuthorization(?string $authorization, array $items): void
     {
         if ($authorization === null) throw new InvalidDomainException('Authorization from admin is required', ['authorization' => 'Authorization from admin is required'], 1001);

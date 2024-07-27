@@ -24,4 +24,5 @@ interface IStockManagementService
     public function cancelReservation(string $productId, string $reservationId, string $actor): Result;
     public function fulfillReservation(string $productId, string $reservationId): Result;
     public function release(string $productId, int $quantity, string $branchId, string $actor): Result;
+    public function return(string $productId, int $quantity, string $branchId, string $actor): Result;
 }

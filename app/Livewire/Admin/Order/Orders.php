@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Order;
 
+use App\Exceptions\ErrorHandler;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -9,6 +10,8 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Order\Models\Order\Order;
+use OrderContracts\IOrderService;
+use Throwable;
 
 #[Title('Orders')]
 class Orders extends Component
@@ -23,7 +26,7 @@ class Orders extends Component
     public $status;
     public $displayStatus;
 
-    public function mount(string $type, string $status)
+    public function mount(string $type, string $status): void
     {
         $this->branch = auth()->user()->branch_id;
         $this->type = $type;
@@ -36,7 +39,29 @@ class Orders extends Component
             case 'processed':
                 $this->status = [1, 2];
                 break;
+            case 'cancelled':
+                $this->status = [3];
+                break;
         }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function cancelOrder(IOrderService $orderService, string $orderId): void
+    {
+        DB::beginTransaction();
+
+        $result = $orderService->cancel($orderId, auth()->user()->id);
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+        session()->flash('success', __('Order has been canceled'));
     }
 
     public function getOrders()

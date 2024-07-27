@@ -202,6 +202,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'regular', 'status' => 'pending']) }}">Pending</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'regular', 'status' => 'processed']) }}">Processed</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'regular', 'status' => 'cancelled']) }}">Cancelled</a>
             </div>
         </div>
     </li>
@@ -216,6 +217,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'pending']) }}">Pending</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'processed']) }}">Processed</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'cancelled']) }}">Cancelled</a>
             </div>
         </div>
     </li>
@@ -230,6 +232,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'custom', 'status' => 'pending']) }}">Pending</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'custom', 'status' => 'processed']) }}">Processed</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'custom', 'status' => 'cancelled']) }}">Cancelled</a>
             </div>
         </div>
     </li>

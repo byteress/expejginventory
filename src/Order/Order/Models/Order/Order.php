@@ -8,6 +8,7 @@ use OrderContracts\Events\ItemPriceUpdated;
 use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
+use OrderContracts\Events\OrderCancelled;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderShipped;
@@ -120,6 +121,14 @@ class Order extends Aggregate
 
         $this->recordThat($event);
 
+        return $this;
+    }
+
+    public function cancel(string $actor): self
+    {
+        $event = new OrderCancelled($this->uuid(), $actor);
+
+        $this->recordThat($event);
         return $this;
     }
 

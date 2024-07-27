@@ -38,6 +38,9 @@
                             <li class="nav-item" role="presentation">
                               <button class="nav-link" id="payment-history-tab" data-toggle="tab" data-target="#payment-history" type="button" role="tab" aria-controls="payment-history" aria-selected="false">Payment History</button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="order-history-tab" data-toggle="tab" data-target="#order-history" type="button" role="tab" aria-controls="order-history" aria-selected="false">Order History</button>
+                            </li>
                           </ul>
                           <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
@@ -206,7 +209,12 @@
                                             @foreach($transaction_history as $history)
                                             <tr>
                                                 <td>
-                                                    <h6 class ="mt-2"><b>{{ $history->or_number  }}</b></h6>
+                                                    <h6 class ="mt-2"><b>
+                                                            @if($history->order_id)
+                                                                <a target="_blank" href="{{ route('admin.order.details', ['order_id' => $history->order_id]) }}"><h6 class ="mt-2"><b>{{ $history->or_number  }}</b></h6></a>
+                                                            @else
+                                                                <h6 class ="mt-2"><b>{{ $history->or_number  }}</b></h6>
+                                                            @endif
                                                 </td>
                                                 <td>
                                                     <h6 class ="mt-2"><b>{{ ucfirst($history->type)  }}</b></h6>
@@ -226,6 +234,55 @@
                                     </table>
                                 </div>
                             </div>
+
+                              <div class="tab-pane fade" id="order-history" role="tabpanel" aria-labelledby="order-history-tab">
+
+                                  <div class="table-responsive mt-4">
+                                      <table class="table table-bordered" width="100%" cellspacing="0">
+                                          <thead>
+                                          <tr>
+                                              <th>Order #</th>
+                                              <th>Sales Representative</th>
+                                              <th>Total</th>
+                                              <th>Placed At</th>
+                                              <th>Payment Type</th>
+                                              <th>Payment Status</th>
+                                              <th>Delivery Status</th>
+                                              <th></th>
+                                          </tr>
+                                          @forelse ($orders as $order)
+                                              <tr>
+                                                  <td>#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
+                                                  <td>{{ $order->assistant_first_name }} {{ $order->assistant_last_name }}</td>
+                                                  <td>@money($order->total)</td>
+                                                  <td>{{ isset($order->placed_at) ? date('F j, Y', strtotime($order->placed_at)) : 'N/A' }}</td>
+                                                  <td>{{ isset($order->payment_type) ? ucfirst($order->payment_type) : 'N/A' }}</td>
+                                                  <td>{{ $this->getPaymentStatus($order->order_id) }}</td>
+                                                  <td>
+                                                          @if($order->shipping_status == 0)
+                                                              To Ship
+                                                          @elseif($order->shipping_status == 1)
+                                                              Out for Delivery
+                                                          @else
+                                                              Delivered
+                                                          @endif
+                                                  </td>
+                                                  <td align = "center">
+                                                      <div class="btn-group">
+                                                          <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" type="button"
+                                                             class="btn btn-primary">View</a>
+                                                      </div>
+                                                  </td>
+                                              </tr>
+                                          @empty
+                                              <tr>
+                                                  <td colspan="10" align="center">No orders found</td>
+                                              </tr>
+                                          @endforelse
+                                          </thead>
+                                      </table>
+                                  </div>
+                              </div>
                           </div>
                     </div>
                 </div>
@@ -283,19 +340,19 @@
                                 <h4 class="mt-3 ml-1">Installment Balance :</h4>
                             </div>
                             <div class="col-sm-6">
-                                <h4 class="mt-3 ml-1"><strong>₱2,350.00</strong></h4>
+                                <h4 class="mt-3 ml-1"><strong>@money($balance->installment)</strong></h4>
                             </div>
                             <div class="col-sm-6">
                                 <h4 class="mt-3 ml-1">COD Balance :</h4>
                             </div>
                             <div class="col-sm-6">
-                                <h4 class="mt-3 ml-1"><strong>₱1,100.00</strong></h4>
+                                <h4 class="mt-3 ml-1"><strong>@money($balance->cod)</strong></h4>
                             </div>
                             <div class="col-sm-6">
                                 <h4 class="mt-3 ml-1">Total Balance :</h4>
                             </div>
                             <div class="col-sm-6">
-                                <h4 class="mt-3 ml-1"><strong>@money($balance)</strong></h4>
+                                <h4 class="mt-3 ml-1"><strong>@money($balance->balance)</strong></h4>
                             </div>
                         </div>
                     </div>
@@ -315,7 +372,7 @@
                           <div class="tab-content" id="paymentContent">
 
                             <div class="tab-pane fade show active" id="installment" role="tabpanel" aria-labelledby="installment-tab">
-                                @foreach($installment_bills as $bills)
+                                @forelse($installment_bills as $bills)
                                 <div wire:key="{{ $bills->installment_id }}-{{ $bills->index }}" class="card shadow mb-4" x-data="{ balance: {{ $bills->balance / 100 }}, rate: 0 }">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between">
@@ -394,11 +451,37 @@
                                         </div>
                                     </div>
                                 </div>
-                                @endforeach
+                                @empty
+                                    <div class="card shadow mb-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <span>No upcoming bills found.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforelse
 
                             </div>
                             <div class="tab-pane fade show" id="cod" role="tabpanel" aria-labelledby="cod-tab">
-                                test2
+                                @forelse($codOrders as $codOrder)
+                                    <div wire:key="{{ $codOrder->order_id }}" class="card shadow mb-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <a href="{{ route('admin.order.details', ['order_id' => $codOrder->order_id]) }}"><h5 class="mt-3 ml-1"><strong>Order #{{ str_pad((string) $codOrder->id, 12, '0', STR_PAD_LEFT) }}</strong> - COD </h5></a>
+                                                <h5 class="mt-3 ml-1">Balance : <strong>@money($codOrder->total - $this->getOrderDownPayment($codOrder->order_id))</strong></h5>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="card shadow mb-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <span>No orders found.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforelse
                             </div>
                           </div>
 

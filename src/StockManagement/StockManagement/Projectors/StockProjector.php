@@ -8,6 +8,7 @@ use StockManagementContracts\Events\DamagedProductReceived;
 use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
+use StockManagementContracts\Events\ProductReturned;
 use StockManagementContracts\Events\ProductSetAsDamaged;
 use StockManagementContracts\Events\ReservationCancelled;
 use StockManagementContracts\Events\ReservationFulfilled;
@@ -126,6 +127,19 @@ class StockProjector extends Projector
 
     public function onProductReleased(ProductReleased $event): void
     {
+        DB::table('stocks')
+            ->where('product_id', $event->productId)
+            ->where('branch_id', $event->branchId)
+            ->decrement('available', $event->quantity);
+    }
+
+    public function onProductReturned(ProductReturned $event): void
+    {
+        DB::table('stocks')
+            ->where('product_id', $event->productId)
+            ->where('branch_id', $event->branchId)
+            ->decrement('sold', $event->quantity);
+
         DB::table('stocks')
             ->where('product_id', $event->productId)
             ->where('branch_id', $event->branchId)

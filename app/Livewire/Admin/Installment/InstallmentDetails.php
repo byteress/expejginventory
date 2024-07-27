@@ -175,7 +175,7 @@ class InstallmentDetails extends Component
 
         if(!$balance) return 0;
 
-        return $balance->balance;
+        return $balance;
     }
 
     public function getTransactionHistory()
@@ -188,6 +188,65 @@ class InstallmentDetails extends Component
             ->get();
     }
 
+    public function getCodOrders()
+    {
+        return DB::table('orders')
+            ->where('customer_id', $this->customer->id)
+            ->where('payment_type', 'cod')
+            ->where('status', 1)
+            ->get();
+    }
+
+    public function getOrderDownPayment(string $orderId)
+    {
+        $sum = DB::table('payment_methods')
+            ->where('order_id', $orderId)
+            ->sum('amount');
+
+        return $sum;
+    }
+
+    public function getOrderHistory()
+    {
+        $query = DB::table('orders')
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
+            ->join('branches', 'orders.branch_id', '=', 'branches.id')
+            ->join('users', 'orders.assistant_id', '=', 'users.id')
+            ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
+            ->where('customer_id', $this->customer->id)
+            ->orderByDesc('orders.placed_at');
+
+        return $query->get();
+    }
+
+    public function getPaymentStatus(string $orderId): string
+    {
+        $order = DB::table('orders')->where('order_id', $orderId)->first();
+        if(!$order) return 'Pending';
+
+        if($order->payment_type == 'full'){
+            if($order->status > 0) return 'Fully Paid';
+        }
+
+        if($order->payment_type == 'cod'){
+            if($order->status == 2) return 'Fully Paid';
+            if($order->status == 1) return 'Partially Paid';
+        }
+
+        if($order->payment_type == 'installment'){
+            $exists = DB::table('installment_bills')
+                ->where('order_id', $orderId)
+                ->where('balance', '>', 0)
+                ->exists();
+
+            if(!$exists) return 'Fully Paid';
+
+            return 'Partially Paid';
+        }
+
+        return 'Pending';
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
@@ -195,6 +254,8 @@ class InstallmentDetails extends Component
             'installment_bills' => $this->getInstallmentBills(),
             'balance' => $this->getBalance(),
             'transaction_history' => $this->getTransactionHistory(),
+            'codOrders' => $this->getCodOrders(),
+            'orders' => $this->getOrderHistory(),
         ]);
     }
 }

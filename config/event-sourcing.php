@@ -52,7 +52,8 @@ return [
     'reactors' => [
         // App\Reactors\YourReactor::class
         \StockManagement\EventHandlers\AdvancedOrderEventHandler::class,
-        \StockManagement\EventHandlers\OrderProcessedEventHandler::class
+        \StockManagement\EventHandlers\OrderProcessedEventHandler::class,
+        \StockManagement\EventHandlers\OrderCancelledEventHandler::class
     ],
 
     /*

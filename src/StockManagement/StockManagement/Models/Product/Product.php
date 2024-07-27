@@ -8,6 +8,7 @@ use StockManagementContracts\Events\DamagedProductReceived;
 use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
+use StockManagementContracts\Events\ProductReturned;
 use StockManagementContracts\Events\ReservationCancelled;
 use StockManagementContracts\Events\ProductSetAsDamaged;
 use StockManagementContracts\Events\ReservationFulfilled;
@@ -195,6 +196,23 @@ class Product extends Aggregate
 
         $this->recordThat($event);
 
+        return $this;
+    }
+
+    public function return(
+        string $branchId,
+        int    $quantity,
+        string $actor
+    ): self
+    {
+        $event = new ProductReturned(
+            $this->uuid(),
+            $branchId,
+            $quantity,
+            $actor
+        );
+
+        $this->recordThat($event);
         return $this;
     }
 

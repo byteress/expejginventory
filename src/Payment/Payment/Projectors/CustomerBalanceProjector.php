@@ -15,35 +15,35 @@ class CustomerBalanceProjector extends Projector
 {
     public function onInstallmentInitialized(InstallmentInitialized $event): void
     {
-        $this->updateBalance($event->customerId, $event->amount, 'increment');
+        $this->updateBalance($event->customerId, $event->amount, 'increment', 'installment');
     }
 
     public function onInstallmentPaymentReceived(InstallmentPaymentReceived $event): void
     {
-        $this->updateBalance($event->customerId, $event->amount, 'decrement');
+        $this->updateBalance($event->customerId, $event->amount, 'decrement', 'installment');
     }
 
     public function onCodPaymentRequested(CodPaymentRequested $event): void
     {
-        $this->updateBalance($event->customerId, $event->amount, 'increment');
+        $this->updateBalance($event->customerId, $event->amount, 'increment', 'cod');
     }
 
     public function onCodPaymentReceived(CodPaymentReceived $event): void
     {
-        $this->updateBalance($event->customerId, $event->amount, 'decrement');
+        $this->updateBalance($event->customerId, $event->amount, 'decrement', 'cod');
     }
 
     public function onPenaltyApplied(PenaltyApplied $event): void
     {
-        $this->updateBalance($event->customerId, $event->amount, 'increment');
+        $this->updateBalance($event->customerId, $event->amount, 'increment', 'installment');
     }
 
     public function onPenaltyRemoved(PenaltyRemoved $event): void
     {
-        $this->updateBalance($event->customerId, $event->amount, 'decrement');
+        $this->updateBalance($event->customerId, $event->amount, 'decrement', 'installment');
     }
 
-    private function updateBalance(string $customerId, int $amount, string $action): void
+    private function updateBalance(string $customerId, int $amount, string $action, string $type): void
     {
         $balance = DB::table('customer_balances')
             ->where('customer_id', $customerId)
@@ -54,6 +54,7 @@ class CustomerBalanceProjector extends Projector
                 ->insert([
                     'customer_id' => $customerId,
                     'balance' => $amount,
+                    $type => $amount
                 ]);
 
             return;
@@ -63,10 +64,18 @@ class CustomerBalanceProjector extends Projector
             DB::table('customer_balances')
                 ->where('customer_id', $customerId)
                 ->increment('balance', $amount);
+
+            DB::table('customer_balances')
+                ->where('customer_id', $customerId)
+                ->increment($type, $amount);
         }else{
             DB::table('customer_balances')
                 ->where('customer_id', $customerId)
                 ->decrement('balance', $amount);
+
+            DB::table('customer_balances')
+                ->where('customer_id', $customerId)
+                ->decrement($type, $amount);
         }
     }
 
