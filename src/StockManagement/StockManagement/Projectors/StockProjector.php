@@ -143,6 +143,6 @@ class StockProjector extends Projector
         DB::table('stocks')
             ->where('product_id', $event->productId)
             ->where('branch_id', $event->branchId)
-            ->decrement('available', $event->quantity);
+            ->increment('available', $event->quantity);
     }
 }

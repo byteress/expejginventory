@@ -61,6 +61,7 @@ class Orders extends Component
         }
 
         DB::commit();
+        $this->dispatch('close-modal');
         session()->flash('success', __('Order has been canceled'));
     }
 

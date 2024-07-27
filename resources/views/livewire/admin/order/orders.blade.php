@@ -121,3 +121,11 @@
     <!-- /.container-fluid -->
 
 </div>
+
+@script
+<script>
+    $wire.on('close-modal', () => {
+        $('.modal').modal('hide');
+    });
+</script>
+@endscript
