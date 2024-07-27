@@ -16,6 +16,17 @@
                     </div>
                 </div>
                 <div class="table-responsive">
+                    @if (session('alert'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('alert') }}
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                             <tr>
