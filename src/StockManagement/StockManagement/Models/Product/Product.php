@@ -278,4 +278,10 @@ class Product extends Aggregate
         $oldQuantity = $this->available[$event->branchId] ?? 0;
         $this->available[$event->branchId] = $oldQuantity - $event->quantity;
     }
+
+    public function applyProductReturned(ProductReturned $event): void
+    {
+        $oldQuantity = $this->available[$event->branchId] ?? 0;
+        $this->available[$event->branchId] = $oldQuantity + $event->quantity;
+    }
 }
