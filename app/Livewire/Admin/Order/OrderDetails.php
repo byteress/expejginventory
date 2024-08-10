@@ -42,6 +42,7 @@ class OrderDetails extends Component
     public $referenceNumbers = [''];
     public $amounts = [null];
     public $receiptNumber = '';
+    public $credit = [true];
 
     public $completed = false;
     public string $paymentType = 'full';
@@ -74,18 +75,7 @@ class OrderDetails extends Component
             $this->paymentType = 'cod';
         }
 
-        $paymentMethods = $this->getPaymentMethods();
-        if($paymentMethods->isNotEmpty()){
-            $this->paymentMethods = [];
-            $this->referenceNumbers = [];
-            $this->amounts = [];
-
-            foreach($paymentMethods as $methods){
-                $this->referenceNumbers[] = $methods->reference;
-                $this->paymentMethods[] = $methods->method;
-                $this->amounts[] = $methods->amount / 100;
-            }
-        }
+        $this->getPaymentMethods();
 
         if($this->completedCod){
 
@@ -326,18 +316,55 @@ class OrderDetails extends Component
         return DB::table('orders')->where('order_id', $this->orderId)->first();
     }
 
+    private function getCancelledOrder()
+    {
+        $order = $this->getOrder();
+        return DB::table('orders')->where('order_id', $order->cancelled_order_id)->first();
+    }
+
     private function getPaymentMethods()
     {
+        $paymentMethods = [];
+        $order = $this->getOrder();
         $transaction = DB::table('transactions')->where('order_id', $this->orderId)->first();
+        $fromCancelledOrder = false;
 
-        $query = DB::table('payment_methods')
-            ->where('order_id', $this->orderId);
+        if ($transaction){
+            $query = DB::table('payment_methods')
+                ->where('order_id', $this->orderId)
+                ->where('transaction_id', $transaction->id);
 
-        if ($transaction)
-            $query = $query->where('transaction_id', $transaction->id);
+            $paymentMethods = $query->get();
+        }else if($order->cancelled_order_id){
+            $transaction = DB::table('transactions')->where('order_id', $order->cancelled_order_id)->first();
 
+            if($transaction){
+                $query = DB::table('payment_methods')
+                    ->where('order_id', $order->cancelled_order_id)
+                    ->where('transaction_id', $transaction->id);
 
-        return $query->get();
+                $paymentMethods = $query->get();
+                $fromCancelledOrder = true;
+            }
+        }
+
+        if(!empty($paymentMethods)){
+            $this->paymentMethods = [];
+            $this->referenceNumbers = [];
+            $this->amounts = [];
+            $this->credit = [];
+
+            foreach($paymentMethods as $methods){
+                $this->referenceNumbers[] = $methods->reference;
+                $this->paymentMethods[] = $methods->method;
+                $this->amounts[] = $methods->amount / 100;
+                if($fromCancelledOrder){
+                    $this->credit[] = true;
+                }else{
+                    $this->credit[] = $methods->credit;
+                }
+            }
+        }
     }
 
     private function getCodPaymentMethods()
@@ -441,6 +468,7 @@ class OrderDetails extends Component
         $this->paymentMethods[] = 'Cash';
         $this->referenceNumbers[] = '';
         $this->amounts[] = null;
+        $this->credit[] = false;
     }
 
     public function newPaymentMethodCod(): void
@@ -456,10 +484,12 @@ class OrderDetails extends Component
         unset($this->paymentMethods[$index]);
         unset($this->referenceNumbers[$index]);
         unset($this->amounts[$index]);
+        unset($this->credit[$index]);
 
         $this->paymentMethods = array_values($this->paymentMethods);
         $this->referenceNumbers = array_values($this->referenceNumbers);
         $this->amounts = array_values($this->amounts);
+        $this->credit = array_values($this->credit);
     }
 
     public function removePaymentMethodCod(int $index): void
@@ -545,6 +575,7 @@ class OrderDetails extends Component
                     'amount' => $this->amounts[$i] * 100,
                     'reference' => $this->referenceNumbers[$i],
                     'method' => $this->paymentMethods[$i],
+                    'credit' => $this->credit[$i],
                 ];
             }
         }
@@ -605,6 +636,7 @@ class OrderDetails extends Component
                     'amount' => $this->amounts[$i] * 100,
                     'reference' => $this->referenceNumbers[$i],
                     'method' => $this->paymentMethods[$i],
+                    'credit' => $this->credit[$i],
                 ];
             }
         }
@@ -692,6 +724,7 @@ class OrderDetails extends Component
     {
         return view('livewire.admin.order.order-details', [
             'order' => $this->getOrder(),
+            'cancelled' => $this->getCancelledOrder(),
             'products' => $this->getProducts(),
             'cartItems' => $this->getItems(),
             'customer' => $this->getCustomer(),

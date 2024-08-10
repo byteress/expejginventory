@@ -14,7 +14,16 @@ interface IOrderService
      *      'price': int,
      *      'reservationId': string
      * }> $items */
-    public function placeOrder(string $orderId, string $customerId, string $assistantId, string $branchId, array $items, string $orderType, ?string $authorization): Result;
+    public function placeOrder(
+        string $orderId,
+        string $customerId,
+        string $assistantId,
+        string $branchId,
+        array $items,
+        string $orderType,
+        ?string $authorization,
+        ?string $cancelledOrder
+    ): Result;
     public function addItem(
         string $orderId,
         string $productId,
@@ -39,5 +48,5 @@ interface IOrderService
      */
     public function shipOrders(string $shippingId, string $driver, string $truck, string $branch, array $orders, ?string $notes = null): Result;
     public function markAsDelivered(string $orderId): Result;
-    public function cancel(string $orderId, string $actor): Result;
+    public function cancel(string $orderId, string $actor, string $authorization, ?string $notes): Result;
 }

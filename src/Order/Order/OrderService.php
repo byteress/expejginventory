@@ -33,19 +33,28 @@ class OrderService implements IOrderService
      *      'price': int,
      *      'reservationId': string
      * }> $items */
-    public function placeOrder(string $orderId, string $customerId, string $assistantId, string $branchId, array $items, string $orderType, ?string $authorization): Result
+    public function placeOrder(
+        string $orderId,
+        string $customerId,
+        string $assistantId,
+        string $branchId,
+        array $items,
+        string $orderType,
+        ?string $authorization,
+        ?string $cancelledOrder
+    ): Result
     {
         try {
             foreach ($items as $item) {
                 $product = Product::retrieve($item['productId']);
                 //check if specified price and the regular price has a difference of 5% of the regular price
                 if ($product->needsAuthorization($item['price'])) {
-                    $this->validateAuthorization($authorization, $items);
+                    $this->validateAuthorization($authorization, serialize($items));
                 }
             }
 
             $order = Order::retrieve($orderId);
-            $order->place($items, $customerId, $assistantId, $branchId, $orderType);
+            $order->place($items, $customerId, $assistantId, $branchId, $orderType, $cancelledOrder);
             $order->persist();
 
             return Result::success(null);
@@ -184,11 +193,13 @@ class OrderService implements IOrderService
         }
     }
 
-    public function cancel(string $orderId, string $actor): Result
+    public function cancel(string $orderId, string $actor, string $authorization, ?string $notes): Result
     {
         try {
+            $this->validateAuthorization($authorization, "cancel-$orderId");
+
             $order = Order::retrieve($orderId);
-            $order->cancel($actor);
+            $order->cancel($actor, $notes);
             $order->persist();
 
             return Result::success(null);
@@ -199,22 +210,14 @@ class OrderService implements IOrderService
     }
 
     /**
-     * @param string|null $authorization
-     * @param array<array{
-     *      'productId': string,
-     *      'title': string,
-     *      'quantity': int,
-     *      'price': int,
-     *      'reservationId': string
-     * }> $items
      * @throws InvalidDomainException
      */
-    private function validateAuthorization(?string $authorization, array $items): void
+    private function validateAuthorization(?string $authorization, string $key): void
     {
         if ($authorization === null) throw new InvalidDomainException('Authorization from admin is required', ['authorization' => 'Authorization from admin is required'], 1001);
 
         $decrypted = Crypt::decryptString($authorization);
-        if ($decrypted != serialize($items)) {
+        if ($decrypted != $key) {
             throw new InvalidDomainException('Authorization from admin is invalid', ['authorization' => 'Authorization from admin is invalid'], 1002);
         }
     }

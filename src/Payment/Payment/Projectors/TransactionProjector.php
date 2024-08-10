@@ -37,7 +37,8 @@ class TransactionProjector extends Projector
                     'reference' => $event->paymentMethods[$i]['reference'],
                     'amount' => $event->paymentMethods[$i]['amount'],
                     'order_id' => $event->orderId,
-                    'transaction_id' => $event->transactionId
+                    'transaction_id' => $event->transactionId,
+                    'credit' => $event->paymentMethods[$i]['credit'],
                 ]);
         }
     }
@@ -128,7 +129,8 @@ class TransactionProjector extends Projector
                     'reference' => $event->paymentMethods[$i]['reference'],
                     'amount' => $event->paymentMethods[$i]['amount'],
                     'order_id' => $event->orderId,
-                    'transaction_id' => $event->transactionId
+                    'transaction_id' => $event->transactionId,
+                    'credit' => $event->paymentMethods[$i]['credit'],
                 ]);
         }
     }

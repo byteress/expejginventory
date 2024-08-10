@@ -12,7 +12,8 @@ class OrderPlaced extends ShouldBeStored
         public string $assistantId,
         public string $branchId,
         public array $items,
-        public string $orderType = 'regular'
+        public string $orderType = 'regular',
+        public ?string $cancelledOrder = null
     )
     {
 

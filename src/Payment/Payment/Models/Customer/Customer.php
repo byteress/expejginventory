@@ -34,7 +34,7 @@ class Customer extends Aggregate
      * @param int $months
      * @param float $interestRate
      * @param string $orderId
-     * @param array<array{'method': string, 'reference': string, 'amount': int}> $downPayment
+     * @param array<array{'method': string, 'reference': string, 'amount': int, 'credit': bool}> $downPayment
      * @param string $cashier
      * @param string|null $transactionId
      * @param string|null $orNumber
@@ -278,7 +278,7 @@ class Customer extends Aggregate
     }
 
     /**
-     * @param array<array{'method': string, 'reference': string, 'amount': int}> $paymentMethods
+     * @param array<array{'method': string, 'reference': string, 'amount': int, 'credit': bool}> $paymentMethods
      * @param string $cashier
      * @param string $transactionId
      * @param string $orNumber

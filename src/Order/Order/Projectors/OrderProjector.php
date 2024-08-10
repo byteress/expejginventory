@@ -42,7 +42,8 @@ class OrderProjector extends Projector
                 'assistant_id' => $event->assistantId,
                 'total' => $total,
                 'placed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s') ?? '',
-                'order_type' => $event->orderType
+                'order_type' => $event->orderType,
+                'cancelled_order_id' => $event->cancelledOrder
             ]);
     }
 
@@ -141,6 +142,7 @@ class OrderProjector extends Projector
             ->where('order_id', $event->orderId)
             ->update([
                 'status' => 3,
+                'notes' => $event->notes
             ]);
     }
 

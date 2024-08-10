@@ -3,14 +3,18 @@
 namespace App\Livewire\Admin\Order;
 
 use App\Exceptions\ErrorHandler;
+use IdentityAndAccessContracts\IIdentityAndAccessService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
-use Order\Models\Order\Order;
 use OrderContracts\IOrderService;
+use StockManagementContracts\IStockManagementService;
 use Throwable;
 
 #[Title('Orders')]
@@ -25,6 +29,12 @@ class Orders extends Component
     public $type;
     public $status;
     public $displayStatus;
+
+    #[Validate('required|email')]
+    public string $email;
+    #[Validate('required')]
+    public string $password;
+    public ?string $notes = null;
 
     public function mount(string $type, string $status): void
     {
@@ -48,21 +58,80 @@ class Orders extends Component
     /**
      * @throws Throwable
      */
-    public function cancelOrder(IOrderService $orderService, string $orderId): void
+    public function cancelOrder(
+        IOrderService $orderService,
+        IIdentityAndAccessService $identityAndAccessService,
+        IStockManagementService $stockManagementService,
+        string $orderId): void
     {
+        $this->validate();
+
         DB::beginTransaction();
 
-        $result = $orderService->cancel($orderId, auth()->user()->id);
+        $authorization = $identityAndAccessService->authorize($this->email, $this->password, "cancel-$orderId");
+        if($authorization->isFailure()){
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($authorization->getError()));
+            return;
+        }
+
+        $result = $orderService->cancel($orderId, auth()->user()->id, $authorization->getValue(), $this->notes);
 
         if($result->isFailure()){
             DB::rollBack();
-            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        $order = $this->getOrder($orderId);
+        $lineItems = $this->getItems($orderId);
+        $items = [];
+        foreach ($lineItems as $item){
+            $reservationId = Str::uuid()->toString();
+            $reservationResult = $stockManagementService->reserve($item->product_id, $reservationId, $item->quantity, $order->branch_id, auth()->user()->id);
+            if($reservationResult->isFailure()){
+                DB::rollBack();
+                session()->flash('alert-auth', ErrorHandler::getErrorMessage($reservationResult->getError()));
+                return;
+            }
+
+            $items[] = [
+                'productId' => $item->product_id,
+                'quantity' => $item->quantity,
+                'title' => $item->title,
+                'price' => $item->price,
+                'reservationId' => $reservationId,
+            ];
+        }
+
+        $newOrderId = Str::uuid()->toString();
+        $placeOrderResult = $orderService->placeOrder(
+            $newOrderId,
+            $order->customer_id,
+            $order->assistant_id,
+            $order->branch_id,
+            $items,
+            $order->order_type,
+            null,
+            $order->order_id
+        );
+
+        if($placeOrderResult->isFailure()){
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($placeOrderResult->getError()));
             return;
         }
 
         DB::commit();
-        $this->dispatch('close-modal');
-        session()->flash('success', __('Order has been canceled'));
+
+        $this->redirect(route('admin.order.details', ['order_id' => $newOrderId]));
+    }
+
+    #[On('modal-hidden')]
+    public function modelHidden()
+    {
+        $this->reset('email', 'password', 'notes');
+        $this->resetErrorBag();
     }
 
     public function getOrders()
@@ -86,6 +155,20 @@ class Orders extends Component
         if($this->branch) $query = $query->where('branches.id', $this->branch);
 
         return $query->paginate(10);
+    }
+
+    private function getItems(string $orderId)
+    {
+        return DB::table('line_items')
+            ->where('order_id', $orderId)
+            ->get();
+    }
+
+    private function getOrder(string $orderId)
+    {
+        return DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
     }
 
     public function getPaymentStatus(string $orderId): string

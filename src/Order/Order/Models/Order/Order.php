@@ -18,6 +18,16 @@ class Order extends Aggregate
     /** @var array<string> */
     private array $productNeedsAuthorization = [];
     private bool $authorizationRequired = false;
+    /**
+     * @var array<array{
+     *       'productId': string,
+     *       'title': string,
+     *       'quantity': int,
+     *       'price': int,
+     *       'reservationId': string
+     *  }>
+     */
+    private array $lineItems = [];
 
     /** @param array<array{
      *      'productId': string,
@@ -26,7 +36,14 @@ class Order extends Aggregate
      *      'price': int,
      *      'reservationId': string
      * }> $items */
-    public function place(array $items, string $customerId, string $assistantId, string $branchId, string $orderType): self
+    public function place(
+        array $items,
+        string $customerId,
+        string $assistantId,
+        string $branchId,
+        string $orderType,
+        ?string $cancelledOrder
+    ): self
     {
         $event = new OrderPlaced(
             $this->uuid(),
@@ -34,7 +51,8 @@ class Order extends Aggregate
             $assistantId,
             $branchId,
             $items,
-            $orderType
+            $orderType,
+            $cancelledOrder
         );
 
         $this->recordThat($event);
@@ -124,9 +142,9 @@ class Order extends Aggregate
         return $this;
     }
 
-    public function cancel(string $actor): self
+    public function cancel(string $actor, ?string $notes): self
     {
-        $event = new OrderCancelled($this->uuid(), $actor);
+        $event = new OrderCancelled($this->uuid(), $actor, $notes);
 
         $this->recordThat($event);
         return $this;
@@ -160,5 +178,10 @@ class Order extends Aggregate
     {
         $this->productNeedsAuthorization = [];
         $this->authorizationRequired = false;
+    }
+
+    public function getLineItems(): array
+    {
+        return $this->lineItems;
     }
 }

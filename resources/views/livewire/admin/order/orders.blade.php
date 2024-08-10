@@ -89,6 +89,7 @@
                                                 role="dialog" aria-labelledby="deleteModal{{ $order->order_id }}Label" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
+                                                        <form class="user" wire:submit="cancelOrder('{{ $order->order_id }}')">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="deleteModal{{ $order->order_id }}Label">Cancel Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}
                                                             </h5>
@@ -98,14 +99,41 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Are you sure you want to cancel this order?
+                                                            @if (session('alert-auth'))
+                                                                <div class="alert alert-danger" role="alert">
+                                                                    {{ session('alert-auth') }}
+                                                                </div>
+                                                            @endif
+                                                                <div class="form-group">
+                                                                    <input autocomplete="false" wire:model="email" type="email" class="form-control"
+                                                                           aria-describedby="emailHelp"
+                                                                           placeholder="Enter Email Address...">
+                                                                    @error('email')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <input wire:model="password" type="password" class="form-control"
+                                                                           placeholder="Password">
+                                                                    @error('password')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <textarea wire:model="notes" class="form-control" placeholder="Notes"></textarea>
+                                                                    @error('notes')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">No</button>
-                                                            <button wire:click="cancelOrder('{{ $order->order_id }}')" type="button"
+                                                            <button type="submit"
                                                                 class="btn btn-danger">Yes</button>
                                                         </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,5 +166,9 @@
     $wire.on('close-modal', () => {
         $('.modal').modal('hide');
     });
+
+    $('.modal').on('hide.bs.modal', function (e) {
+        $wire.dispatch('modal-hidden');
+    })
 </script>
 @endscript

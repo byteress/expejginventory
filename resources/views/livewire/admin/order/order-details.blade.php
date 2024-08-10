@@ -289,14 +289,30 @@
                                                   <input wire:model.live="paymentType" type="radio" id="option3" value="installment"  @if($completed) disabled @endif> Installment
                                                 </label>
                                                 @endif
-                                                <label class="btn btn-secondary btn-option @if($paymentType == 'cod') active @endif">
-                                                    <input type="radio" id="option4" value="cod" wire:model.live="paymentType" @if($completed) disabled @endif> COD
-                                                </label>
+{{--                                                <label class="btn btn-secondary btn-option @if($paymentType == 'cod') active @endif">--}}
+{{--                                                    <input type="radio" id="option4" value="cod" wire:model.live="paymentType" @if($completed) disabled @endif> COD--}}
+{{--                                                </label>--}}
                                               </div>
                                         </div>
                                     </div>
                                 </div>
                                 <hr>
+                                @if($cancelled)
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Previous Receipt Number</span>
+                                                </div>
+                                                <input type="text" class="form-control" disabled placeholder="Previous Receipt Number" value="{{ $cancelled->receipt_number }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <br>
+                                </div>
+                                @endif
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="d-flex">
@@ -363,7 +379,7 @@
                                                             <option value="Gcash">Gcash</option>
                                                             <option value="Paymaya">Paymaya</option>
                                                             <option value="Bank Transfer">Bank Transfer</option>
-                                                            <option value="Others">Others</option>
+                                                            <option value="COD">COD</option>
                                                         </select>
                                                     </div>
                                                     @error('paymentMethods.' . $loop->index)
@@ -398,17 +414,23 @@
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                                @if (!$loop->first)
                                                     <div class="col-md-2">
                                                         <div class="d-flex justify-content-center">
+                                                            <div class="form-check form-switch">
+                                                                <input wire:model="credit.{{ $loop->index }}" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked{{ $loop->index }}">
+                                                                <label class="form-check-label" for="flexSwitchCheckChecked{{ $loop->index }}">Credit</label>
+                                                            </div>
+                                                            @if (!$loop->first)
+                                                            <div class="form-check form-switch">
                                                             <button
                                                                 wire:click="removePaymentMethod({{ $loop->index }})"
                                                                 class="btn btn-danger btn-sm mt-1">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
-                                                @endif
                                             </div>
                                         @endforeach
                                     </div>
@@ -487,7 +509,7 @@
                                                             <option value="Gcash">Gcash</option>
                                                             <option value="Paymaya">Paymaya</option>
                                                             <option value="Bank Transfer">Bank Transfer</option>
-                                                            <option value="Others">Others</option>
+                                                            <option value="COD">COD</option>
                                                         </select>
                                                     </div>
                                                     @error('paymentMethodsCod.' . $loop->index)

@@ -3,6 +3,7 @@
 namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
+use OrderContracts\Events\OrderCancelled;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\InstallmentPaymentReceived;
 use PaymentContracts\Events\PenaltyApplied;
@@ -94,6 +95,13 @@ class InstallmentBillsProjector extends Projector
             ->update([
                 'penalty' => 0,
             ]);
+    }
+
+    public function onOrderCancelled(OrderCancelled $event): void
+    {
+        DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->delete();
     }
 
     public function onStartingEventReplay(): void
