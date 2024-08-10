@@ -22,7 +22,7 @@ interface IOrderService
         array $items,
         string $orderType,
         ?string $authorization,
-        ?string $cancelledOrder
+        ?string $cancelledOrder = null
     ): Result;
     public function addItem(
         string $orderId,

@@ -41,7 +41,7 @@ class OrderService implements IOrderService
         array $items,
         string $orderType,
         ?string $authorization,
-        ?string $cancelledOrder
+        ?string $cancelledOrder = null
     ): Result
     {
         try {
