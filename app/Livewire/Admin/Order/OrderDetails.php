@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Order;
 
+use Akaunting\Money\Money;
 use App\Exceptions\ErrorHandler;
 use Exception;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
@@ -509,6 +510,14 @@ class OrderDetails extends Component
     public function submitPayment(IPaymentService $paymentService): void
     {
         $this->resetErrorBag();
+
+        $order = $this->getOrder();
+        $cancelledOrder = $this->getCancelledOrder();
+
+        if($cancelledOrder && $order->total < $cancelledOrder->total){
+            $this->addError('total', 'Order total should be equal or greater than the previous amount of ' . Money::PHP($cancelledOrder->total));
+            return;
+        }
 
         if($this->paymentType == 'full'){
             $this->fullPayment($paymentService);

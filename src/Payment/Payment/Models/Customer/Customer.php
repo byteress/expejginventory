@@ -116,6 +116,7 @@ class Customer extends Aggregate
      * @param string $transactionId
      * @param string $orNumber
      * @return $this
+     * @throws InvalidDomainException
      */
     public function payInstallment(array $paymentMethods, string $cashier, string $transactionId, string $orNumber): self
     {
@@ -123,6 +124,8 @@ class Customer extends Aggregate
         foreach($paymentMethods as $dp){
             $total += $dp['amount'];
         }
+
+//        if($this->balance < $total) throw new InvalidDomainException('Amount should not be more than customer balance.', ['amount' => 'Amount should not be more than customer balance.']);
 
 //        foreach ($this->installments as $installment){
 //            if($installment['balance'] >= $total){
@@ -327,6 +330,11 @@ class Customer extends Aggregate
 //        });
 
         $this->installments = $merge;
+    }
+
+    public function applyInstallmentPaymentReceived(InstallmentPaymentReceived $event): void
+    {
+        $this->balance -= $event->amount;
     }
 
     public function applyPenaltyApplied(PenaltyApplied $event): void

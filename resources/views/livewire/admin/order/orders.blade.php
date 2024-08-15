@@ -43,6 +43,9 @@
                                     <th>Payment Status</th>
                                     <th>Delivery Status</th>
                                 @endif
+                                @if($displayStatus == 'cancelled')
+                                    <th>Notes</th>
+                                @endif
                                 <th></th>
                             </tr>
                         </thead>
@@ -69,6 +72,9 @@
                                                 Delivered
                                             @endif
                                         </td>
+                                    @endif
+                                    @if($displayStatus == 'cancelled')
+                                        <td>{{ $order->notes }}</td>
                                     @endif
                                     <td align = "center">
                                         <div class="btn-group">
