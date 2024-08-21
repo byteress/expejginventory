@@ -268,6 +268,52 @@
                         </div>
                     </div>
                 </div>
+
+                <div x-data="{ openAddress: $wire.entangle('sameAddress'), openDeliver: $wire.entangle('deliveryType'), openDeliver: $wire.entangle('deliveryType'), deliveryFee: $wire.entangle('deliveryFee').live }" class="card shadow mb-4">
+                    <div class="card-body">
+                        <h5 class ="mb-2 text-primary admin-title">Delivery Information</h5>
+                        <hr>
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                    <div class="btn-group btn-group-toggle">
+                                            <label class="btn btn-secondary btn-option mr-2" :class="openDeliver == 'pickup' && 'active'">
+                                                <input x-on:click="openDeliver = 'pickup', deliveryFee = 0" wire:model="deliveryType" type="radio" id="option2" value="pickup" @if($completed) disabled @endif> Pickup
+                                            </label>
+                                            <label for="delivery-type-deliver" class="btn btn-secondary btn-option mr-2" :class="openDeliver == 'deliver' && 'active'">
+                                                <input x-on:click="openDeliver = 'deliver'" wire:model="deliveryType" type="radio" id="delivery-type-deliver" value="deliver"  @if($completed) disabled @endif> Deliver
+                                            </label>
+                                    </div>
+                            </div>
+                        </div>
+                        <div x-show="openDeliver == 'deliver'" class="form-row">
+
+                            <div class="col-md-12 mb-3">
+                                <label for="delivery-fee">Delivery Fee</label>
+                                <input type="number" min="0" class="form-control" id="delivery-fee" wire:model.live.blur="deliveryFee" @if($completed) disabled @endif>
+                                @error('deliveryFee')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check">
+                                    <input x-on:click="openAddress = ! openAddress, $wire.set('deliveryAddress', '')" class="form-check-input" type="checkbox" id="flexCheckDefault" wire:model="sameAddress" @if($completed) disabled @endif>
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Same as customer address
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div x-show="!openAddress" class="col-md-12 mb-3">
+                                <label for="delivery-address">Address</label>
+                                <textarea wire:model="deliveryAddress" class="form-control" id="delivery-address" @if($completed) disabled @endif></textarea>
+                                @error('deliveryAddress')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-8">
                 <div class="card shadow mb-4">
@@ -625,7 +671,7 @@
                             @endif
                             <div class="col-md-4 fa-pull-right">
                                 <h4 class="text-secondary mt-1"><small>Order Total:</small><br>
-                                    <strong class ="text-primary">@money($order->total)</strong></h4>
+                                    <strong class ="text-primary">@money($order->total + $deliveryFee * 100)</strong></h4>
 
 
                                 <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Payment Total:@else Down Payment: @endif</small><br>

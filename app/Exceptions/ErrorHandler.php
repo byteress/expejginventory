@@ -18,6 +18,7 @@ class ErrorHandler
             case $exception instanceof \TransferContracts\Exceptions\InvalidDomainException:
             case $exception instanceof \ProductManagementContracts\Exceptions\InvalidDomainException:
             case $exception instanceof InvalidDomainException:
+            case $exception instanceof \DeliveryContracts\Exceptions\InvalidDomainException:
                 return $exception->getMessage();
             default:
                 return 'Something went wrong. Please try again later.';

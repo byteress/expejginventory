@@ -157,7 +157,7 @@ class Product extends Aggregate
 
         $reservation = $this->reservations[$reservationId];
 
-        $available = $this->available[$reservation->branchId] ?? 0;
+        $available = $this->reserved[$reservation->branchId] ?? 0;
         Log::info("$reservation->branchId: $available");
         if($available < $reservation->quantity) throw new InvalidDomainException('Insufficient quantity on hand.', ['reserve' => 'Insufficient quantity on hand.']);
 

@@ -6,6 +6,8 @@ use BranchManagement\BranchManagementService;
 use BranchManagementContracts\IBranchManagementService;
 use CustomerManagement\CustomerManagementService;
 use CustomerManagementContracts\ICustomerManagementService;
+use Delivery\DeliveryService;
+use DeliveryContracts\IDeliveryService;
 use IdentityAndAccess\IdentityAndAccessService;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use Illuminate\Support\Facades\Event;
@@ -48,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IOrderService::class, OrderService::class);
         $this->app->bind(ICustomerManagementService::class, CustomerManagementService::class);
         $this->app->bind(IPaymentService::class, PaymentService::class);
+        $this->app->bind(IDeliveryService::class, DeliveryService::class);
 
         Event::subscribe(GenerateSku::class);
 

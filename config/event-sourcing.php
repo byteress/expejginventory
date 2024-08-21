@@ -1,5 +1,6 @@
 <?php
 
+use Delivery\Projectors\DeliveryProjector;
 use Order\Projectors\OrderProjector;
 use StockManagement\Projectors\ReceiveHistoryProjector;
 use StockManagement\Projectors\StockProjector;
@@ -41,7 +42,7 @@ return [
         \Payment\Projectors\CustomerBalanceProjector::class,
         \Payment\Projectors\InstallmentBillsProjector::class,
         \StockManagement\Projectors\AdvancedReservationsProjector::class,
-        \StockManagement\Projectors\ConfirmedItemProjector::class
+        DeliveryProjector::class
     ],
 
     /*
@@ -53,7 +54,8 @@ return [
         // App\Reactors\YourReactor::class
         \StockManagement\EventHandlers\AdvancedOrderEventHandler::class,
         \StockManagement\EventHandlers\OrderProcessedEventHandler::class,
-        \StockManagement\EventHandlers\OrderCancelledEventHandler::class
+        \StockManagement\EventHandlers\OrderCancelledEventHandler::class,
+        \Delivery\EventHandlers\ReservationFulfilledEventHandler::class
     ],
 
     /*

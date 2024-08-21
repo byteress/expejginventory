@@ -4,9 +4,12 @@ namespace App\Livewire\Admin\Order;
 
 use Akaunting\Money\Money;
 use App\Exceptions\ErrorHandler;
-use Exception;
+use DeliveryContracts\IDeliveryService;
+use DeliveryContracts\Utils\Result;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -24,6 +27,9 @@ class OrderDetails extends Component
     use WithPagination;
 
     public $orderId;
+    public $order2;
+    public $cartItems2 = [];
+    public $customer;
 
     #[Url(nullable: true)]
     public $search;
@@ -43,7 +49,7 @@ class OrderDetails extends Component
     public $referenceNumbers = [''];
     public $amounts = [null];
     public $receiptNumber = '';
-    public $credit = [true];
+    public $credit = [false];
 
     public $completed = false;
     public string $paymentType = 'full';
@@ -58,11 +64,18 @@ class OrderDetails extends Component
     public $completedCod = false;
     public string $orderType = '';
 
-    public function mount($order_id)
+    public string $deliveryType = 'pickup';
+    #[Validate('required_if:deliveryType,deliver')]
+    public float $deliveryFee = 0.0;
+    public ?string $deliveryAddress = null;
+    public bool $sameAddress = true;
+
+    public function mount(string $order_id): void
     {
         $this->orderId = $order_id;
 
         $order = $this->getOrder();
+        $this->order2 = $order;
         $this->completed = $order->status;
         $this->completedCod = $order->status == 2;
         $this->branch = $order->branch_id;
@@ -71,6 +84,9 @@ class OrderDetails extends Component
         $this->months = $order->months ?? 5;
         $this->rate = $order->rate ?? 0;
         $this->orderType = $order->order_type;
+        $this->deliveryType = $order->delivery_type;
+        $this->deliveryFee = $order->delivery_fee;
+        $this->deliveryAddress = $order->delivery_address;
 
         if($order->order_type != 'regular'){
             $this->paymentType = 'cod';
@@ -99,6 +115,11 @@ class OrderDetails extends Component
         foreach ($items as $item) {
             $this->calculateDiscount($item->product_id, $item->price);
         }
+
+        $this->cartItems2 = $this->getItems();
+        $this->customer = $this->getCustomer();
+
+        $this->sameAddress = $order->delivery_address == $this->customer->address;
     }
 
     public function calculateDiscount(string $productId, int $price): void
@@ -319,14 +340,14 @@ class OrderDetails extends Component
 
     private function getCancelledOrder()
     {
-        $order = $this->getOrder();
+        $order = $this->order2;
         return DB::table('orders')->where('order_id', $order->cancelled_order_id)->first();
     }
 
     private function getPaymentMethods()
     {
         $paymentMethods = [];
-        $order = $this->getOrder();
+        $order = $this->order2;
         $transaction = DB::table('transactions')->where('order_id', $this->orderId)->first();
         $fromCancelledOrder = false;
 
@@ -404,7 +425,7 @@ class OrderDetails extends Component
 
     public function getCustomer()
     {
-        $order = $this->getOrder();
+        $order = $this->order2;
 
         return DB::table('customers')
             ->where('id', $order->customer_id)
@@ -413,7 +434,7 @@ class OrderDetails extends Component
 
     public function getAssistant()
     {
-        $order = $this->getOrder();
+        $order = $this->order2;
 
         return DB::table('users')
             ->where('id', $order->assistant_id)
@@ -422,7 +443,7 @@ class OrderDetails extends Component
 
     public function getCashier()
     {
-        $order = $this->getOrder();
+        $order = $this->order2;
 
         return DB::table('users')
             ->where('id', $order->cashier)
@@ -507,11 +528,16 @@ class OrderDetails extends Component
     /**
      * @throws \Throwable
      */
-    public function submitPayment(IPaymentService $paymentService): void
+    public function submitPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
     {
         $this->resetErrorBag();
+        $this->validate([
+            'deliveryAddress' => [
+                Rule::requiredIf($this->deliveryType == 'deliver' && !$this->sameAddress)
+            ]
+        ]);
 
-        $order = $this->getOrder();
+        $order = $this->order2;
         $cancelledOrder = $this->getCancelledOrder();
 
         if($cancelledOrder && $order->total < $cancelledOrder->total){
@@ -520,12 +546,30 @@ class OrderDetails extends Component
         }
 
         if($this->paymentType == 'full'){
-            $this->fullPayment($paymentService);
+            $this->fullPayment($paymentService, $deliveryService);
         }else if($this->paymentType == 'installment'){
-            $this->installmentPayment($paymentService);
+            $this->installmentPayment($paymentService, $deliveryService);
         }else if($this->paymentType == 'cod'){
             $this->codPayment($paymentService);
         }
+    }
+
+    private function placeDeliveryOrder(IDeliveryService $deliveryService): Result
+    {
+        $items = [];
+        foreach ($this->cartItems2 as $item) {
+            $items[] = [
+                'productId' => $item->product_id,
+                'title' => $item->title,
+                'quantity' => $item->quantity,
+                'reservationId' => $item->reservation_id,
+            ];
+        }
+
+        $address = $this->customer->address;
+        if(!$this->sameAddress) $address = $this->deliveryAddress;
+
+        return $deliveryService->placeOrder($this->orderId, $items, $this->deliveryType, $this->branch, $this->deliveryFee, $address);
     }
 
     /**
@@ -535,7 +579,7 @@ class OrderDetails extends Component
     {
         DB::beginTransaction();
 
-        $order = $this->getOrder();
+        $order = $this->order2;
 
         $downPayment = [];
         for($i = 0; $i < count($this->amounts); $i++){
@@ -571,11 +615,18 @@ class OrderDetails extends Component
     /**
      * @throws \Throwable
      */
-    public function installmentPayment(IPaymentService $paymentService): void
+    public function installmentPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
     {
         DB::beginTransaction();
 
-        $order = $this->getOrder();
+        $order = $this->order2;
+
+        $deliveryResult = $this->placeDeliveryOrder($deliveryService);
+        if($deliveryResult->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($deliveryResult->getError()));
+            return;
+        }
 
         $downPayment = [];
         for($i = 0; $i < count($this->amounts); $i++){
@@ -615,7 +666,7 @@ class OrderDetails extends Component
     /**
      * @throws \Throwable
      */
-    public function fullPayment(IPaymentService $paymentService): void
+    public function fullPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
     {
         $this->validate([
             'receiptNumber' => 'required',
@@ -626,17 +677,24 @@ class OrderDetails extends Component
             'referenceNumbers.*' => 'Reference Number is required',
         ]);
 
-        $order = $this->getOrder();
+        $order = $this->order2;
 
         $total = array_sum($this->amounts) * 100;
 
-        if($order->total != $total)
+        if(($order->total + $this->deliveryFee * 100) != $total)
         {
             $this->addError('total', 'Payment total should be equal to the order total');
             return;
         }
 
         DB::beginTransaction();
+
+        $deliveryResult = $this->placeDeliveryOrder($deliveryService);
+        if($deliveryResult->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($deliveryResult->getError()));
+            return;
+        }
 
         $fullPayment = [];
         for($i = 0; $i < count($this->amounts); $i++){
@@ -683,7 +741,7 @@ class OrderDetails extends Component
             'referenceNumbersCod.*' => 'Reference Number is required',
         ]);
 
-        $order = $this->getOrder();
+        $order = $this->order2;
 
         $total = $order->total - (array_sum($this->amounts) * 100);
         $codTotal = array_sum($this->amountsCod) * 100;
@@ -695,8 +753,6 @@ class OrderDetails extends Component
         }
 
         DB::beginTransaction();
-
-        $order = $this->getOrder();
 
         $downPayment = [];
         for($i = 0; $i < count($this->amountsCod); $i++){
@@ -733,10 +789,9 @@ class OrderDetails extends Component
     {
         return view('livewire.admin.order.order-details', [
             'order' => $this->getOrder(),
+            'cartItems' => $this->getItems(),
             'cancelled' => $this->getCancelledOrder(),
             'products' => $this->getProducts(),
-            'cartItems' => $this->getItems(),
-            'customer' => $this->getCustomer(),
             'assistant' => $this->getAssistant(),
             'cashier' => $this->getCashier(),
         ]);

@@ -8,9 +8,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use StockManagementContracts\IStockManagementService;
 
-class ProcessOrderJob implements ShouldQueue
+class ProcessOrderJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -20,6 +21,7 @@ class ProcessOrderJob implements ShouldQueue
 
     public function handle(IStockManagementService $stockManagementService): void
     {
+        Log::info("Test log");
         $items = DB::table('line_items')
             ->where('order_id', $this->orderId)
             ->get();

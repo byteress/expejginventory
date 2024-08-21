@@ -5,12 +5,12 @@ namespace App\Livewire\Admin\Delivery;
 use App\Exceptions\ErrorHandler;
 use App\Models\User;
 use BranchManagement\Models\Branch;
+use DeliveryContracts\IDeliveryService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
-use OrderContracts\IOrderService;
 
 #[Title('To Ship')]
 class ToShip extends Component
@@ -25,8 +25,7 @@ class ToShip extends Component
     public $truck = null;
     public string $notes;
 
-    #[Validate('required')]
-    public $toShip = [];
+    public $quantities = [];
 
     public function mount()
     {
@@ -36,7 +35,7 @@ class ToShip extends Component
     /**
      * @throws \Throwable
      */
-    public function shipOrders(IOrderService $orderService): void
+    public function shipOrders(IDeliveryService $deliveryService): void
     {
         $this->resetErrorBag();
         $this->validate();
@@ -44,22 +43,31 @@ class ToShip extends Component
         $user = auth()->user();
         if(!$user) return;
 
-        $orders = [];
-        foreach ($this->toShip as $key => $value) {
-            if($value) $orders[] = $key;
+        $items = [];
+        foreach ($this->quantities as $orderId => $quantities) {
+            foreach($quantities as $productId => $quantity) {
+                if($quantity > 0){
+                    $items[] = [
+                        'orderId' => $orderId,
+                        'productId' => $productId,
+                        'quantity' => $quantity,
+                    ];
+                }
+            }
         }
 
-        if(empty($orders)){
-            $this->addError('toShip', 'You must add at least one order');
+        if(empty($items)){
+            $this->addError('toShip', 'You must add at least one item');
+            return;
         }
 
         DB::beginTransaction();
-        $result = $orderService->shipOrders(
+        $result = $deliveryService->shipItems(
             \Str::uuid()->toString(),
             $this->driver,
             $this->truck,
             $this->branch,
-            $orders,
+            $items,
             $this->notes
         );
 
@@ -80,12 +88,12 @@ class ToShip extends Component
             ->join('branches', 'orders.branch_id', '=', 'branches.id')
             ->join('users', 'orders.assistant_id', '=', 'users.id')
             ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'customers.address as customer_address', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
-            ->whereNotExists(function ($query) {
+            ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
-                    ->from('line_items')
-                    ->whereRaw('orders.order_id = line_items.order_id')
-                    ->where('line_items.confirmed', 0);
-            })->where('shipping_status', 0);
+                    ->from('delivery_items')
+                    ->whereRaw('orders.order_id = delivery_items.order_id')
+                    ->where('delivery_items.to_ship', '>', 0);
+            });
 
         if($this->branch){
             $query = $query->where('orders.branch_id', $this->branch);
@@ -96,7 +104,7 @@ class ToShip extends Component
 
     public function getItems($id)
     {
-        return DB::table('line_items')
+        return DB::table('delivery_items')
             ->where('order_id', $id)
             ->get();
     }

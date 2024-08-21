@@ -80,7 +80,6 @@
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th></th>
                             <th>Order #</th>
                             <th>Customer</th>
                             <th>Items</th>
@@ -93,25 +92,22 @@
                         <tbody>
                         @forelse ($orders as $order)
                             <tr>
-                                <td>
-                                    <div class="custom-control custom-checkbox">
-                                        <input wire:model="toShip.{{ $order->order_id }}" type="checkbox" value="{{ $order->order_id }}" class="custom-control-input" id="customCheck{{ $order->order_id }}">
-                                        <label class="custom-control-label" for="customCheck{{ $order->order_id }}"></label>
-                                    </div>
-                                </td>
                                 <td>#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
                                 <td>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</td>
                                 <td>
-                                    <ul>
                                     @foreach($this->getItems($order->order_id) as $item)
-                                        <li>{{ $item->title }}</li>
+                                        <div class="form-group row">
+                                            <label for="colFormLabel" class="col-sm-5 col-form-label">{{ $item->to_ship }} {{ $item->title }}</label>
+                                            <div class="col-sm-5">
+                                                <input wire:model="quantities.{{ $item->order_id }}.{{ $item->product_id }}" type="number" min="0" max="{{ $item->to_ship }}" class="form-control" id="colFormLabel" placeholder="0">
+                                            </div>
+                                        </div>
                                     @endforeach
-                                    </ul>
                                 </td>
                                 @hasrole('admin')
                                 <td>{{ $order->branch_name }}</td>
                                 @endhasrole
-                                <td>{{ $order->customer_address }}</td>
+                                <td>{{ $order->delivery_address }}</td>
                             </tr>
                         @empty
                             <tr>

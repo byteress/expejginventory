@@ -52,6 +52,8 @@
             "Order\\": "src/Order/Order/",
             "PaymentContracts\\": "src/Payment/Contracts/",
             "Payment\\": "src/Payment/Payment/",
+            "DeliveryContracts\\": "src/Delivery/Contracts/",
+            "Delivery\\": "src/Delivery/Delivery/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
