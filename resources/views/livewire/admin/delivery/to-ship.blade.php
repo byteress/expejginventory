@@ -19,60 +19,56 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="supplier">Driver</label>
-                            <select class="form-control" id="driver" wire:model="driver">
-                                <option selected value="">Select Driver</option>
-                                @foreach ($drivers as $driver)
-                                    <option value="{{ $driver->id }}">{{ $driver->first_name }}
-                                        {{ $driver->last_name }}</option>
-                                @endforeach
-                            </select>
-                            @error('driver')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Driver</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">John Doe</div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="regular-price">Truck</label>
-                            <input type="text" class="form-control" id="regular-price"
-                                   wire:model="truck" placeholder="">
-                            @error('truck')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Truck</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">SLR-012</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="regular-price">Notes</label>
-                            <input type="text" class="form-control" id="regular-price"
-                                   wire:model="notes" placeholder="">
-                            @error('notes')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Branch</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">Branch #939393</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
-                        <div class="form-group">
-                            <label for="supplier">Branch</label>
-                            <select class="form-control" id="supplier" wire:model.live="branch">
-                                <option selected value="">Select Branch</option>
-                                @foreach ($branches as $branch)
-                                    <option value="{{ $branch->id }}"
-                                            @if (auth()->user()->branch_id == $branch->id) selected @endif>
-                                        {{ $branch->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('branch')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Notes
+                                    <a href="#" class="btn btn-success btn-circle btn-sm ml-2">
+                                        <i class="fa fa-pen"></i>
+                                    </a>
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">Lorem Ipsum</div>
+                                <div class="form-group" style = "display:none;">
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <a href="#" class="btn btn-secondary mt-2 ml-2 float-right">
+                                        Cancel
+                                    </a>
+                                    <a href="#" class="btn btn-success mt-2 float-right">
+                                        Save
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
