@@ -88,9 +88,9 @@ class OrderDetails extends Component
         $this->deliveryFee = $order->delivery_fee;
         $this->deliveryAddress = $order->delivery_address;
 
-        if($order->order_type != 'regular'){
-            $this->paymentType = 'cod';
-        }
+//        if($order->order_type != 'regular'){
+//            $this->paymentType = 'cod';
+//        }
 
         $this->getPaymentMethods();
 
