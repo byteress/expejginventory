@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Admin\Delivery\Delivered;
+use App\Livewire\Admin\Delivery\DeliveryDetails;
 use App\Livewire\Admin\Delivery\OutForDelivery;
 use App\Livewire\Admin\Delivery\ToShip;
 use App\Livewire\Admin\Payment\CustomerList;
@@ -76,7 +77,9 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/request-history', RequestHistory::class)->name('request.history');
     Route::get('/delivery/to-ship', ToShip::class)->name('delivery.to-ship');
     Route::get('/delivery/out-for-delivery', OutForDelivery::class)->name('delivery.out-for-delivery');
+    Route::get('/delivery/history', \App\Livewire\Admin\Delivery\History::class)->name('delivery.history');
     Route::get('/delivery/delivered', Delivered::class)->name('delivery.delivered');
+    Route::get('/delivery/details/{delivery_id}', DeliveryDetails::class)->name('delivery.details');
 });
 
 Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {

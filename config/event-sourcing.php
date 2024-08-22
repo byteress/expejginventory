@@ -42,7 +42,8 @@ return [
         \Payment\Projectors\CustomerBalanceProjector::class,
         \Payment\Projectors\InstallmentBillsProjector::class,
         \StockManagement\Projectors\AdvancedReservationsProjector::class,
-        DeliveryProjector::class
+        DeliveryProjector::class,
+        \Delivery\Projectors\AttemptProjector::class
     ],
 
     /*

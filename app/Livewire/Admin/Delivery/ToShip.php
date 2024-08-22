@@ -6,11 +6,17 @@ use App\Exceptions\ErrorHandler;
 use App\Models\User;
 use BranchManagement\Models\Branch;
 use DeliveryContracts\IDeliveryService;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Str;
+use Throwable;
 
 #[Title('To Ship')]
 class ToShip extends Component
@@ -23,17 +29,17 @@ class ToShip extends Component
 
     #[Validate('required')]
     public $truck = null;
-    public string $notes;
+    public ?string $notes = null;
 
     public $quantities = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->branch = auth()->user()->branch_id;
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function shipOrders(IDeliveryService $deliveryService): void
     {
@@ -62,8 +68,9 @@ class ToShip extends Component
         }
 
         DB::beginTransaction();
+        $deliveryId = Str::uuid()->toString();
         $result = $deliveryService->shipItems(
-            \Str::uuid()->toString(),
+            $deliveryId,
             $this->driver,
             $this->truck,
             $this->branch,
@@ -78,10 +85,15 @@ class ToShip extends Component
         }
 
         DB::commit();
-        session()->flash('success', 'Orders shipped.');
+        $this->redirect(route('admin.delivery.details', [
+            'delivery_id' => $deliveryId
+        ]));
     }
 
-    public function getOrders()
+    /**
+     * @return Collection<int, object>
+     */
+    public function getOrders(): Collection
     {
         $query = DB::table('orders')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
@@ -102,7 +114,11 @@ class ToShip extends Component
         return $query->get();
     }
 
-    public function getItems($id)
+    /**
+     * @param string $id
+     * @return Collection<int, object>
+     */
+    public function getItems(string $id): Collection
     {
         return DB::table('delivery_items')
             ->where('order_id', $id)
@@ -110,7 +126,7 @@ class ToShip extends Component
     }
 
     #[Layout('livewire.admin.base_layout')]
-    public function render()
+    public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {
         return view('livewire.admin.delivery.to-ship', [
             'orders' => $this->getOrders(),

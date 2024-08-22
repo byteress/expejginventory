@@ -3,7 +3,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Delivered</h1>
+        <h1 class="h3 mb-2 text-gray-800">Delivery History</h1>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-body">
@@ -22,38 +22,31 @@
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th>Order #</th>
-                            <th>Customer</th>
-                            <th>Items</th>
+                            <th>Delivery #</th>
+                            <th>Driver</th>
+                            <th>Truck</th>
                             @hasrole('admin')
                             <th>Branch</th>
                             @endhasrole
-                            <th>Address</th>
-                            <th>Status</th>
+                            <th>Date</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        @forelse ($orders as $order)
+                        @forelse ($deliveries as $delivery)
                             <tr>
-                                <td>#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
-                                <td>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</td>
-                                <td>
-                                    <ul>
-                                        @foreach($this->getItems($order->order_id) as $item)
-                                            <li>{{ $item->delivered }}/{{ $item->to_ship + $item->out_for_delivery + $item->delivered }} {{ $item->title }}</li>
-                                        @endforeach
-                                    </ul>
-                                </td>
+                                <td>#{{ str_pad((string) $delivery->id, 12, '0', STR_PAD_LEFT) }}</td>
+                                <td>{{ $delivery->driver_first_name }} {{ $delivery->driver_last_name }}</td>
+                                <td>{{ $delivery->truck }}</td>
                                 @hasrole('admin')
-                                <td>{{ $order->branch_name }}</td>
+                                <td>{{ $delivery->branch_name }}</td>
                                 @endhasrole
-                                <td>{{ $order->customer_address }}</td>
+                                <td>{{ date('h:i a F j, Y', strtotime($delivery->completed_at)) }}</td>
                                 <td>
-                                    @if(($item->to_ship + $item->out_for_delivery + $item->delivered ) == $item->delivered)
-                                        <span class="badge badge-success">Delivered</span>
-                                    @else
-                                        <span class="badge badge-secondary">Partially Delivered</span>
-                                    @endif
+                                    <div class="btn-group">
+                                        <a href="{{ route('admin.delivery.details', ['delivery_id' => $delivery->delivery_id]) }}" type="button"
+                                           class="btn btn-primary">View</a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -64,7 +57,6 @@
 
                         </tbody>
                     </table>
-                    {{ $orders->links() }}
                 </div>
             </div>
         </div>

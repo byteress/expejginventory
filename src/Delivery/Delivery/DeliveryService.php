@@ -2,10 +2,12 @@
 
 namespace Delivery;
 
+use Delivery\Models\Delivery\Delivery;
 use Delivery\Models\Order\Order;
 use DeliveryContracts\Exceptions\InvalidDomainException;
 use DeliveryContracts\IDeliveryService;
 use DeliveryContracts\Utils\Result;
+use Exception;
 
 class DeliveryService implements IDeliveryService
 {
@@ -30,20 +32,27 @@ class DeliveryService implements IDeliveryService
             if($type == 'pickup'){
                 $order->placePickupOrder($convertedItems, $branchId);
             }else{
-                if(!$address) throw new InvalidDomainException('Address is required.', ['address' => 'Address is required.']);
+                if(!$address) throw new InvalidDomainException('Address is required.', [
+                    'address' => 'Address is required.'
+                ]);
 
                 $order->placeDeliveryOrder($convertedItems, $deliveryFee, $address, $branchId);
             }
 
             $order->persist();
             return Result::success(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             report($e);
             return Result::failure($e);
         }
     }
 
-    public function confirmItemForDelivery(string $orderId, string $productId, string $reservationId, int $quantity): Result
+    public function confirmItemForDelivery(
+        string $orderId,
+        string $productId,
+        string $reservationId,
+        int $quantity
+    ): Result
     {
         try{
             $order = Order::retrieve($orderId);
@@ -51,7 +60,7 @@ class DeliveryService implements IDeliveryService
 
             $order->persist();
             return Result::success(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             report($e);
             return Result::failure($e);
         }
@@ -66,17 +75,59 @@ class DeliveryService implements IDeliveryService
         string $truck,
         string $branch,
         array  $items,
-        string $notes): Result
+        ?string $notes
+    ): Result
     {
        try{
             foreach($items as $item)
             {
                 $order = Order::retrieve($item['orderId']);
                 $order->shipItem($item['productId'], $item['quantity']);
+                $order->persist();
             }
-       } catch (\Exception $e) {
+
+           $convertedItems = array_map(function ($item) {
+               return Delivery::arrayToItem($item);
+           }, $items);
+
+            $delivery = Delivery::retrieve($deliveryId);
+            $delivery->assign($driver, $truck, $branch, $convertedItems, $notes);
+            $delivery->persist();
+
+            return Result::success(null);
+       } catch (Exception $e) {
            report($e);
            return Result::failure($e);
        }
+    }
+
+    public function setItemsAsDelivered(string $deliveryId, string $branch, array $items): Result
+    {
+        try{
+            $convertedItems = array_map(function ($item) {
+                return Delivery::arrayToItem($item);
+            }, $items);
+
+            $delivery = Delivery::retrieve($deliveryId);
+            $delivery->markAsComplete($convertedItems, $branch);
+            $delivery->persist();
+
+            foreach ($items as $item){
+                $order = Order::retrieve($item['orderId']);
+
+                $deliveryItem = $delivery->state()->getItem($item['orderId'], $item['productId']);
+                $success = $deliveryItem->getDelivered();
+                $failure = $deliveryItem->getQuantity() - $deliveryItem->getDelivered();
+
+                $order->deliverItem($item['productId'], $success, $failure);
+                $order->persist();
+            }
+
+
+            return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
     }
 }

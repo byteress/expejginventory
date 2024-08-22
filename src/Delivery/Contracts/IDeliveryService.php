@@ -29,7 +29,7 @@ interface IDeliveryService
      * @param string $truck
      * @param string $branch
      * @param array<array{'orderId': string, 'productId': string, 'quantity': int}> $items
-     * @param string $notes
+     * @param string|null $notes
      * @return Result
      */
     public function shipItems(
@@ -38,5 +38,18 @@ interface IDeliveryService
         string $truck,
         string $branch,
         array  $items,
-        string $notes): Result;
+        ?string $notes
+    ): Result;
+
+    /**
+     * @param string $deliveryId
+     * @param string $branch
+     * @param array<array{'orderId': string, 'productId': string, 'quantity': int}> $items
+     * @return Result
+     */
+    public function setItemsAsDelivered(
+        string $deliveryId,
+        string $branch,
+        array  $items
+    ): Result;
 }

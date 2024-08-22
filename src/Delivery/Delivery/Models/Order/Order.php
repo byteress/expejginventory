@@ -6,6 +6,8 @@ use Delivery\Models\Aggregate;
 use Delivery\Models\Order\Entities\Item;
 use DeliveryContracts\Events\DeliveryOrderPlaced;
 use DeliveryContracts\Events\ItemConfirmedForDelivery;
+use DeliveryContracts\Events\ItemDelivered;
+use DeliveryContracts\Events\ItemShipped;
 use DeliveryContracts\Events\PickupOrderPlaced;
 use DeliveryContracts\Exceptions\InvalidDomainException;
 
@@ -68,8 +70,20 @@ class Order extends Aggregate
     {
         $item = $this->state->getItem($productId);
         if($item->getToShip() < $quantity){
-            throw new InvalidDomainException()
+            throw new InvalidDomainException('Quantity is more than the quantity to ship.', [
+                'quantity' => 'Quantity is more than the quantity to ship.'
+            ]);
         }
+
+        $event = new ItemShipped($this->uuid(), $productId, $quantity);
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    public function deliverItem(string $productId, int $success, int $failure): self
+    {
+        $this->recordThat(new ItemDelivered($this->uuid(), $productId, $success, $failure));
 
         return $this;
     }
@@ -107,5 +121,15 @@ class Order extends Aggregate
     public function applyItemConfirmedForDelivery(ItemConfirmedForDelivery $event): void
     {
         $this->state->setItemToShip($event->productId, $event->quantity);
+    }
+
+    public function applyItemShipped(ItemShipped $event): void
+    {
+        $this->state->setItemOutForDelivery($event->productId, $event->quantity);
+    }
+
+    public function applyItemDelivered(ItemDelivered $event): void
+    {
+        $this->state->setItemDelivered($event->productId, $event->success, $event->failure);
     }
 }

@@ -39,6 +39,32 @@ class State
         return $this;
     }
 
+    public function setItemOutForDelivery(string $productId, int $quantity): self
+    {
+        foreach ($this->items as $item) {
+            if ($item->getProductId() === $productId) {
+                $item->setOutForDelivery($quantity);
+                break;
+            }
+        }
+
+        return $this;
+    }
+
+    public function setItemDelivered(string $productId, int $success, int $failure): self
+    {
+        foreach ($this->items as $item) {
+            if ($item->getProductId() === $productId) {
+                $item->setToShip($item->getToShip() + $failure);
+                $item->setOutForDelivery($item->getOutForDelivery() - ($success + $failure));
+                $item->setDelivered($item->getDelivered() + $success);
+                break;
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * @return Item[]
      */

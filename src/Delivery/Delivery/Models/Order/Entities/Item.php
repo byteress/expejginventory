@@ -22,6 +22,11 @@ class Item
         $this->toShip = $quantity;
     }
 
+    public function setOutForDelivery(int $quantity): void
+    {
+        $this->outForDelivery = $quantity;
+    }
+
     public function getToShip(): int
     {
         return $this->toShip;
@@ -68,5 +73,10 @@ class Item
     public function getReservationId(): string
     {
         return $this->reservationId;
+    }
+
+    public function setDelivered(int $delivered): void
+    {
+        $this->delivered = $delivered;
     }
 }

@@ -171,6 +171,7 @@
                 <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.to-ship') }}">To Ship</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.out-for-delivery') }}">Out for Delivery</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.delivered') }}">Delivered</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.delivery.history') }}">History</a>
             </div>
         </div>
     </li>

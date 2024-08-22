@@ -22,35 +22,39 @@
                         <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
                             <tr>
-                                <th>Order #</th>
-                                <th>Customer</th>
-                                <th>Items</th>
+                                <th>Delivery #</th>
+                                <th>Driver</th>
+                                <th>Truck</th>
                                 @hasrole('admin')
                                 <th>Branch</th>
                                 @endhasrole
-                                <th>Address</th>
+                                <th>Date</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
-                            @forelse ($orders as $order)
+                            @forelse ($deliveries as $delivery)
                                 <tr>
-                                    <td>#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
-                                    <td>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</td>
-                                    <td>
-                                        <ul>
-                                            @foreach($this->getItems($order->order_id) as $item)
-                                                <li>{{ $item->title }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </td>
+                                    <td>#{{ str_pad((string) $delivery->id, 12, '0', STR_PAD_LEFT) }}</td>
+                                    <td>{{ $delivery->driver_first_name }} {{ $delivery->driver_last_name }}</td>
+                                    <td>{{ $delivery->truck }}</td>
                                     @hasrole('admin')
-                                    <td>{{ $order->branch_name }}</td>
+                                    <td>{{ $delivery->branch_name }}</td>
                                     @endhasrole
-                                    <td>{{ $order->customer_address }}</td>
+                                    <td>{{ date('h:i a F j, Y', strtotime($delivery->assigned_at)) }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a wire:confirm="Mark order as delivered?" wire:click="markAsDelivered('{{ $order->order_id }}')" href="#" type="button" class="btn btn-primary">Mark as Delivered</a>
+                                            <a href="{{ route('admin.delivery.details', ['delivery_id' => $delivery->delivery_id]) }}" type="button"
+                                               class="btn btn-primary">View</a>
+                                                <button type="button"
+                                                        class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item"
+                                                       href="#">Cancel</a>
+                                                </div>
                                         </div>
                                     </td>
                                 </tr>

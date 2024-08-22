@@ -4,6 +4,8 @@ namespace Delivery\Projectors;
 
 use DeliveryContracts\Events\DeliveryOrderPlaced;
 use DeliveryContracts\Events\ItemConfirmedForDelivery;
+use DeliveryContracts\Events\ItemDelivered;
+use DeliveryContracts\Events\ItemShipped;
 use DeliveryContracts\Events\PickupOrderPlaced;
 use Illuminate\Support\Facades\DB;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -41,6 +43,37 @@ class DeliveryProjector extends Projector
             ->where('product_id', $event->productId)
             ->where('reservation_id', $event->reservationId)
             ->increment('to_ship', $event->quantity);
+    }
+
+    public function onItemShipped(ItemShipped $event): void
+    {
+        DB::table('delivery_items')
+            ->where('order_id', $event->orderId)
+            ->where('product_id', $event->productId)
+            ->decrement('to_ship', $event->quantity);
+
+        DB::table('delivery_items')
+            ->where('order_id', $event->orderId)
+            ->where('product_id', $event->productId)
+            ->increment('out_for_delivery', $event->quantity);
+    }
+
+    public function onItemDelivered(ItemDelivered $event): void
+    {
+        DB::table('delivery_items')
+            ->where('order_id', $event->orderId)
+            ->where('product_id', $event->productId)
+            ->increment('to_ship', $event->failure);
+
+        DB::table('delivery_items')
+            ->where('order_id', $event->orderId)
+            ->where('product_id', $event->productId)
+            ->decrement('out_for_delivery', ($event->success + $event->failure));
+
+        DB::table('delivery_items')
+            ->where('order_id', $event->orderId)
+            ->where('product_id', $event->productId)
+            ->increment('delivered', $event->success);
     }
 
     /**
