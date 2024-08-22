@@ -71,6 +71,7 @@ class DeliveryDetails extends Component
 
         DB::commit();
         session()->flash('success', 'Delivery marked as complete');
+        $this->redirect(route('admin.delivery.details', ['deliveryId' => $this->deliveryId]), true);
     }
 
     public function getStatus(int $status): string
