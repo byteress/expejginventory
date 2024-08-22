@@ -50,13 +50,11 @@ class DeliveryDetails extends Component
         $items = [];
         foreach ($this->quantities as $orderId => $quantities) {
             foreach($quantities as $productId => $quantity) {
-                if($quantity > 0){
                     $items[] = [
                         'orderId' => $orderId,
                         'productId' => $productId,
                         'quantity' => $quantity,
                     ];
-                }
             }
         }
 
