@@ -38,6 +38,7 @@ use App\Livewire\Admin\Order\Cart;
 use App\Livewire\Admin\Order\Orders;
 use App\Livewire\Admin\Order\OrderDetails;
 use App\Livewire\Admin\Installment\InstallmentDetails;
+use App\Livewire\Admin\Expense\DailyExpense;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
@@ -96,3 +97,5 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
 
     Route::get('/customers', CustomerList::class)->name('customer.list');
 });
+
+Route::get('/daily-expense/new', DailyExpense::class)->name('create.dailyexpense');
