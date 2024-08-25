@@ -760,13 +760,14 @@
 
     </div>
     <!-- /.container-fluid -->
+    </div>
 </div>
 
 <x-slot:print>
 <div class="printable">
     <div class="receipt-container no-bootstrap-center">
         <div class="receipt-header">
-            <p>OR# {{ $order->receipt_number }}</p>
+            <p>TR# {{ ($transaction) ? str_pad((string) $transaction->transaction_number, 5, '0', STR_PAD_LEFT) : '' }} {{ $order->total > 1000000 ? 'DR' : 'SI' }}# {{ $order->receipt_number }}</p>
             <p>{{ is_null($order->completed_at) ? '' : date('F j, Y', strtotime($order->completed_at)) }}</p>
         </div>
         <div class="receipt-details">
@@ -789,7 +790,7 @@
         <div class="receipt-totals">
             <p>Total Sales: <x-money amount="{{ $order->total - ($order->total * 0.12) }}" /></p>
             <p>VAT: <x-money amount="{{ $order->total * 0.12 }}" /></p>
-            <p><strong>Net Total: <x-money amount="{{ $order->total }}" /></strong></p>
+            <p>Net Total: <x-money amount="{{ $order->total }}" /></p>
         </div>
         <div class="receipt-footer">
             <p>FOR DELIVER</p>
@@ -819,6 +820,7 @@
 
         .receipt-details {
             margin-top: 20px;
+            margin-left: 40px;
         }
 
         .receipt-details p {

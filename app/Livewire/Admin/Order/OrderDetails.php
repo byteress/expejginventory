@@ -163,7 +163,7 @@ class OrderDetails extends Component
         $cancelResult = $stockManagementService->cancelReservation(
             $productId,
             $reservationId,
-            auth()->user()->id
+            auth()->user()->id, false
         );
 
         if ($cancelResult->isFailure()) {
@@ -211,7 +211,7 @@ class OrderDetails extends Component
         $cancelResult = $stockManagementService->cancelReservation(
             $productId,
             $reservationId,
-            auth()->user()->id
+            auth()->user()->id, false
         );
 
         if ($cancelResult->isFailure()) {
@@ -289,7 +289,7 @@ class OrderDetails extends Component
         $cancelResult = $stockManagementService->cancelReservation(
             $productId,
             $reservationId,
-            auth()->user()->id
+            auth()->user()->id, false
         );
 
         if ($cancelResult->isFailure()) {
@@ -784,6 +784,24 @@ class OrderDetails extends Component
         $this->redirect(route('admin.order.details', ['order_id' => $this->orderId]), true);
     }
 
+    public function getTransaction()
+    {
+        return DB::table('transactions')
+            ->where('order_id', $this->orderId)
+            ->first();
+    }
+
+    public function generateString(string $string1, float $amount, int $totalLength = 40): string
+    {
+        $string2 = Money::PHP($amount);
+        $spaceCount = $totalLength - strlen($string1) - strlen($string2);
+        if ($spaceCount < 0) {
+            $spaceCount = 0; // If strings are too long, no space is added
+        }
+
+        return $string1 . str_repeat(' ', $spaceCount) . $string2;
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
@@ -794,6 +812,7 @@ class OrderDetails extends Component
             'products' => $this->getProducts(),
             'assistant' => $this->getAssistant(),
             'cashier' => $this->getCashier(),
+            'transaction' => $this->getTransaction(),
         ]);
     }
 }

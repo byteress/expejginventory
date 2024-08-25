@@ -21,7 +21,8 @@ class OrderProjector extends Projector
                 'receipt_number' => $event->orNumber,
                 'cashier' => $event->cashier,
                 'months' => $event->months,
-                'rate' => $event->interestRate
+                'rate' => $event->interestRate,
+                'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s')
             ]);
     }
 
@@ -45,7 +46,8 @@ class OrderProjector extends Projector
                 'payment_type' => 'full',
                 'status' => 1,
                 'receipt_number' => $event->orNumber,
-                'cashier' => $event->cashier
+                'cashier' => $event->cashier,
+                'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s')
             ]);
     }
 

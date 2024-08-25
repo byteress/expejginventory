@@ -122,6 +122,7 @@ class ToShip extends Component
     {
         return DB::table('delivery_items')
             ->where('order_id', $id)
+            ->where('to_ship', '>', 0)
             ->get();
     }
 

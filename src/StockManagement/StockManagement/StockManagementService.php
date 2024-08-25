@@ -52,11 +52,19 @@ class StockManagementService implements IStockManagementService
         }
     }
 
-    public function reserve(string $productId, string $reservationId, int $quantity, string $branchId, string $actor, bool $advanceOrder = false): Result
+    public function reserve(
+        string $productId,
+        string $reservationId,
+        int $quantity,
+        string $branchId,
+        string $actor,
+        bool $advanceOrder = false,
+        bool $hasExpiry = false
+    ): Result
     {
         try{
             $product = Product::retrieve($productId);
-            $product->reserve($reservationId, $branchId, $quantity, $actor, $advanceOrder);
+            $product->reserve($reservationId, $branchId, $quantity, $actor, $advanceOrder, $hasExpiry);
             $product->persist();
 
             return Result::success(null);
@@ -66,11 +74,11 @@ class StockManagementService implements IStockManagementService
         }
     }
 
-    public function cancelReservation(string $productId, string $reservationId, string $actor): Result
+    public function cancelReservation(string $productId, string $reservationId, ?string $actor, bool $expired = false): Result
     {
         try{
             $product = Product::retrieve($productId);
-            $product->cancelReservation($reservationId, $actor);
+            $product->cancelReservation($reservationId, $actor, false);
             $product->persist();
 
             return Result::success(null);
@@ -108,7 +116,14 @@ class StockManagementService implements IStockManagementService
         }
     }
 
-    public function batchReceive(string $batchId, array $products, string $branchId, string $actor, string $requestedBy, string $notes): Result
+    public function batchReceive(
+        string $batchId,
+        array $products,
+        string $branchId,
+        string $actor,
+        string $requestedBy,
+        string $notes
+    ): Result
     {
         try {
             $batch = new Batch();
@@ -139,6 +154,20 @@ class StockManagementService implements IStockManagementService
         try{
             $product = Product::retrieve($productId);
             $product->return($branchId, $quantity, $actor);
+            $product->persist();
+
+            return Result::success(null);
+        }catch(Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    public function confirmReservation(string $productId, string $reservationId): Result
+    {
+        try{
+            $product = Product::retrieve($productId);
+            $product->confirmReservation($reservationId);
             $product->persist();
 
             return Result::success(null);

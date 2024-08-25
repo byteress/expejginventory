@@ -96,6 +96,5 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
     Route::get('/customer/{customer}', InstallmentDetails::class)->name('customer.details');
 
     Route::get('/customers', CustomerList::class)->name('customer.list');
+    Route::get('/daily-expense/new', DailyExpense::class)->name('expense');
 });
-
-Route::get('/daily-expense/new', DailyExpense::class)->name('create.dailyexpense');

@@ -54,6 +54,8 @@
             "Payment\\": "src/Payment/Payment/",
             "DeliveryContracts\\": "src/Delivery/Contracts/",
             "Delivery\\": "src/Delivery/Delivery/",
+            "ExpenseManagementContracts\\": "src/ExpenseManagement/Contracts/",
+            "ExpenseManagement\\": "src/ExpenseManagement/ExpenseManagement/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

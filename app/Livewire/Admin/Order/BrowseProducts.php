@@ -91,7 +91,8 @@ class BrowseProducts extends Component
             1,
             $this->branch,
             auth()->user()->id,
-            $type != 'regular'
+            $type != 'regular',
+            true
         );
 
         if ($hasStock->isFailure()) {
@@ -121,7 +122,7 @@ class BrowseProducts extends Component
             $stockManagementService->cancelReservation(
                 $productId,
                 $item->getExtraInfo()['reservation_id'],
-                auth()->user()->id
+                auth()->user()->id, false
             );
 
             Cart::removeItem($hash);

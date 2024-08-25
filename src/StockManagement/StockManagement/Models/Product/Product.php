@@ -2,7 +2,6 @@
 
 namespace StockManagement\Models\Product;
 
-use Illuminate\Support\Facades\Log;
 use StockManagement\Models\Aggregate;
 use StockManagementContracts\Events\DamagedProductReceived;
 use StockManagementContracts\Events\ProductReceived;
@@ -11,7 +10,9 @@ use StockManagementContracts\Events\ProductReserved;
 use StockManagementContracts\Events\ProductReturned;
 use StockManagementContracts\Events\ReservationCancelled;
 use StockManagementContracts\Events\ProductSetAsDamaged;
+use StockManagementContracts\Events\ReservationConfirmed;
 use StockManagementContracts\Events\ReservationFulfilled;
+use StockManagementContracts\Exceptions\ErrorCode;
 use StockManagementContracts\Exceptions\InvalidDomainException;
 
 class Product extends Aggregate
@@ -27,6 +28,8 @@ class Product extends Aggregate
 
     /** @var array<string, ProductReserved> */
     public array $reservations = [];
+    /** @var array<string, ProductReserved> */
+    public array $expiringReservations = [];
 
     public function receive(
         string $branchId,
@@ -99,7 +102,8 @@ class Product extends Aggregate
         string $branchId,
         int $quantity,
         string $actor,
-        bool $advanceOrder
+        bool $advanceOrder,
+        bool $hasExpiry
     ): self
     {
         $available = $this->available[$branchId] ?? 0;
@@ -112,7 +116,8 @@ class Product extends Aggregate
             $branchId,
             $quantity,
             $actor,
-            $advanceOrder
+            $advanceOrder,
+            $hasExpiry
         );
 
         $this->recordThat($event);
@@ -123,14 +128,48 @@ class Product extends Aggregate
     /**
      * @throws InvalidDomainException
      */
+    public function confirmReservation(string $reservationId): self
+    {
+        if(!array_key_exists($reservationId, $this->expiringReservations))
+            throw new InvalidDomainException('Reservation not found.', [
+                'reserve' => 'Reservation not found.'
+            ], ErrorCode::RESERVATION_NOT_FOUND->value);
+
+        $reservation = $this->expiringReservations[$reservationId];
+
+        $event = new ReservationConfirmed(
+            $this->uuid(),
+            $reservationId,
+            $reservation->branchId
+        );
+
+        $this->recordThat($event);
+
+        return $this;
+    }
+
+    /**
+     * @param string $reservationId
+     * @param string|null $actor
+     * @param bool $expired
+     * @return Product
+     * @throws InvalidDomainException
+     */
     public function cancelReservation(
-        string $reservationId,
-        string $actor
+        string  $reservationId,
+        ?string $actor,
+        bool $expired = false
     ): self
     {
-        if(!array_key_exists($reservationId, $this->reservations)) throw new InvalidDomainException('Reservation not found.', ['reserve' => 'Reservation not found.']);
+        if(!array_key_exists($reservationId, $this->reservations) && !array_key_exists($reservationId, $this->expiringReservations)) {
+            if($expired) return $this;
 
-        $reservation = $this->reservations[$reservationId];
+            throw new InvalidDomainException('Reservation not found.', [
+                'reserve' => 'Reservation not found.'
+            ], ErrorCode::RESERVATION_NOT_FOUND->value);
+        }
+
+        $reservation = $this->reservations[$reservationId] ?? $this->expiringReservations[$reservationId];
 
         $event = new ReservationCancelled(
             $this->uuid(),
@@ -157,8 +196,7 @@ class Product extends Aggregate
 
         $reservation = $this->reservations[$reservationId];
 
-        $available = $this->reserved[$reservation->branchId] ?? 0;
-        Log::info("$reservation->branchId: $available");
+        $available = ($reservation->advancedOrder) ? $this->available[$reservation->branchId] ?? 0 : $this->reserved[$reservation->branchId] ?? 0;
         if($available < $reservation->quantity) throw new InvalidDomainException('Insufficient quantity on hand.', ['reserve' => 'Insufficient quantity on hand.']);
 
         $event = new ReservationFulfilled(
@@ -240,6 +278,7 @@ class Product extends Aggregate
     public function applyProductReserved(ProductReserved $event): void
     {
         $this->reservations[$event->reservationId] = $event;
+        if($event->hasExpiry) $this->expiringReservations[$event->reservationId] = $event;
         if($event->advancedOrder) return;
 
         $oldQuantity = $this->available[$event->branchId] ?? 0;
@@ -249,26 +288,28 @@ class Product extends Aggregate
         $this->reserved[$event->branchId] = $oldQuantity + $event->quantity;
     }
 
+    public function applyReservationConfirmed(ReservationConfirmed $event): void
+    {
+        unset($this->expiringReservations[$event->reservationId]);
+    }
+
     public function applyReservationCancelled(ReservationCancelled $event): void
     {
+        unset($this->reservations[$event->reservationId]);
+        if(array_key_exists($event->reservationId, $this->expiringReservations)) unset($this->expiringReservations[$event->reservationId]);
+        if($event->advancedOrder) return;
+
         $oldQuantity = $this->available[$event->branchId] ?? 0;
         $this->available[$event->branchId] = $oldQuantity + $event->quantity;
 
         $oldQuantity = $this->reserved[$event->branchId] ?? 0;
         $this->reserved[$event->branchId] = $oldQuantity - $event->quantity;
-
-        unset($this->reservations[$event->reservationId]);
     }
 
     public function applyReservationFulfilled(ReservationFulfilled $event): void
     {
-        if($event->advancedOrder){
-            $oldQuantity = $this->reserved[$event->branchId] ?? 0;
-            $this->reserved[$event->branchId] = $oldQuantity - $event->quantity;
-        }else{
-            $oldQuantity = $this->available[$event->branchId] ?? 0;
-            $this->available[$event->branchId] = $oldQuantity - $event->quantity;
-        }
+        $oldQuantity = $this->available[$event->branchId] ?? 0;
+        $this->available[$event->branchId] = $oldQuantity - $event->quantity;
 
         unset($this->reservations[$event->reservationId]);
     }

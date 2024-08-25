@@ -250,6 +250,14 @@
             </div>
         </div>
     </li>
+
+    <hr class="sidebar-divider">
+
+    <li class="nav-item ">
+        <a wire:navigate class="nav-link" href="{{ route('admin.expense') }}">
+            <i class="fas fa-fw fa-store"></i>
+            <span>Manage Expenses</span></a>
+    </li>
     @endhasanyrole
 
     <!-- Divider -->

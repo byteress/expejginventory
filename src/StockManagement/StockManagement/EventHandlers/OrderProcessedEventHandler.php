@@ -13,22 +13,22 @@ class OrderProcessedEventHandler extends Reactor
 {
     public function onFullPaymentReceived(FullPaymentReceived $event): void
     {
-        ProcessOrderJob::dispatch($event->orderId);
+        $this->processOrder($event->orderId);
     }
 
     public function onInstallmentInitialized(InstallmentInitialized $event): void
     {
-        ProcessOrderJob::dispatch($event->orderId);
+        $this->processOrder($event->orderId);
     }
 
-    public function onCodPaymentRequested(CodPaymentRequested $event): void
+    private function processOrder(string $orderId): void
     {
         $order = DB::table('orders')
-            ->where('order_id', $event->orderId)
+            ->where('order_id', $orderId)
             ->first();
 
         if(!$order || $order->order_type != 'regular') return;
 
-        ProcessOrderJob::dispatch($event->orderId);
+        ProcessOrderJob::dispatch($orderId);
     }
 }

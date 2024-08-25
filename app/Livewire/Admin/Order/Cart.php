@@ -15,8 +15,10 @@ use Livewire\Attributes\Title;
 use OrderContracts\IOrderService;
 use ProductManagement\Models\Product;
 use StockManagement\StockManagementService;
+use StockManagementContracts\Exceptions\ErrorCode;
 use StockManagementContracts\IStockManagementService;
 use Str;
+use Throwable;
 
 #[Title('Cart')]
 class Cart extends Component
@@ -58,13 +60,28 @@ class Cart extends Component
         }
     }
 
+    private function expireCart(IStockManagementService $stockManagementService): void
+    {
+        foreach (CartAlias::getItems() as $item) {
+            $confirmReservationResult = $stockManagementService->cancelReservation(
+                $item->getId(),
+                $item->getExtraInfo()['reservation_id'],
+                null,
+                true,
+            );
+        }
+
+        CartAlias::destroy();
+    }
+
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function placeOrder(
         ICustomerManagementService $customerManagementService,
         IOrderService $orderService,
         IIdentityAndAccessService $identityAndAccessService,
+        IStockManagementService $stockManagementService,
         bool $authorizing = false
     ): void
     {
@@ -111,6 +128,21 @@ class Cart extends Component
         $items = [];
 
         foreach (CartAlias::getItems() as $item) {
+            $confirmReservationResult = $stockManagementService->confirmReservation(
+                $item->getId(),
+                $item->getExtraInfo()['reservation_id']
+            );
+
+            if ($confirmReservationResult->isFailure()) {
+                DB::rollBack();
+
+                if($confirmReservationResult->getError()->getCode() == ErrorCode::RESERVATION_NOT_FOUND->value){
+                    $this->expireCart($stockManagementService);
+                    session()->flash('alert', 'Your cart has expired');
+                    return;
+                }
+            }
+
             $items[] = [
                 'productId' => $item->getId(),
                 'title' => $item->getTitle(),
@@ -180,7 +212,7 @@ class Cart extends Component
         $cancelResult = $stockManagementService->cancelReservation(
             $item->getId(),
             $reservationId,
-            auth()->user()->id
+            auth()->user()->id, false
         );
 
         if ($cancelResult->isFailure()) {
@@ -196,7 +228,8 @@ class Cart extends Component
             $quantity,
             $this->branch,
             auth()->user()->id,
-            $cartType != 'regular'
+            $cartType != 'regular',
+            true
         );
 
         if ($reserveResult->isFailure()) {
@@ -230,7 +263,7 @@ class Cart extends Component
         $cancelResult = $stockManagementService->cancelReservation(
             $item->getId(),
             $reservationId,
-            auth()->user()->id
+            auth()->user()->id, false
         );
 
         if ($cancelResult->isFailure()) {
@@ -246,7 +279,8 @@ class Cart extends Component
             $quantity,
             $this->branch,
             auth()->user()->id,
-            $cartType != 'regular'
+            $cartType != 'regular',
+            true
         );
 
         if ($reserveResult->isFailure()) {
@@ -272,7 +306,7 @@ class Cart extends Component
         $cancelResult = $stockManagementService->cancelReservation(
             $item->getId(),
             $reservationId,
-            auth()->user()->id
+            auth()->user()->id, false
         );
 
         if ($cancelResult->isFailure()) {
@@ -362,7 +396,8 @@ class Cart extends Component
             $q->where('first_name', 'LIKE', '%'.$search.'%')
                 ->orWhere('last_name', 'LIKE', '%'.$search.'%')
                 ->orWhere('email', 'LIKE', '%'.$search.'%');
-        })->limit(10)->get();
+        })->where('branch_id', $this->branch)
+            ->limit(10)->get();
 
         return array_map(function($item) {
             return [
