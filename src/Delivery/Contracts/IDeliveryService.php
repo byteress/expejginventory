@@ -52,4 +52,6 @@ interface IDeliveryService
         string $branch,
         array  $items
     ): Result;
+
+    public function updateNotes(string $deliveryId, string $notes): Result;
 }

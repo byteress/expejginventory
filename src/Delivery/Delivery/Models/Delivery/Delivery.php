@@ -8,6 +8,7 @@ use Delivery\Models\Delivery\Enums\DeliveryStatus;
 use DeliveryContracts\Events\DeliveryAssigned;
 use DeliveryContracts\Events\DeliveryCompleted;
 use DeliveryContracts\Events\DeliveryItemDelivered;
+use DeliveryContracts\Events\DeliveryNotesUpdated;
 use DeliveryContracts\Events\DeliveryPartiallyCompleted;
 use DeliveryContracts\Exceptions\InvalidDomainException;
 
@@ -69,14 +70,18 @@ class Delivery extends Aggregate
         $isComplete = $this->state->isComplete($items);
         if ($isComplete) {
             $this->recordThat(new DeliveryCompleted($this->uuid(), $branch));
-            $this->persist();
 
             return $this;
         }
 
         $this->recordThat(new DeliveryPartiallyCompleted($this->uuid(), $branch));
-        $this->persist();
 
+        return $this;
+    }
+
+    public function updateNotes(string $notes): self
+    {
+        $this->recordThat(new DeliveryNotesUpdated($this->uuid(), $notes));
         return $this;
     }
 

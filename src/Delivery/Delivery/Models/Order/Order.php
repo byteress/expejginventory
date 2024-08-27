@@ -39,6 +39,7 @@ class Order extends Aggregate
 
     /**
      * @param Item[] $items
+     * @param int $deliveryFee
      * @param string $address
      * @param string $branchId
      * @return self

@@ -85,7 +85,7 @@ class OrderDetails extends Component
         $this->rate = $order->rate ?? 0;
         $this->orderType = $order->order_type;
         $this->deliveryType = $order->delivery_type;
-        $this->deliveryFee = $order->delivery_fee;
+        $this->deliveryFee = $order->delivery_fee / 100;
         $this->deliveryAddress = $order->delivery_address;
 
 //        if($order->order_type != 'regular'){
@@ -569,7 +569,7 @@ class OrderDetails extends Component
         $address = $this->customer->address;
         if(!$this->sameAddress) $address = $this->deliveryAddress;
 
-        return $deliveryService->placeOrder($this->orderId, $items, $this->deliveryType, $this->branch, $this->deliveryFee, $address);
+        return $deliveryService->placeOrder($this->orderId, $items, $this->deliveryType * 100, $this->branch, $this->deliveryFee, $address);
     }
 
     /**

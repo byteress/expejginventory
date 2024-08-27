@@ -22,11 +22,13 @@ class DeliveryDetails extends Component
 
     public $quantities = [];
     public object $delivery;
+    public string $notes = '';
 
     public function mount(string $delivery_id): void
     {
         $this->deliveryId = $delivery_id;
         $this->delivery = $this->getDelivery($delivery_id);
+        $this->notes = $this->delivery->notes;
 
         $orders = $this->getOrders();
         foreach ($orders as $order) {
@@ -70,6 +72,15 @@ class DeliveryDetails extends Component
         DB::commit();
         session()->flash('success', 'Delivery marked as complete');
         $this->redirect(route('admin.delivery.details', ['delivery_id' => $this->deliveryId]), true);
+    }
+
+    public function updateNotes(IDeliveryService $deliveryService): void
+    {
+        $this->validate([
+            'notes' => 'required'
+        ]);
+
+        $deliveryService->updateNotes($this->deliveryId, $this->notes);
     }
 
     public function getStatus(int $status): string

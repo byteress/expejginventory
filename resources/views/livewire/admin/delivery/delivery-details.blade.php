@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ edit: false }">
     <!-- Begin Page Content -->
     <div class="container-fluid">
         @php
@@ -76,17 +76,20 @@
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                         Notes
-                                        <a href="#" class="btn btn-success btn-circle btn-sm ml-2">
+                                        <a x-show="!edit" x-on:click="edit = true" href="#" class="btn btn-success btn-circle btn-sm ml-2">
                                             <i class="fa fa-pen"></i>
                                         </a>
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Lorem Ipsum</div>
-                                    <div class="form-group" style = "display:none;">
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                                        <a href="#" class="btn btn-secondary mt-2 ml-2 float-right">
+                                    <div x-show="!edit" class="h5 mb-0 font-weight-bold text-gray-800">{{ $notes }}</div>
+                                    <div x-show="edit" class="form-group" style = "display:none;">
+                                        <textarea wire:model="notes" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                        @error('notes')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                        <a x-on:click="edit = false" href="#" class="btn btn-secondary mt-2 ml-2 float-right">
                                             Cancel
                                         </a>
-                                        <a href="#" class="btn btn-success mt-2 float-right">
+                                        <a wire:click="updateNotes" x-on:click="edit = false" href="#" class="btn btn-success mt-2 float-right">
                                             Save
                                         </a>
                                     </div>

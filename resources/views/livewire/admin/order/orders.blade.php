@@ -63,15 +63,7 @@
                                     @if($displayStatus == 'processed')
                                         <td>{{ ucfirst($order->payment_type) }}</td>
                                         <td>{{ $this->getPaymentStatus($order->order_id) }}</td>
-                                        <td>
-                                            @if($order->shipping_status == 0)
-                                                To Ship
-                                                @elseif($order->shipping_status == 1)
-                                                Out for Delivery
-                                            @else
-                                                Delivered
-                                            @endif
-                                        </td>
+                                        <td>{{ $this->getDeliveryStatus($order->order_id) }}</td>
                                     @endif
                                     @if($displayStatus == 'cancelled')
                                         <td>{{ $order->notes }}</td>

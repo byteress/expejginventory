@@ -6,6 +6,7 @@ use Delivery\Models\Delivery\Enums\DeliveryStatus;
 use DeliveryContracts\Events\DeliveryAssigned;
 use DeliveryContracts\Events\DeliveryCompleted;
 use DeliveryContracts\Events\DeliveryItemDelivered;
+use DeliveryContracts\Events\DeliveryNotesUpdated;
 use DeliveryContracts\Events\DeliveryPartiallyCompleted;
 use Illuminate\Support\Facades\DB;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -64,6 +65,15 @@ class AttemptProjector extends Projector
             ->update([
                 'status' => DeliveryStatus::PARTIALLY_COMPLETED->value,
                 'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+            ]);
+    }
+
+    public function onDeliveryNotesUpdated(DeliveryNotesUpdated $event): void
+    {
+        DB::table('deliveries')
+            ->where('delivery_id', $event->deliveryId)
+            ->update([
+                'notes' => $event->notes
             ]);
     }
 }

@@ -105,7 +105,7 @@ class ToShip extends Component
                     ->from('delivery_items')
                     ->whereRaw('orders.order_id = delivery_items.order_id')
                     ->where('delivery_items.to_ship', '>', 0);
-            });
+            })->where('orders.delivery_type', 'deliver');
 
         if($this->branch){
             $query = $query->where('orders.branch_id', $this->branch);

@@ -59,12 +59,12 @@ class EditProduct extends Component
         $this->model = $product->model;
         $this->description = $product->description;
         $this->supplier = $product->supplier_id;
-        $this->regularPrice = $product->regular_price;
-        $this->salePrice = $product->sale_price;
+        $this->regularPrice = $product->regular_price / 100;
+        $this->salePrice = $product->sale_price / 100;
 
         $this->setDefaultImages();
     }
-    
+
     public function setDefaultImages()
     {
         $this->defaultFeaturedImage = $this->product->getFirstMedia('featured');
@@ -119,7 +119,7 @@ class EditProduct extends Component
                 return;
             }
         }
-        
+
         if($this->gallery){
             $galleryResult = $productManagementService->setGallery($productId, array_map(function ($image) {
                 return $image->getRealPath();
@@ -151,7 +151,7 @@ class EditProduct extends Component
     public function render()
     {
         return view('livewire.admin.product.edit-product', [
-            'suppliers' => Supplier::all()  
+            'suppliers' => Supplier::all()
         ]);
     }
 }

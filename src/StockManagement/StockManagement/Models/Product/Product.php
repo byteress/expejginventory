@@ -169,6 +169,9 @@ class Product extends Aggregate
             ], ErrorCode::RESERVATION_NOT_FOUND->value);
         }
 
+        if(array_key_exists($reservationId, $this->reservations) && !array_key_exists($reservationId, $this->expiringReservations) && $expired)
+            return $this;
+
         $reservation = $this->reservations[$reservationId] ?? $this->expiringReservations[$reservationId];
 
         $event = new ReservationCancelled(

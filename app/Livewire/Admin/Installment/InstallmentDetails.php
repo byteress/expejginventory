@@ -247,6 +247,27 @@ class InstallmentDetails extends Component
         return 'Pending';
     }
 
+    public function getDeliveryStatus(string $orderId): string
+    {
+        $delivered = DB::table('delivery_items')
+            ->where('order_id', $orderId)
+            ->sum('delivered');
+
+        $outForDelivery = DB::table('delivery_items')
+            ->where('order_id', $orderId)
+            ->sum('out_for_delivery');
+
+        $toShip = DB::table('delivery_items')
+            ->where('order_id', $orderId)
+            ->sum('to_ship');
+
+        if($delivered > 0 && $outForDelivery == 0 && $toShip == 0) return 'Delivered';
+        if($delivered > 0 && ($outForDelivery > 0 || $toShip > 0)) return 'Partially Delivered';
+        if($delivered == 0 && $outForDelivery > 0) return 'Out For Delivery';
+
+        return 'To Ship';
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {

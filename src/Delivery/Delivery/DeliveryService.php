@@ -130,4 +130,18 @@ class DeliveryService implements IDeliveryService
             return Result::failure($e);
         }
     }
+
+    public function updateNotes(string $deliveryId, string $notes): Result
+    {
+        try{
+            $delivery = Delivery::retrieve($deliveryId);
+            $delivery->updateNotes($notes);
+            $delivery->persist();
+
+            return Result::success(null);
+        }catch (Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
 }

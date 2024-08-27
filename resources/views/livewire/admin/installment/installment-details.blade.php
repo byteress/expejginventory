@@ -244,35 +244,22 @@
                                               <th>Order #</th>
                                               <th>Sales Representative</th>
                                               <th>Total</th>
-                                              <th>Placed At</th>
+                                              <th>Processed At</th>
+                                              <th>Order Status</th>
                                               <th>Payment Type</th>
                                               <th>Payment Status</th>
                                               <th>Delivery Status</th>
-                                              <th></th>
                                           </tr>
                                           @forelse ($orders as $order)
                                               <tr>
-                                                  <td>#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
+                                                  <td><a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" target="_blank">#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</a></td>
                                                   <td>{{ $order->assistant_first_name }} {{ $order->assistant_last_name }}</td>
                                                   <td>@money($order->total)</td>
-                                                  <td>{{ isset($order->placed_at) ? date('F j, Y', strtotime($order->placed_at)) : 'N/A' }}</td>
+                                                  <td>{{ isset($order->completed_at) ? date('F j, Y', strtotime($order->completed_at)) : 'N/A' }}</td>
+                                                  <td></td>
                                                   <td>{{ isset($order->payment_type) ? ucfirst($order->payment_type) : 'N/A' }}</td>
                                                   <td>{{ $this->getPaymentStatus($order->order_id) }}</td>
-                                                  <td>
-                                                          @if($order->shipping_status == 0)
-                                                              To Ship
-                                                          @elseif($order->shipping_status == 1)
-                                                              Out for Delivery
-                                                          @else
-                                                              Delivered
-                                                          @endif
-                                                  </td>
-                                                  <td align = "center">
-                                                      <div class="btn-group">
-                                                          <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" type="button"
-                                                             class="btn btn-primary">View</a>
-                                                      </div>
-                                                  </td>
+                                                  <td>{{ $this->getDeliveryStatus($order->order_id) }}</td>
                                               </tr>
                                           @empty
                                               <tr>

@@ -782,15 +782,21 @@
                 <tr>
                     <td>{{ $item->quantity }}</td>
                     <td>{{ $item->title }}</td>
-                    <td></td>
+                    <td><x-money amount="{{ $item->price * $item->quantity }}"></x-money></td>
                 </tr>
                 @endforeach
             </table>
         </div>
         <div class="receipt-totals">
-            <p>Total Sales: <x-money amount="{{ $order->total - ($order->total * 0.12) }}" /></p>
-            <p>VAT: <x-money amount="{{ $order->total * 0.12 }}" /></p>
-            <p>Net Total: <x-money amount="{{ $order->total }}" /></p>
+            @php
+                $orderTotal = $order->total + $order->delivery_fee
+            @endphp
+            @if($order->delivery_fee > 0)
+            <p>Delivery Fee: <x-money amount="{{ $order->delivery_fee }}" /></p>
+            @endif
+            <p>Total Sales: <x-money amount="{{ $orderTotal - ($orderTotal * 0.12) }}" /></p>
+            <p>VAT: <x-money amount="{{ $orderTotal * 0.12 }}" /></p>
+            <p>Net Total: <x-money amount="{{ $orderTotal }}" /></p>
         </div>
         <div class="receipt-footer">
             <p>FOR DELIVER</p>
