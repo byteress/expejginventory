@@ -311,8 +311,13 @@ class Product extends Aggregate
 
     public function applyReservationFulfilled(ReservationFulfilled $event): void
     {
-        $oldQuantity = $this->available[$event->branchId] ?? 0;
-        $this->available[$event->branchId] = $oldQuantity - $event->quantity;
+        if($event->advancedOrder){
+            $oldQuantity = $this->available[$event->branchId] ?? 0;
+            $this->available[$event->branchId] = $oldQuantity - $event->quantity;
+        }else{
+            $oldQuantity = $this->reserved[$event->branchId] ?? 0;
+            $this->reserved[$event->branchId] = $oldQuantity - $event->quantity;
+        }
 
         unset($this->reservations[$event->reservationId]);
     }
