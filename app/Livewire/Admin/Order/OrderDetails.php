@@ -571,7 +571,7 @@ class OrderDetails extends Component
 
         $fee = (float) $this->deliveryType;
 
-        return $deliveryService->placeOrder($this->orderId, $items, $fee * 100, $this->branch, $this->deliveryFee, $address);
+        return $deliveryService->placeOrder($this->orderId, $items, $this->deliveryType, $this->branch, $fee * 100, $address);
     }
 
     /**
