@@ -185,7 +185,7 @@
                                     <div class="input-group mt-5">
                                         @if(!$completed)
                                         <button class="btn btn-outline-secondary" type="button"
-                                            wire:click="decrementQuantity('{{ $item->product_id }}')">
+                                            wire:click="decrementQuantity('{{ $item->product_id }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
                                             <i class="fas fa-minus"></i>
                                         </button>
                                         @endif
@@ -193,7 +193,7 @@
                                             class="text-center" style ="width:45px !important;" readonly>
                                         @if(!$completed)
                                         <button class="btn btn-outline-secondary" type="button"
-                                            wire:click="incrementQuantity('{{ $item->product_id }}')">
+                                            wire:click="incrementQuantity('{{ $item->product_id }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                         @endif

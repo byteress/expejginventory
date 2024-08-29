@@ -78,7 +78,7 @@ class StockManagementService implements IStockManagementService
     {
         try{
             $product = Product::retrieve($productId);
-            $product->cancelReservation($reservationId, $actor, false);
+            $product->cancelReservation($reservationId, $actor, $expired);
             $product->persist();
 
             return Result::success(null);
