@@ -570,7 +570,7 @@ class OrderDetails extends Component
         if(!$this->sameAddress) $address = $this->deliveryAddress;
 
         $fee = (float) $this->deliveryType;
-        
+
         return $deliveryService->placeOrder($this->orderId, $items, $fee * 100, $this->branch, $this->deliveryFee, $address);
     }
 
