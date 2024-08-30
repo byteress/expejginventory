@@ -34,7 +34,7 @@
                                 <td>{{ $customer->last_name }}</td>
                                 <td>{{ $customer->phone }}</td>
                                 <td>{{ $customer->email }}</td>
-                                <td>@money($customer->balance)</td>
+                                <td>@money($customer->balance ?? 0)</td>
                                 <td><a href="{{ route('admin.customer.details', ['customer' => $customer->id]) }}"
                                        class="btn btn-primary">View</a></td>
                             </tr>

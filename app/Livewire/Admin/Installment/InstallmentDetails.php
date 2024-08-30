@@ -174,7 +174,7 @@ class InstallmentDetails extends Component
             ->where('customer_id', $this->customer->id)
             ->first();
 
-        if(!$balance) return 0;
+        if(!$balance) return (object) ['balance' => 0];
 
         return $balance;
     }

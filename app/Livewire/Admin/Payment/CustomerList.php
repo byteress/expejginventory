@@ -12,9 +12,12 @@ class CustomerList extends Component
 {
     public function getCustomers()
     {
-        return DB::table('customers')
-            ->join('customer_balances', 'customers.id', '=', 'customer_balances.customer_id')
-            ->paginate(10);
+        $query = DB::table('customers')
+            ->leftJoin('customer_balances', 'customers.id', '=', 'customer_balances.customer_id');
+
+        if(auth()->user()->branch_id) $query->where('branch_id', auth()->user()->branch_id);
+
+        return $query->paginate(10);
     }
 
     #[Layout('livewire.admin.base_layout')]
