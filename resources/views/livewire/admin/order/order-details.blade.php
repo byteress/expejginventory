@@ -789,21 +789,39 @@
         </div>
         <div class="receipt-totals">
             @php
-                $orderTotal = $order->total + $order->delivery_fee
-            @endphp
-            @if($order->delivery_fee > 0)
-            <p>Delivery Fee: <x-money amount="{{ $order->delivery_fee }}" /></p>
-            @endif
-            <p>Total Sales: <x-money amount="{{ $orderTotal - ($orderTotal * 0.12) }}" /></p>
-            <p>VAT: <x-money amount="{{ $orderTotal * 0.12 }}" /></p>
-            <p>Net Total: <x-money amount="{{ $orderTotal }}" /></p>
-            @php
+                $orderTotal = $order->total + $order->delivery_fee;
                 $paymentTotal = $this->getPaymentTotalWithoutCod();
             @endphp
-            @if($paymentTotal != $orderTotal)
-            <p>Downpayment: <x-money amount="{{ $paymentTotal }}" /></p>
-                <p>Balance: <x-money amount="{{ $orderTotal - $paymentTotal}}" /></p>
-            @endif
+            <table style = "width:100%;">
+                @if($order->delivery_fee > 0)
+                <tr>
+                    <td>Delivery Fee: </td>
+                    <td><x-money amount="{{ $order->delivery_fee }}" /></td>
+                </tr>
+                @endif
+                <tr>
+                    <td>Total Sales: </td>
+                    <td><x-money amount="{{ $orderTotal - ($orderTotal * 0.12) }}" /></td>
+                </tr>
+                <tr>
+                    <td>VAT: </td>
+                    <td><x-money amount="{{ $orderTotal * 0.12 }}" /></td>
+                </tr>
+                <tr>
+                    <td>Net Total: </td>
+                    <td><x-money amount="{{ $orderTotal }}" /></td>
+                </tr>
+                <tr>
+                    <td>Downpayment: </td>
+                    <td><x-money amount="{{ $paymentTotal }}" /></td>
+                </tr>
+                @if($paymentTotal != $orderTotal)
+                <tr>
+                    <td>Balance: </td>
+                    <td><x-money amount="{{ $orderTotal - $paymentTotal}}" /></td>
+                </tr>
+                @endif
+            </table>
         </div>
         <div class="receipt-footer">
             <p>{{ $this->getPaymentBreakdown() }}</p>
