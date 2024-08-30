@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use OrderContracts\Events\OrderCancelled;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\InstallmentPaymentReceived;
+use PaymentContracts\Events\InstallmentStarted;
 use PaymentContracts\Events\PenaltyApplied;
 use PaymentContracts\Events\PenaltyRemoved;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -21,9 +22,22 @@ class InstallmentBillsProjector extends Projector
                     'customer_id' => $event->customerId,
                     'installment_id' => $event->installmentId,
                     'index' => $key,
-                    'due' => date('Y-m-d', strtotime($installment['due'])),
+//                    'due' => date('Y-m-d', strtotime($installment['due'])),
                     'penalty' => 0,
                     'balance' => $installment['balance'],
+                ]);
+        }
+    }
+
+    public function onInstallmentStarted(InstallmentStarted $event): void
+    {
+        foreach ($event->dues as $due)
+        {
+            DB::table('installment_bills')
+                ->where('order_id', $event->orderId)
+                ->where('index', $due['index'])
+                ->update([
+                    'due' => date('Y-m-d', strtotime($due['due'])),
                 ]);
         }
     }

@@ -10,6 +10,7 @@ use PaymentContracts\Events\FullPaymentReceived;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\DownPaymentReceived;
 use PaymentContracts\Events\InstallmentPaymentReceived;
+use PaymentContracts\Events\InstallmentStarted;
 use PaymentContracts\Events\PenaltyApplied;
 use PaymentContracts\Events\PenaltyRemoved;
 use PaymentContracts\Exceptions\InvalidDomainException;
@@ -24,7 +25,7 @@ class Customer extends Aggregate
     public array $orders = [];
 
     /**
-     * @var array<array{'due': Carbon, 'balance': int, 'amount': int, 'index': int, 'installmentId': string}>
+     * @var array<array{'due': ?Carbon, 'balance': int, 'amount': int, 'index': int, 'installmentId': string, 'orderId': string}>
      */
     public array $installments = [];
 
@@ -70,7 +71,7 @@ class Customer extends Aggregate
         $installments = [];
         for($i = 1; $i <= $months; $i++){
             $installments[] = [
-                'due' => \Date::now()->addMinutes($i),
+//                'due' => \Date::now()->addMinutes($i),
                 'amount' => round($withInterest / $months),
                 'penalty' => 0,
                 'balance' => round($withInterest / $months),
@@ -106,6 +107,26 @@ class Customer extends Aggregate
         );
 
         $this->recordThat($paymentReceivedEvent);
+
+        return $this;
+    }
+
+    public function startInstallment(string $orderId): self
+    {
+        $dues = [];
+        $i = 1;
+        foreach($this->installments as $installment){
+            if($installment['orderId'] == $orderId && !isset($installment['due'])){
+                $dues[] = [
+                    'due' => \Date::now()->addMonths($i),
+                    'index' => $installment['index']
+                ];
+
+                $i++;
+            }
+        }
+
+        $this->recordThat(new InstallmentStarted($orderId, $dues));
 
         return $this;
     }
@@ -320,6 +341,8 @@ class Customer extends Aggregate
             $i = $installment;
             $i['installmentId'] = $event->installmentId;
             $i['index'] = $key;
+            $i['due'] = null;
+            $i['orderId'] = $event->orderId;
             $installments[] = $i;
         }
 
@@ -330,6 +353,17 @@ class Customer extends Aggregate
 //        });
 
         $this->installments = $merge;
+    }
+
+    public function applyInstallmentStarted(InstallmentStarted $event): void
+    {
+        foreach($this->installments as $key => $installment){
+            foreach ($event->dues as $due){
+                if($installment['orderId'] === $event->orderId && $installment['index'] === $due['index']){
+                    $this->installments[$key]['due'] = $due;
+                }
+            }
+        }
     }
 
     public function applyInstallmentPaymentReceived(InstallmentPaymentReceived $event): void

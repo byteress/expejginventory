@@ -118,4 +118,6 @@ interface IPaymentService
         string $orNumber,
         string $orderId,
     ): Result;
+
+    public function startInstallment(string $customerId, string $orderId): Result;
 }

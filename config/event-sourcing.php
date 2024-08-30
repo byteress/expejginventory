@@ -57,7 +57,8 @@ return [
         \StockManagement\EventHandlers\OrderProcessedEventHandler::class,
         \StockManagement\EventHandlers\OrderCancelledEventHandler::class,
         \Delivery\EventHandlers\ReservationFulfilledEventHandler::class,
-        \StockManagement\EventHandlers\ProductReservedEventHandler::class
+        \StockManagement\EventHandlers\ProductReservedEventHandler::class,
+        \Payment\EventHandlers\ItemDeliveredEventHandler::class
     ],
 
     /*

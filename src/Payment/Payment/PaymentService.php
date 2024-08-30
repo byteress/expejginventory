@@ -206,4 +206,21 @@ class PaymentService implements IPaymentService
             return Result::failure($exception);
         }
     }
+
+    public function startInstallment(string $customerId, string $orderId): Result
+    {
+        try {
+            $customer = Customer::retrieve($customerId);
+            $customer->startInstallment(
+                $orderId
+            );
+
+            $customer->persist();
+
+            return Result::success(null);
+        } catch (Exception $exception) {
+            report($exception);
+            return Result::failure($exception);
+        }
+    }
 }

@@ -162,6 +162,7 @@ class InstallmentDetails extends Component
             ->join('orders', 'installment_bills.order_id', '=', 'orders.order_id')
             ->where('installment_bills.customer_id', $this->customer->id)
             ->where('balance', '>', 0)
+            ->whereNotNull('due')
             ->orderBy('due')
             ->orderBy('index')
             ->get();
