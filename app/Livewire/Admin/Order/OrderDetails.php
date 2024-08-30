@@ -793,15 +793,61 @@ class OrderDetails extends Component
             ->first();
     }
 
-    public function generateString(string $string1, float $amount, int $totalLength = 40): string
+    public function getReceiptType(): string
     {
-        $string2 = Money::PHP($amount);
-        $spaceCount = $totalLength - strlen($string1) - strlen($string2);
-        if ($spaceCount < 0) {
-            $spaceCount = 0; // If strings are too long, no space is added
+        $order = $this->order2;
+
+        if($order->payment_type == 'installment') return 'CI';
+        if($order->order_type != 'regular') return 'CI';
+
+        $orderTotal = $order->total + $order->delivery_fee;
+        if($orderTotal >= 1000000) return 'DR';
+
+        return 'SI';
+    }
+
+    public function getPaymentTotalWithoutCod(): int
+    {
+        return DB::table('payment_methods')
+            ->where('order_id', $this->orderId)
+            ->where('method', '!=', 'COD')
+            ->sum('amount');
+    }
+
+    public function getCodPaymentTotal(): int
+    {
+        return DB::table('payment_methods')
+            ->where('order_id', $this->orderId)
+            ->where('method', '=', 'COD')
+            ->sum('amount');
+    }
+
+    public function getPaymentBreakdown(): string
+    {
+        $order = $this->order2;
+        $result = '';
+
+        if($order->payment_type == 'installment') $result .= "$order->months MS DP:";
+
+        $paymentMethods = DB::table('payment_methods')
+            ->where('order_id', $this->orderId)
+            ->get();
+
+        foreach ($paymentMethods as $method) {
+            if($method->method != 'COD'){
+                $amount = money($method->amount);
+                $type = strtoupper($method->method);
+                $result .= "$amount THRU $type ";
+            }
         }
 
-        return $string1 . str_repeat(' ', $spaceCount) . $string2;
+        $cod = $this->getCodPaymentTotal();
+        if($cod > 0){
+            $codAmount = money($cod);
+            $result .= "COD - $codAmount ";
+        }
+
+        return $result;
     }
 
     #[Layout('livewire.admin.base_layout')]

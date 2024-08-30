@@ -247,8 +247,20 @@ class InstallmentDetails extends Component
         return 'Pending';
     }
 
+    private function getOrder(string $orderId)
+    {
+        return DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+    }
+
     public function getDeliveryStatus(string $orderId): string
     {
+        $order  = $this->getOrder($orderId);
+        if(!$order) return 'Pending';
+
+        if($order->delivery_type == 'pickup') return 'For Pickup';
+
         $delivered = DB::table('delivery_items')
             ->where('order_id', $orderId)
             ->sum('delivered');
@@ -266,6 +278,17 @@ class InstallmentDetails extends Component
         if($delivered == 0 && $outForDelivery > 0) return 'Out For Delivery';
 
         return 'To Ship';
+    }
+
+    public function statusDisplay(int $status): string
+    {
+        return match ($status) {
+            0 => 'Pending',
+            1, 2 => 'Processed',
+            3 => 'Cancelled',
+            4 => 'Refunded',
+            default => throw new \Exception('Unexpected value'),
+        };
     }
 
     #[Layout('livewire.admin.base_layout')]

@@ -767,7 +767,7 @@
 <div class="printable">
     <div class="receipt-container no-bootstrap-center">
         <div class="receipt-header">
-            <p>TR# {{ ($transaction) ? str_pad((string) $transaction->transaction_number, 5, '0', STR_PAD_LEFT) : '' }} {{ $order->total > 1000000 ? 'DR' : 'SI' }}# {{ $order->receipt_number }}</p>
+            <p>TR# {{ ($transaction) ? str_pad((string) $transaction->transaction_number, 5, '0', STR_PAD_LEFT) : '' }} {{ $this->getReceiptType() }}# {{ $order->receipt_number }}</p>
             <p>{{ is_null($order->completed_at) ? '' : date('F j, Y', strtotime($order->completed_at)) }}</p>
         </div>
         <div class="receipt-details">
@@ -782,7 +782,7 @@
                 <tr>
                     <td>{{ $item->quantity }}</td>
                     <td>{{ $item->title }}</td>
-                    <td><x-money amount="{{ $item->price * $item->quantity }}"></x-money></td>
+                    <td style="text-align: right;"><x-money amount="{{ $item->price * $item->quantity }}"></x-money></td>
                 </tr>
                 @endforeach
             </table>
@@ -797,9 +797,17 @@
             <p>Total Sales: <x-money amount="{{ $orderTotal - ($orderTotal * 0.12) }}" /></p>
             <p>VAT: <x-money amount="{{ $orderTotal * 0.12 }}" /></p>
             <p>Net Total: <x-money amount="{{ $orderTotal }}" /></p>
+            @php
+                $paymentTotal = $this->getPaymentTotalWithoutCod();
+            @endphp
+            @if($paymentTotal != $orderTotal)
+            <p>Downpayment: <x-money amount="{{ $paymentTotal }}" /></p>
+                <p>Balance: <x-money amount="{{ $orderTotal - $paymentTotal}}" /></p>
+            @endif
         </div>
         <div class="receipt-footer">
-            <p>FOR DELIVER</p>
+            <p>{{ $this->getPaymentBreakdown() }}</p>
+            <p>FOR {{ strtoupper($order->delivery_type) }}</p>
             <p>Assisted by: {{ $assistant->first_name }}</p>
             <p>Cashier: {{ is_null($cashier) ? '' : $cashier->first_name }}</p>
         </div>
@@ -859,8 +867,10 @@
         }
 
         .receipt-footer {
-            margin-top: 100px;
-            margin-left: 100px;
+            margin-top: 80px;
+            margin-left: 50px;
+            max-width:250px;
+            word-wrap:break-word;
         }
 
         .receipt-footer p {
