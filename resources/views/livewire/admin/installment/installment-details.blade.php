@@ -256,7 +256,7 @@
                                                   <td>{{ $order->assistant_first_name }} {{ $order->assistant_last_name }}</td>
                                                   <td>@money($order->total)</td>
                                                   <td>{{ isset($order->completed_at) ? date('F j, Y', strtotime($order->completed_at)) : 'N/A' }}</td>
-                                                  <td></td>
+                                                  <td>{{ $this->statusDisplay($order->status) }}</td>
                                                   <td>{{ isset($order->payment_type) ? ucfirst($order->payment_type) : 'N/A' }}</td>
                                                   <td>{{ $this->getPaymentStatus($order->order_id) }}</td>
                                                   <td>{{ $this->getDeliveryStatus($order->order_id) }}</td>
