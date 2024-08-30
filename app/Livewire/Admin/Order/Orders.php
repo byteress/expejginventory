@@ -201,6 +201,11 @@ class Orders extends Component
 
     public function getDeliveryStatus(string $orderId): string
     {
+        $order  = $this->getOrder($orderId);
+        if(!$order) return 'Pending';
+
+        if($order->delivery_type == 'pickup') return 'For Pickup';
+
         $delivered = DB::table('delivery_items')
             ->where('order_id', $orderId)
             ->sum('delivered');
