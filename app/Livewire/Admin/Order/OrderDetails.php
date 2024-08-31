@@ -27,8 +27,6 @@ class OrderDetails extends Component
     use WithPagination;
 
     public $orderId;
-    public $order2;
-    public $cartItems2 = [];
     public $customer;
 
     #[Url(nullable: true)]
@@ -75,7 +73,6 @@ class OrderDetails extends Component
         $this->orderId = $order_id;
 
         $order = $this->getOrder();
-        $this->order2 = $order;
         $this->completed = $order->status;
         $this->completedCod = $order->status == 2;
         $this->branch = $order->branch_id;
@@ -116,7 +113,6 @@ class OrderDetails extends Component
             $this->calculateDiscount($item->product_id, $item->price);
         }
 
-        $this->cartItems2 = $this->getItems();
         $this->customer = $this->getCustomer();
 
         $this->sameAddress = $order->delivery_address == $this->customer->address;
@@ -557,7 +553,7 @@ class OrderDetails extends Component
     private function placeDeliveryOrder(IDeliveryService $deliveryService): Result
     {
         $items = [];
-        foreach ($this->cartItems2 as $item) {
+        foreach ($this->getItems() as $item) {
             $items[] = [
                 'productId' => $item->product_id,
                 'title' => $item->title,
