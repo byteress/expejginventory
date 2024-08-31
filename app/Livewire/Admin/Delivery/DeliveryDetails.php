@@ -28,7 +28,7 @@ class DeliveryDetails extends Component
     {
         $this->deliveryId = $delivery_id;
         $this->delivery = $this->getDelivery($delivery_id);
-        $this->notes = $this->delivery->notes;
+        $this->notes = $this->delivery->notes ?? '';
 
         $orders = $this->getOrders();
         foreach ($orders as $order) {
