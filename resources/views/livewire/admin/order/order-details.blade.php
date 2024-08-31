@@ -811,11 +811,12 @@
                     <td>Net Total: </td>
                     <td><x-money amount="{{ $orderTotal }}" /></td>
                 </tr>
+                    @if($paymentTotal != $orderTotal)
                 <tr>
                     <td>Downpayment: </td>
                     <td><x-money amount="{{ $paymentTotal }}" /></td>
                 </tr>
-                @if($paymentTotal != $orderTotal)
+
                 <tr>
                     <td>Balance: </td>
                     <td><x-money amount="{{ $orderTotal - $paymentTotal}}" /></td>

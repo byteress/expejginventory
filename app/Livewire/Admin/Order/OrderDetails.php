@@ -340,14 +340,14 @@ class OrderDetails extends Component
 
     private function getCancelledOrder()
     {
-        $order = $this->order2;
+        $order = $this->getOrder();
         return DB::table('orders')->where('order_id', $order->cancelled_order_id)->first();
     }
 
     private function getPaymentMethods()
     {
         $paymentMethods = [];
-        $order = $this->order2;
+        $order = $this->getOrder();
         $transaction = DB::table('transactions')->where('order_id', $this->orderId)->first();
         $fromCancelledOrder = false;
 
@@ -425,7 +425,7 @@ class OrderDetails extends Component
 
     public function getCustomer()
     {
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         return DB::table('customers')
             ->where('id', $order->customer_id)
@@ -434,7 +434,7 @@ class OrderDetails extends Component
 
     public function getAssistant()
     {
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         return DB::table('users')
             ->where('id', $order->assistant_id)
@@ -443,7 +443,7 @@ class OrderDetails extends Component
 
     public function getCashier()
     {
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         return DB::table('users')
             ->where('id', $order->cashier)
@@ -537,7 +537,7 @@ class OrderDetails extends Component
             ]
         ]);
 
-        $order = $this->order2;
+        $order = $this->getOrder();
         $cancelledOrder = $this->getCancelledOrder();
 
         if($cancelledOrder && $order->total < $cancelledOrder->total){
@@ -569,7 +569,7 @@ class OrderDetails extends Component
         $address = $this->customer->address;
         if(!$this->sameAddress) $address = $this->deliveryAddress;
 
-        $fee = (float) $this->deliveryType;
+        $fee = (float) $this->deliveryFee;
 
         return $deliveryService->placeOrder($this->orderId, $items, $this->deliveryType, $this->branch, $fee * 100, $address);
     }
@@ -581,7 +581,7 @@ class OrderDetails extends Component
     {
         DB::beginTransaction();
 
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         $downPayment = [];
         for($i = 0; $i < count($this->amounts); $i++){
@@ -621,7 +621,7 @@ class OrderDetails extends Component
     {
         DB::beginTransaction();
 
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         $deliveryResult = $this->placeDeliveryOrder($deliveryService);
         if($deliveryResult->isFailure()){
@@ -679,7 +679,7 @@ class OrderDetails extends Component
             'referenceNumbers.*' => 'Reference Number is required',
         ]);
 
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         $total = array_sum($this->amounts) * 100;
 
@@ -743,7 +743,7 @@ class OrderDetails extends Component
             'referenceNumbersCod.*' => 'Reference Number is required',
         ]);
 
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         $total = $order->total - (array_sum($this->amounts) * 100);
         $codTotal = array_sum($this->amountsCod) * 100;
@@ -795,7 +795,7 @@ class OrderDetails extends Component
 
     public function getReceiptType(): string
     {
-        $order = $this->order2;
+        $order = $this->getOrder();
 
         if($order->payment_type == 'installment') return 'CI';
         if($order->order_type != 'regular') return 'CI';
@@ -824,7 +824,7 @@ class OrderDetails extends Component
 
     public function getPaymentBreakdown(): string
     {
-        $order = $this->order2;
+        $order = $this->getOrder();
         $result = '';
 
         if($order->payment_type == 'installment') $result .= "$order->months MS DP:";

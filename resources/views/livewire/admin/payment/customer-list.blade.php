@@ -45,8 +45,9 @@
                         @endforelse
                         </tbody>
                     </table>
+                    {{ $customers->links() }}
                 </div>
-                {{ $customers->links() }}
+
             </div>
         </div>
 
