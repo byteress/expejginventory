@@ -43,7 +43,7 @@
                                     <th>Payment Status</th>
                                     <th>Delivery Status</th>
                                 @endif
-                                @if($displayStatus == 'cancelled')
+                                @if($displayStatus != 'processed')
                                     <th>Notes</th>
                                 @endif
                                 <th></th>
@@ -65,14 +65,14 @@
                                         <td>{{ $this->getPaymentStatus($order->order_id) }}</td>
                                         <td>{{ $this->getDeliveryStatus($order->order_id) }}</td>
                                     @endif
-                                    @if($displayStatus == 'cancelled')
+                                    @if($displayStatus != 'processed')
                                         <td>{{ $order->notes }}</td>
                                     @endif
                                     <td align = "center">
                                         <div class="btn-group">
                                             <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" type="button"
                                                 class="btn btn-primary">@if($displayStatus != 'pending') View @else Checkout @endif</a>
-                                            @if($displayStatus != 'cancelled')
+                                            @if($displayStatus == 'processed')
                                             <button type="button"
                                                 class="btn btn-primary dropdown-toggle dropdown-toggle-split"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -81,6 +81,8 @@
                                             <div class="dropdown-menu">
                                                 <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"
                                                     href="#">Cancel</a>
+                                                <a data-toggle="modal" data-target="#refundModal{{ $order->order_id }}" class="dropdown-item"
+                                                   href="#">Refund</a>
                                             </div>
                                             <!-- Delete Modal -->
                                             <div wire:ignore.self class="modal fade" id="deleteModal{{ $order->order_id }}" tabindex="-1"
@@ -136,6 +138,60 @@
                                                 </div>
                                             </div>
                                             <!-- End Delete Modal -->
+                                                <!-- Refund Modal -->
+                                                <div wire:ignore.self class="modal fade" id="refundModal{{ $order->order_id }}" tabindex="-1"
+                                                     role="dialog" aria-labelledby="refundModal{{ $order->order_id }}Label" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <form class="user" wire:submit="refundOrder('{{ $order->order_id }}')">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="refundModal{{ $order->order_id }}Label">Refund Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}
+                                                                    </h5>
+                                                                    <button type="button" class="close" data-dismiss="modal"
+                                                                            aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    @if (session('alert-auth'))
+                                                                        <div class="alert alert-danger" role="alert">
+                                                                            {{ session('alert-auth') }}
+                                                                        </div>
+                                                                    @endif
+                                                                    <div class="form-group">
+                                                                        <input autocomplete="false" wire:model="email" type="email" class="form-control"
+                                                                               aria-describedby="emailHelp"
+                                                                               placeholder="Enter Email Address...">
+                                                                        @error('email')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input wire:model="password" type="password" class="form-control"
+                                                                               placeholder="Password">
+                                                                        @error('password')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <textarea wire:model="notes" class="form-control" placeholder="Notes"></textarea>
+                                                                        @error('notes')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">No</button>
+                                                                    <button type="submit"
+                                                                            class="btn btn-danger">Yes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- End Refund Modal -->
                                             @endif
                                         </div>
                                     </td>

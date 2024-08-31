@@ -95,7 +95,9 @@ class DailyExpense extends Component
      */
     public function getExpenses(): Collection
     {
-        $query =  ExpenseModel::where('date', $this->date);
+        $date = $this->date ?? now()->format('Y-m-d');
+
+        $query =  ExpenseModel::where('date', $date);
 
         if(!empty($this->branch)) $query->where('branch_id', $this->branch);
 

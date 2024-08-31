@@ -11,6 +11,7 @@ use OrderContracts\Events\OrderAuthorized;
 use OrderContracts\Events\OrderCancelled;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
+use OrderContracts\Events\OrderRefunded;
 use OrderContracts\Events\OrderShipped;
 
 class Order extends Aggregate
@@ -145,6 +146,14 @@ class Order extends Aggregate
     public function cancel(string $actor, ?string $notes): self
     {
         $event = new OrderCancelled($this->uuid(), $actor, $notes);
+
+        $this->recordThat($event);
+        return $this;
+    }
+
+    public function refund(string $actor, ?string $notes): self
+    {
+        $event = new OrderRefunded($this->uuid(), $actor, $notes);
 
         $this->recordThat($event);
         return $this;

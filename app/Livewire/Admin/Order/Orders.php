@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\Order;
 
 use App\Exceptions\ErrorHandler;
+use ExpenseManagementContracts\Enums\Expense;
+use ExpenseManagementContracts\IExpenseManagementService;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -52,6 +54,9 @@ class Orders extends Component
             case 'cancelled':
                 $this->status = [3];
                 break;
+            case 'refunded':
+                $this->status = [4];
+                break;
         }
     }
 
@@ -62,7 +67,8 @@ class Orders extends Component
         IOrderService $orderService,
         IIdentityAndAccessService $identityAndAccessService,
         IStockManagementService $stockManagementService,
-        string $orderId): void
+        string $orderId
+    ): void
     {
         $this->validate();
 
@@ -125,6 +131,61 @@ class Orders extends Component
         DB::commit();
 
         $this->redirect(route('admin.order.details', ['order_id' => $newOrderId]));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function refundOrder(
+        IOrderService $orderService,
+        IIdentityAndAccessService $identityAndAccessService,
+        IExpenseManagementService $expenseManagementService,
+        string $orderId
+    ): void
+    {
+        $this->validate();
+
+        DB::beginTransaction();
+
+        $authorization = $identityAndAccessService->authorize($this->email, $this->password, "refund-$orderId");
+        if ($authorization->isFailure()) {
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($authorization->getError()));
+            return;
+        }
+
+        $result = $orderService->refund($orderId, auth()->user()->id, $authorization->getValue(), $this->notes);
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        $order = $this->getOrder($orderId);
+
+        $amount = $order->total + $order->delivery_fee;
+        $orNumber = str_pad((string) $order->id, 12, '0', STR_PAD_LEFT);
+        $expenseResult = $expenseManagementService->create(
+            Str::uuid()->toString(),
+            date('Y-m-d'),
+            Expense::REFUND,
+            $amount,
+            "Refunded Order# $orNumber",
+            auth()->user()->id,
+            $order->branch_id
+        );
+
+        if($expenseResult->isFailure()){
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($expenseResult->getError()));
+            return;
+        }
+
+        DB::commit();
+
+        $this->dispatch('close-modal');
+        session()->flash('success', 'Order refunded successfully.');
     }
 
     #[On('modal-hidden')]

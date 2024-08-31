@@ -49,4 +49,5 @@ interface IOrderService
     public function shipOrders(string $shippingId, string $driver, string $truck, string $branch, array $orders, ?string $notes = null): Result;
     public function markAsDelivered(string $orderId): Result;
     public function cancel(string $orderId, string $actor, string $authorization, ?string $notes): Result;
+    public function refund(string $orderId, string $actor, string $authorization, ?string $notes): Result;
 }

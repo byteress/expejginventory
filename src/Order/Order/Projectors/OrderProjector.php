@@ -11,6 +11,7 @@ use OrderContracts\Events\OrderAuthorized;
 use OrderContracts\Events\OrderCancelled;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
+use OrderContracts\Events\OrderRefunded;
 use OrderContracts\Events\OrderShipped;
 use PaymentContracts\Events\InstallmentInitialized;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -142,6 +143,16 @@ class OrderProjector extends Projector
             ->where('order_id', $event->orderId)
             ->update([
                 'status' => 3,
+                'notes' => $event->notes
+            ]);
+    }
+
+    public function onOrderRefunded(OrderRefunded $event): void
+    {
+        DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'status' => 4,
                 'notes' => $event->notes
             ]);
     }
