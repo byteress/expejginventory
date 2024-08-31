@@ -279,8 +279,11 @@
 @script
     <script>
         $wire.on('authorizationRequired', () => {
-            console.log('test');
             $('#confirmLogin').modal('show');
+        });
+
+        $wire.on('hideModal', () => {
+            $('#confirmLogin').modal('hide');
         });
 
         let customerSearchSelect = VirtualSelect.init({

@@ -194,6 +194,7 @@ class Cart extends Component
 
         CartAlias::destroy();
         $this->reset();
+        $this->dispatch('hideModal');
         session()->flash('success', 'Order placed successfully');
 
         DB::commit();

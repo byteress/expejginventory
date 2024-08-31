@@ -110,6 +110,14 @@ class Orders extends Component
             ];
         }
 
+        $authorizationResult = $identityAndAccessService->authorize($this->email, $this->password, serialize($items));
+        if($authorizationResult->isFailure()){
+            DB::rollBack();
+            $this->reset('username', 'password');
+            session()->flash('alert-authorization', ErrorHandler::getErrorMessage($authorizationResult->getError()));
+            return;
+        }
+
         $newOrderId = Str::uuid()->toString();
         $placeOrderResult = $orderService->placeOrder(
             $newOrderId,
@@ -118,7 +126,7 @@ class Orders extends Component
             $order->branch_id,
             $items,
             $order->order_type,
-            null,
+            $authorizationResult->getValue(),
             $order->order_id
         );
 
