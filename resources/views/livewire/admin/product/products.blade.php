@@ -92,16 +92,16 @@
                                             <span class="sr-only">Toggle Dropdown</span>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a data-toggle="modal" data-target="#deleteModal1" class="dropdown-item"
+                                            <a data-toggle="modal" data-target="#deleteModal{{ $product->id }}}}" class="dropdown-item"
                                                 href="#">Delete</a>
                                         </div>
                                         <!-- Delete Modal -->
-                                        <div wire:ignore.self class="modal fade" id="deleteModal1" tabindex="-1"
-                                            role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                        <div wire:ignore.self class="modal fade" id="deleteModal{{ $product->id }}}}" tabindex="-1"
+                                            role="dialog" aria-labelledby="deleteModal{{ $product->id }}}}Label" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteModal1Label">Delete Product
+                                                        <h5 class="modal-title" id="deleteModal{{ $product->id }}}}Label">Delete Product
                                                         </h5>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
