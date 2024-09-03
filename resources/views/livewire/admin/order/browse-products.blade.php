@@ -69,20 +69,25 @@
                                             <h5 class="card-title"><b>{{ $product['model'] }}</b></h5>
                                             <p class="card-text">{{ $product['description'] }}</p>
                                             <div class="row">
-                                                <div class="col-5">
+                                                <div class="col-md-6 mt-2">
                                                     <div class="d-flex justify-content-start">
-                                                        <div class="mb-0 font-weight-bold text-gray-800 price-box">
-                                                            <i class="fas fa-tag"></i> @money($product->sale_price)
-                                                        </div>
+                                                        <div class="input-group mb-3 price-select">
+                                                            <div class="input-group-prepend">
+                                                              <label class="input-group-text" for="product-price"><i class="fas fa-tag"></i></label>
+                                                            </div>
+                                                            <select class="form-control price-select" id="product-price">
+                                                                <option value="@money($product->sale_price)">@money($product->sale_price)</option>
+                                                            </select>
+                                                          </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-7">
+                                                <div class="col-md-6 mt-2">
                                                     <div class="d-flex justify-content-end">
                                                         @if (empty(Cart::getItems(['id' => $product->id])))
                                                             @if(!$product->quantity)
                                                                 <div class="btn-group">
-                                                                    <button wire:click="addToCart('{{ $product['id'] }}', 'purchase')" type="button" class="btn btn-secondary">Purchase Order</button>
-                                                                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <button wire:click="addToCart('{{ $product['id'] }}', 'purchase')" type="button" class="btn btn-primary">Purchase Order</button>
+                                                                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                         <span class="sr-only">Toggle Dropdown</span>
                                                                     </button>
                                                                     <div class="dropdown-menu">
