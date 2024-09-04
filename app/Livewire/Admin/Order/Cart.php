@@ -56,7 +56,7 @@ class Cart extends Component
 
         $items = CartAlias::getItems();
         foreach ($items as $item) {
-            $this->calculateDiscount($item->getHash(), $item->getPrice() * 100);
+            $this->calculateDiscount($item->getHash(), $item->getPrice() * 100, $item->getExtraInfo()['price_type']);
         }
     }
 
@@ -148,7 +148,8 @@ class Cart extends Component
                 'title' => $item->getTitle(),
                 'quantity' => $item->getQuantity(),
                 'price' => $item->getPrice() * 100,
-                'reservationId' => $item->getExtraInfo()['reservation_id']
+                'reservationId' => $item->getExtraInfo()['reservation_id'],
+                'priceType' => $item->getExtraInfo()['price_type']
             ];
         }
 
@@ -321,14 +322,14 @@ class Cart extends Component
         }
     }
 
-    public function calculateDiscount(string $hash, int $price)
+    public function calculateDiscount(string $hash, int $price, string $priceType)
     {
 
         $product = $this->getProduct($hash);
 
         $discount = 0;
-        if($product->sale_price > $price)
-            $discount = ($product->sale_price - $price) / $product->sale_price;
+        if($product->$priceType > $price)
+            $discount = ($product->$priceType - $price) / $product->$priceType;
 
         $this->discounts[$hash] = round($discount * 100, 2);
     }
@@ -341,9 +342,11 @@ class Cart extends Component
     public function updatedDiscounts(float $percentage, string $hash): void
     {
         $product = $this->getProduct($hash);
+        $item = CartAlias::getItem($hash);
+        $priceType = $item->getExtraInfo()['price_type'];
 
         $rate = $percentage / 100;
-        $price = $product->sale_price / 100;
+        $price = $product->$priceType / 100;
         $discount = $price * $rate;
         $discountedPrice = $price - $discount;
 

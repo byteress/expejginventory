@@ -68,6 +68,11 @@ class OrderDetails extends Component
     public ?string $deliveryAddress = null;
     public bool $sameAddress = true;
 
+    /**
+     * @var array<string, string>
+     */
+    public array $priceType = [];
+
     public function mount(string $order_id): void
     {
         $this->orderId = $order_id;
@@ -121,29 +126,34 @@ class OrderDetails extends Component
     public function calculateDiscount(string $productId, int $price): void
     {
         $product = $this->getProduct($productId);
+        $item = $this->getItem($productId);
+        $priceType = $item->price_type;
 
         $discount = 0;
-        if($product->sale_price > $price)
-            $discount = ($product->sale_price - $price) / $product->sale_price;
+        if($product->$priceType > $price)
+            $discount = ($product->$priceType - $price) / $product->$priceType;
 
         $this->discounts[$productId] = round($discount * 100, 2);
     }
 
     public function updatedPrices(IOrderService $orderService, $price, $productId): void
     {
-        $result = $orderService->updateItemPrice($this->orderId, $productId, $price * 100);
+        $item = $this->getItem($productId);
+        $result = $orderService->updateItemPrice($this->orderId, $productId, $price * 100, $item->price_type);
         $this->calculateDiscount($productId, $price * 100);
     }
 
     public function updatedDiscounts(IOrderService $orderService, $percentage, $productId): void
     {
         $product = $this->getProduct($productId);
+        $item = $this->getItem($productId);
+        $priceType = $item->price_type;
 
         $rate = $percentage / 100;
-        $discount = $product->sale_price * $rate;
-        $discountedPrice = $product->sale_price - $discount;
+        $discount = $product->$priceType * $rate;
+        $discountedPrice = $product->$priceType - $discount;
 
-        $orderService->updateItemPrice($this->orderId, $productId, $discountedPrice);
+        $orderService->updateItemPrice($this->orderId, $productId, $discountedPrice, $priceType);
     }
 
     public function incrementQuantity(IStockManagementService $stockManagementService, IOrderService $orderService, $productId)
@@ -265,8 +275,8 @@ class OrderDetails extends Component
             DB::rollBack();
             return session()->flash('alert', ErrorHandler::getErrorMessage($reserveResult->getError()));
         }
-
-        $addResult = $orderService->addItem($this->orderId, $productId, "{$product->model} {$product->description}", $product->sale_price, 1, $newReservationId);
+        $priceType = $this->priceType[$productId] ?? 'regular_price';
+        $addResult = $orderService->addItem($this->orderId, $productId, "{$product->model} {$product->description}", $product->$priceType, 1, $newReservationId, $priceType);
         if ($addResult->isFailure()) {
             DB::rollBack();
             return session()->flash('alert', ErrorHandler::getErrorMessage($addResult->getError()));

@@ -32,6 +32,7 @@ class OrderProjector extends Projector
                     'price' => $item['price'],
                     'quantity' => $item['quantity'],
                     'reservation_id' => $item['reservationId'],
+                    'price_type' => $item['priceType'],
                 ]);
         }
 

@@ -62,7 +62,7 @@
                         </div>
                         <div class="row">
                             @foreach ($products as $product)
-                                <div class="col-md-4 mb-4">
+                                <div wire:key="{{ $product->id }}" class="col-md-4 mb-4">
                                     <div class="card shadow">
                                         {{ $product->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'card-img-top']) }}
                                         <div class="card-body">
@@ -75,8 +75,9 @@
                                                             <div class="input-group-prepend">
                                                               <label class="input-group-text" for="product-price"><i class="fas fa-tag"></i></label>
                                                             </div>
-                                                            <select class="form-control price-select" id="product-price">
-                                                                <option value="@money($product->sale_price)">@money($product->sale_price)</option>
+                                                            <select wire:model="priceType.{{ $product->id }}" class="form-control price-select" id="product-price">
+                                                                <option value="regular_price" selected>@money($product->regular_price)</option>
+                                                                <option value="sale_price">@money($product->sale_price)</option>
                                                             </select>
                                                           </div>
                                                     </div>

@@ -2,6 +2,7 @@
 
 namespace Order\Models\Product;
 
+use Illuminate\Support\Facades\DB;
 use Order\Models\Aggregate;
 use OrderContracts\Events\PriceSet;
 
@@ -39,12 +40,17 @@ class Product extends Aggregate
         return $this->sale;
     }
 
-    public function needsAuthorization(int $price): bool
+    public function needsAuthorization(int $price, string $priceType = 'regular_price'): bool
     {
+        $product = \ProductManagement\Models\Product::find($this->uuid());
+
+        if(!$product) return false;
+
         $authorization = false;
-        if ($this->sale >= $price) {
-            $diff = $this->sale - $price;
-            $rate = ($diff / $this->sale) * 100;
+        $basePrice = $product->$priceType;
+        if ($basePrice >= $price) {
+            $diff = $basePrice - $price;
+            $rate = ($diff / $basePrice) * 100;
             if ($rate > 5) $authorization = true;
         }
 

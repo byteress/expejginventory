@@ -66,10 +66,11 @@ class Order extends Aggregate
         string $title,
         int $price,
         int $quantity,
-        string $reservationId
+        string $reservationId,
+        string $priceType
     ): self
     {
-        $event = new ItemAdded($this->uuid(), $productId, $title, $price, $quantity, $reservationId);
+        $event = new ItemAdded($this->uuid(), $productId, $title, $price, $quantity, $reservationId, $priceType);
         $this->recordThat($event);
 
         return $this;

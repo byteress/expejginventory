@@ -23,13 +23,18 @@ class BrowseProducts extends Component
     use WithPagination;
 
     #[Url(nullable: true)]
-    public $search;
+    public ?string $search = null;
 
     #[Validate('required')]
     #[Session]
     public ?string $branch = null;
 
-    public function mount()
+    /**
+     * @var array<string, string>
+     */
+    public array $priceType = [];
+
+    public function mount(): void
     {
         if(auth()->user()->branch_id){
             $this->branch = auth()->user()->branch_id;
@@ -101,13 +106,15 @@ class BrowseProducts extends Component
         }
 
         $product = Product::find($productId);
+        $priceType = $this->priceType[$productId] ?? 'regular_price';
 
         Cart::addItem([
             'id' => $productId,
             'title' => "{$product->model} {$product->description}",
-            'price' => $product->sale_price / 100,
+            'price' => $product->$priceType / 100,
             'extra_info' => [
-                'reservation_id' => $reservationId
+                'reservation_id' => $reservationId,
+                'price_type' => $priceType,
             ]
         ]);
 

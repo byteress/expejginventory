@@ -67,8 +67,14 @@
                                                 <div class="row">
                                                     <div class="col-5">
                                                         <div class="d-flex justify-content-start">
-                                                            <div class="mb-0 font-weight-bold text-gray-800 price-box">
-                                                                <i class="fas fa-tag"></i> @money($product->sale_price)
+                                                            <div class="input-group mb-3 price-select">
+                                                                <div class="input-group-prepend">
+                                                                    <label class="input-group-text" for="product-price"><i class="fas fa-tag"></i></label>
+                                                                </div>
+                                                                <select wire:model="priceType.{{ $product->id }}" class="form-control price-select" id="product-price">
+                                                                    <option value="regular_price" selected>@money($product->regular_price)</option>
+                                                                    <option value="sale_price">@money($product->sale_price)</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </div>

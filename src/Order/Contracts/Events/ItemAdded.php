@@ -12,9 +12,10 @@ class ItemAdded extends ShouldBeStored
         public string $title,
         public int $price,
         public int $quantity,
-        public string $reservationId
+        public string $reservationId,
+        public string $priceType
     )
     {
-        
+
     }
 }

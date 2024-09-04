@@ -26,13 +26,9 @@ class OrderService implements IOrderService
         }
     }
 
-    /** @param array<array{
-     *      'productId': string,
-     *      'title': string,
-     *      'quantity': int,
-     *      'price': int,
-     *      'reservationId': string
-     * }> $items */
+    /**
+     * @inheritDoc
+     */
     public function placeOrder(
         string $orderId,
         string $customerId,
@@ -48,7 +44,7 @@ class OrderService implements IOrderService
             foreach ($items as $item) {
                 $product = Product::retrieve($item['productId']);
                 //check if specified price and the regular price has a difference of 5% of the regular price
-                if ($product->needsAuthorization($item['price'])) {
+                if ($product->needsAuthorization($item['price'], $item['priceType'])) {
                     $this->validateAuthorization($authorization, serialize($items));
                 }
             }
@@ -70,12 +66,13 @@ class OrderService implements IOrderService
         string $title,
         int $price,
         int $quantity,
-        string $reservationId
+        string $reservationId,
+        string $priceType
     ): Result
     {
         try {
             $order = Order::retrieve($orderId);
-            $order->addItem($productId, $title, $price, $quantity, $reservationId);
+            $order->addItem($productId, $title, $price, $quantity, $reservationId, $priceType);
             $order->persist();
 
             return Result::success(null);
@@ -85,13 +82,13 @@ class OrderService implements IOrderService
         }
     }
 
-    public function updateItemPrice(string $orderId, string $productId, int $newPrice): Result
+    public function updateItemPrice(string $orderId, string $productId, int $newPrice, string $priceType): Result
     {
         try {
             $product = Product::retrieve($productId);
 
             $order = Order::retrieve($orderId);
-            $order->updateItemPrice($productId, $newPrice, $product->needsAuthorization($newPrice));
+            $order->updateItemPrice($productId, $newPrice, $product->needsAuthorization($newPrice, $priceType));
             $order->persist();
 
             return Result::success(null);
@@ -144,50 +141,6 @@ class OrderService implements IOrderService
 
             return Result::success(null);
         }catch(Exception $e){
-            report($e);
-            return Result::failure($e);
-        }
-    }
-
-    /**
-     * @param string $shippingId
-     * @param string $driver
-     * @param string $truck
-     * @param string $branch
-     * @param array<string> $orders
-     * @param string|null $notes
-     * @return Result
-     */
-    public function shipOrders(string $shippingId, string $driver, string $truck, string $branch, array $orders, ?string $notes = null): Result
-    {
-        try {
-            foreach ($orders as $orderId) {
-                $order = Order::retrieve($orderId);
-                $order->ship(
-                    $shippingId,
-                    $driver,
-                    $truck,
-                    $notes
-                );
-                $order->persist();
-            }
-
-            return Result::success(null);
-        } catch (Exception $e) {
-            report($e);
-            return Result::failure($e);
-        }
-    }
-
-    public function markAsDelivered(string $orderId): Result
-    {
-        try {
-            $order = Order::retrieve($orderId);
-            $order->markAsDelivered();
-            $order->persist();
-
-            return Result::success(null);
-        } catch (Exception $e) {
             report($e);
             return Result::failure($e);
         }
