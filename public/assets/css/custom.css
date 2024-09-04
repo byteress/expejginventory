@@ -182,3 +182,9 @@ body {
     border: 1px solid #6d74d8;
     padding: 0.8rem 0.7rem;
 }
+
+@media (min-width: 768px) {
+    .sidebar.toggled .sidebar-brand .sidebar-brand-icon {
+        display: block !important;
+    }
+}

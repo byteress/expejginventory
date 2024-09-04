@@ -4,11 +4,11 @@
     <!-- Sidebar - Brand -->
     <a wire:navigate class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin.dashboard') }}">
 
-        <div class="sidebar-brand-icon">
+        <div class="sidebar-brand-icon d-none">
             <img src="{{ asset('assets/img/final_logo.png') }}" alt="" style = "width:40px;">
         </div>
         {{-- <div class="sidebar-brand-text mx-2"><span class ="primary-text">JENNY</span><span class ="secondary-text">Joy</span><sup>GRACE</sup></div> --}}
-        <div class="sidebar-brand-text mx-2 mt-2"><h6>JENNYGRACE<sup>admin</sup></h6></div>
+        <div class="sidebar-brand-text mt-2"><img src="{{ asset('assets/img/left_logo.png') }}" alt="" style = "width:200px;"></div>
     </a>
 
     <!-- Divider -->
