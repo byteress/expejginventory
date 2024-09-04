@@ -21,6 +21,13 @@
     <link href="{{ asset('assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/favicon/favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ asset('assets/favicon/android-chrome-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512"  href="{{ asset('assets/favicon/android-chrome-512x512.png') }}">
+    <link rel="manifest" href="{{ asset('assets/favicon/site.webmanifest') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/favicon/favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/virtual-select.min.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">

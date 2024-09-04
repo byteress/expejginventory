@@ -12,7 +12,7 @@
                         <div class="col-md-12">
                             <div class="p-5">
                                 <div class = "d-flex justify-content-center">
-                                    <img src="{{ asset('assets/img/jg-logo.jpg') }}" alt="" class ="home-logo" style = "width: 150px;">
+                                    <img src="{{ asset('assets/img/left_logo.png') }}" alt="" class ="home-logo mb-3" style = "width: 250px;">
                                 </div>
                                 {{-- <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">LOGIN</h1>
