@@ -107,6 +107,7 @@ class Orders extends Component
                 'title' => $item->title,
                 'price' => $item->price,
                 'reservationId' => $reservationId,
+                'priceType' => $item->price_type,
             ];
         }
 

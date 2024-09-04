@@ -59,6 +59,7 @@ class OrderProjector extends Projector
                 'price' => $event->price,
                 'quantity' => $event->quantity,
                 'reservation_id' => $event->reservationId,
+                'price_type' => $event->priceType,
             ]);
 
         $this->updateTotal($event->orderId);
