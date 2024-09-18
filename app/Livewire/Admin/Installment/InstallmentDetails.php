@@ -19,6 +19,9 @@ class InstallmentDetails extends Component
     public $paymentMethods = ['Cash'];
     public $referenceNumbers = [''];
     public $amounts = [null];
+
+    public $codReferenceNumbers = [];
+    public $codAmounts = [];
     public $receiptNumber = '';
 
     public array $rate;
@@ -214,7 +217,22 @@ class InstallmentDetails extends Component
             ->join('branches', 'orders.branch_id', '=', 'branches.id')
             ->join('users', 'orders.assistant_id', '=', 'users.id')
             ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
-            ->where('customer_id', $this->customer->id)
+            ->where('orders.customer_id', $this->customer->id)
+            ->orderByDesc('orders.placed_at');
+
+        return $query->get();
+    }
+
+    public function getCodBalance()
+    {
+        $query = DB::table('cod_balances')
+            ->join('orders', 'orders.order_id', '=', 'cod_balances.order_id')
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
+            ->join('branches', 'orders.branch_id', '=', 'branches.id')
+            ->join('users', 'orders.assistant_id', '=', 'users.id')
+            ->select(['cod_balances.*', 'orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
+            ->where('orders..customer_id', $this->customer->id)
+            ->where('cod_balances.balance', '>', 0)
             ->orderByDesc('orders.placed_at');
 
         return $query->get();
@@ -292,6 +310,47 @@ class InstallmentDetails extends Component
         };
     }
 
+    /**
+     * @throws \Throwable
+     */
+    public function collectCod(IPaymentService $paymentService, string $orderId): void
+    {
+        $this->validate([
+            'codReferenceNumbers.' . $orderId => 'required',
+            'codAmounts.' . $orderId => 'required',
+        ], [
+            'codReferenceNumbers.' . $orderId => 'Reference number is required.',
+            'codAmounts.' . $orderId => 'Amount is required.',
+        ]);
+
+        $payment = [];
+        $payment[] = [
+            'amount' => $this->codAmounts[$orderId] * 100,
+            'reference' => $this->codReferenceNumbers[$orderId],
+            'method' => 'Cash',
+        ];
+
+        DB::beginTransaction();
+
+        $result = $paymentService->collectCod(
+            $this->customer->id,
+            $payment,
+            auth()->user()?->id,
+            Str::uuid()->toString(),
+            $this->codReferenceNumbers[$orderId],
+            $orderId
+        );
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+        session()->flash('success', 'Payment received.');
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
@@ -301,6 +360,7 @@ class InstallmentDetails extends Component
             'transaction_history' => $this->getTransactionHistory(),
             'codOrders' => $this->getCodOrders(),
             'orders' => $this->getOrderHistory(),
+            'codBalance' => $this->getCodBalance(),
         ]);
     }
 }

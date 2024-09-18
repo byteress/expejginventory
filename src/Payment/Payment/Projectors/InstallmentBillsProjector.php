@@ -39,6 +39,11 @@ class InstallmentBillsProjector extends Projector
                 ->update([
                     'due' => date('Y-m-d', strtotime($due['due'])),
                 ]);
+
+            DB::table('installment_bills')
+                ->where('order_id', $event->orderId)
+                ->where('index', $due['index'])
+                ->increment('balance', $due['amount']);
         }
     }
 

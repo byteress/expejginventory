@@ -4,8 +4,10 @@ namespace Payment\Models\Customer;
 
 use Carbon\Carbon;
 use Payment\Models\Aggregate;
+use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\CodPaymentRequested;
+use PaymentContracts\Events\CodReceived;
 use PaymentContracts\Events\FullPaymentReceived;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\DownPaymentReceived;
@@ -28,6 +30,14 @@ class Customer extends Aggregate
      * @var array<array{'due': ?Carbon, 'balance': int, 'amount': int, 'index': int, 'installmentId': string, 'orderId': string}>
      */
     public array $installments = [];
+    /**
+     * @var array<string, array{'amount': int, 'balance': int, 'type': string}>
+     */
+    public array $codBalances = [];
+    /**
+     * @var array<string, InstallmentInitialized>
+     */
+    public array $installmentRequests = [];
 
     /**
      * @param string $installmentId
@@ -65,7 +75,8 @@ class Customer extends Aggregate
             $totalDownPayment += $dp['amount'];
         }
 
-        $installmentAmount = $orderTotal - $totalDownPayment;
+        $codAmount = $this->calculateCODTotalAmount($downPayment);
+        $installmentAmount = $orderTotal - $totalDownPayment - $codAmount;
         $withInterest = round($installmentAmount + ($installmentAmount * ($interestRate / 100)));
 
         $installments = [];
@@ -108,25 +119,40 @@ class Customer extends Aggregate
 
         $this->recordThat($paymentReceivedEvent);
 
+        if($codAmount == 0) return $this;
+
+        $this->recordThat(new CodReceived(
+            $orderId,
+            $this->uuid(),
+            $codAmount,
+            'installment'
+        ));
+
         return $this;
     }
 
-    public function startInstallment(string $orderId): self
+    public function startInstallment(string $orderId, int $codBalance = 0): self
     {
+        if($this->codBalances[$orderId]['balance'] != $codBalance) return $this;
+
+        $interestRate = $this->installmentRequests[$orderId]->interestRate;
+        $withInterest = round($codBalance + ($codBalance * ($interestRate / 100)));
+
         $dues = [];
         $i = 1;
         foreach($this->installments as $installment){
             if($installment['orderId'] == $orderId && !isset($installment['due'])){
                 $dues[] = [
                     'due' => \Date::now()->addMonths($i),
-                    'index' => $installment['index']
+                    'index' => $installment['index'],
+                    'amount' => round($withInterest / $this->installmentRequests[$orderId]->months),
                 ];
 
                 $i++;
             }
         }
 
-        $this->recordThat(new InstallmentStarted($orderId, $dues));
+        $this->recordThat(new InstallmentStarted($orderId, $this->uuid(), $dues, $codBalance));
 
         return $this;
     }
@@ -286,7 +312,7 @@ class Customer extends Aggregate
             $total += $dp['amount'];
         }
 
-        $event = new CodPaymentReceived(
+        $event = new CodPaymentCollected(
             $transactionId,
             $this->uuid(),
             $paymentMethods,
@@ -297,6 +323,10 @@ class Customer extends Aggregate
         );
 
         $this->recordThat($event);
+
+        if($this->codBalances[$event->orderId]['type'] != 'installment') return $this;
+
+        $this->startInstallment($orderId, $this->codBalances[$event->orderId]['balance']);
 
         return $this;
     }
@@ -326,15 +356,44 @@ class Customer extends Aggregate
             $orderId
         );
 
+        $codAmount = $this->calculateCODTotalAmount($paymentMethods);
+        if($codAmount == 0) return $this;
+
+        $this->recordThat(new CodReceived(
+            $orderId,
+            $this->uuid(),
+            $codAmount,
+            'full'
+        ));
+
         $this->recordThat($event);
 
         return $this;
+    }
+
+    /**
+     * @param array<array{'method': string, 'reference': string, 'amount': int, 'credit': bool}> $paymentMethods
+     * @return int
+     */
+    private function calculateCODTotalAmount(array $paymentMethods): int
+    {
+        $totalCOD = 0;
+
+        foreach ($paymentMethods as $payment) {
+            if ($payment['method'] === 'COD' && !$payment['credit']) {
+                // Add the amount if the method is COD and it's not a credit payment
+                $totalCOD += $payment['amount'];
+            }
+        }
+
+        return $totalCOD;
     }
 
     public function applyInstallmentInitialized(InstallmentInitialized $event): void
     {
         $this->balance += (int) round($event->amount + ($event->amount * ($event->interestRate / 100)));
         $this->orders[$event->orderId] = (int) round($event->amount + ($event->amount * ($event->interestRate / 100)));
+        $this->installmentRequests[$event->orderId] = $event;
 
         $installments = [];
         foreach($event->installments as $key => $installment){
@@ -360,10 +419,17 @@ class Customer extends Aggregate
         foreach($this->installments as $key => $installment){
             foreach ($event->dues as $due){
                 if($installment['orderId'] === $event->orderId && $installment['index'] === $due['index']){
-                    $this->installments[$key]['due'] = $due;
+                    $this->installments[$key]['due'] = $due['due'];
+                    $oldAmount = $this->installments[$key]['amount'];
+
+                    $this->installments[$key]['amount'] = $oldAmount + $due['amount'];
+                    $this->installments[$key]['balance'] = $oldAmount + $due['amount'];
                 }
             }
         }
+
+        $oldBalance = $this->codBalances[$event->orderId]['balance'] ?? 0;
+        $this->codBalances[$event->orderId]['balance'] = $oldBalance - $event->codBalance;
     }
 
     public function applyInstallmentPaymentReceived(InstallmentPaymentReceived $event): void
@@ -379,5 +445,21 @@ class Customer extends Aggregate
                 break;
             }
         }
+    }
+
+    public function applyCodReceived(CodReceived $event): void
+    {
+        $this->codBalances[$event->orderId] = [
+            'amount' => $event->amount,
+            'balance' => $event->amount,
+            'type' => $event->paymentType,
+        ];
+    }
+
+    public function applyCodPaymentCollected(CodPaymentCollected $event): void
+    {
+        $oldBalance = $this->codBalances[$event->orderId]['balance'] ?? 0;
+
+        $this->codBalances[$event->orderId]['balance'] = $oldBalance - $event->amount;
     }
 }

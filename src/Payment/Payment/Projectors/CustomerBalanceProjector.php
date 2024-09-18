@@ -4,10 +4,13 @@ namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
 use OrderContracts\Events\OrderCancelled;
+use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\CodPaymentRequested;
+use PaymentContracts\Events\CodReceived;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\InstallmentPaymentReceived;
+use PaymentContracts\Events\InstallmentStarted;
 use PaymentContracts\Events\PenaltyApplied;
 use PaymentContracts\Events\PenaltyRemoved;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -57,6 +60,46 @@ class CustomerBalanceProjector extends Projector
         if(!$order) return;
 
         $this->updateBalance($order->customer_id, $balance, 'decrement', 'installment');
+
+        $cod = DB::table('cod_balances')
+            ->where('order_id', $event->orderId)
+            ->first();
+
+        if(!$cod) return;
+
+        $this->updateBalance($order->customer_id, $cod->balance, 'decrement', 'cod');
+        $cod->delete();
+    }
+
+    public function onCodReceived(CodReceived $event): void
+    {
+        DB::table('cod_balances')
+            ->insert([
+                'order_id' => $event->orderId,
+                'amount' => $event->amount,
+                'balance' => $event->amount
+            ]);
+
+        $this->updateBalance($event->customerId, $event->amount, 'increment', 'cod');
+    }
+
+    public function onCodPaymentCollected(CodPaymentCollected $event): void
+    {
+        DB::table('cod_balances')
+            ->where('order_id', $event->orderId)
+            ->decrement('balance', $event->amount);
+
+        $this->updateBalance($event->customerId, $event->amount, 'decrement', 'cod');
+    }
+
+    public function onInstallmentStarted(InstallmentStarted $event): void
+    {
+        DB::table('cod_balances')
+            ->where('order_id', $event->orderId)
+            ->decrement('balance', $event->codBalance);
+
+        $this->updateBalance($event->customerId, $event->codBalance, 'decrement', 'cod');
+        $this->updateBalance($event->customerId, $event->codBalance, 'increment', 'installment');
     }
 
     private function updateBalance(string $customerId, int $amount, string $action, string $type): void

@@ -223,4 +223,25 @@ class PaymentService implements IPaymentService
             return Result::failure($exception);
         }
     }
+
+    public function collectCod(string $customerId, array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId,): Result
+    {
+        try {
+            $customer = Customer::retrieve($customerId);
+            $customer->payCod(
+                $paymentMethods,
+                $cashier,
+                $transactionId,
+                $orNumber,
+                $orderId
+            );
+
+            $customer->persist();
+
+            return Result::success(null);
+        } catch (Exception $exception) {
+            report($exception);
+            return Result::failure($exception);
+        }
+    }
 }

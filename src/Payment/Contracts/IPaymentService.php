@@ -120,4 +120,22 @@ interface IPaymentService
     ): Result;
 
     public function startInstallment(string $customerId, string $orderId): Result;
+
+    /**
+     * @param string $customerId
+     * @param array<array{'method': string, 'reference': string, 'amount': int, 'credit': bool}> $paymentMethods
+     * @param string $cashier
+     * @param string $transactionId
+     * @param string $orNumber
+     * @param string $orderId
+     * @return Result
+     */
+    public function collectCod(
+        string $customerId,
+        array $paymentMethods,
+        string $cashier,
+        string $transactionId,
+        string $orNumber,
+        string $orderId,
+    ): Result;
 }
