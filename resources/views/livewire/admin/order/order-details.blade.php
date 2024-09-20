@@ -430,6 +430,7 @@
                                                             <option value="Paymaya">Paymaya</option>
                                                             <option value="Bank Transfer">Bank Transfer</option>
                                                             <option value="COD">COD</option>
+                                                            <option value="Check">Check</option>
                                                         </select>
                                                     </div>
                                                     @error('paymentMethods.' . $loop->index)
@@ -560,6 +561,7 @@
                                                             <option value="Paymaya">Paymaya</option>
                                                             <option value="Bank Transfer">Bank Transfer</option>
                                                             <option value="COD">COD</option>
+                                                            <option value="Check">Check</option>
                                                         </select>
                                                     </div>
                                                     @error('paymentMethodsCod.' . $loop->index)
