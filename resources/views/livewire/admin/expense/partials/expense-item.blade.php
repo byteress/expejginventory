@@ -1,4 +1,5 @@
 <tr x-data="{ edit: false }">
+    <td><span x-show="!edit">{{ $pvc }}</span> <input wire:model="pvc" x-show="edit" type="text" required class = "form-control" ></td>
     <td><span x-show="!edit">{{ $this->getExpenseName($expense) }}</span> <select  x-show="edit" wire:model="expense" class="form-control" id="expense_type">
             @foreach($expenses as $expense)
                 <option value="{{ $expense->value }}">{{ $expense->displayName() }}</option>

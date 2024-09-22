@@ -18,16 +18,20 @@ class ExpenseItem extends Component
     #[Validate('required')]
     public int $expense;
 
+    #[Validate('required')]
+    public string $pvc;
+
     #[Validate('required|numeric|min:1')]
     public float $amount;
     public string $description;
     public string $branchId;
 
-    public function mount(string $expenseId, int $expense, int $amount, string $description, string $branchId): void
+    public function mount(string $expenseId, int $expense, int $amount, string $pvc, string $description, string $branchId): void
     {
         $this->expenseId = $expenseId;
         $this->expense = $expense;
         $this->amount = $amount / 100;
+        $this->pvc = $pvc;
         $this->description = $description;
         $this->branchId = $branchId;
     }
@@ -51,6 +55,7 @@ class ExpenseItem extends Component
             $this->expenseId,
             Expense::from($this->expense),
             (int) round($this->amount * 100),
+            $this->pvc,
             $this->description
         );
     }

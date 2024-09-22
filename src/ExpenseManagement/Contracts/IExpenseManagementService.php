@@ -12,6 +12,7 @@ interface IExpenseManagementService
         string  $date,
         Expense $expense,
         int     $amount,
+        string $pvc,
         ?string $description,
         string  $actor,
         string $branch
@@ -21,6 +22,7 @@ interface IExpenseManagementService
         string $expenseId,
         Expense $expense,
         int $amount,
+        string $pvc,
         string $description
     ): Result;
 

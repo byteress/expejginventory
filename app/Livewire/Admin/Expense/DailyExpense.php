@@ -35,6 +35,9 @@ class DailyExpense extends Component
     public ?string $description = null;
 
     #[Validate('required')]
+    public string $pvc = '';
+
+    #[Validate('required')]
     public string $branch = '';
 
     public function mount(): void
@@ -76,6 +79,7 @@ class DailyExpense extends Component
             $this->date,
             Expense::from($this->expense),
             $this->amount * 100,
+            $this->pvc,
             $this->description,
             $user->id,
             $this->branch

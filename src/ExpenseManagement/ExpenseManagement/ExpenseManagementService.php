@@ -17,6 +17,7 @@ class ExpenseManagementService implements IExpenseManagementService
         string $date,
         Expense $expense,
         int $amount,
+        string $pvc,
         ?string $description,
         string $actor,
         string $branch
@@ -27,6 +28,7 @@ class ExpenseManagementService implements IExpenseManagementService
             $expenseModel->id = $expenseId;
             $expenseModel->date = $date;
             $expenseModel->amount = $amount;
+            $expenseModel->voucher_number = $pvc;
             $expenseModel->expense = $expense->value;
             $expenseModel->actor = $actor;
             $expenseModel->description = $description;
@@ -40,7 +42,7 @@ class ExpenseManagementService implements IExpenseManagementService
         }
     }
 
-    public function update(string $expenseId, Expense $expense, int $amount, string $description): Result
+    public function update(string $expenseId, Expense $expense, int $amount, string $pvc, string $description): Result
     {
         try{
             $expenseModel = ExpenseModel::find($expenseId);
@@ -50,6 +52,7 @@ class ExpenseManagementService implements IExpenseManagementService
             ]);
 
             $expenseModel->amount = $amount;
+            $expenseModel->voucher_number = $pvc;
             $expenseModel->expense = $expense->value;
             $expenseModel->description = $description;
             $expenseModel->save();

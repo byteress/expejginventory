@@ -67,6 +67,15 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="pvc">PVC#</label>
+                                <input wire:model="pvc" type="text" class="form-control" id="pvc" placeholder="PVC#">
+                                @error('pvc')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
                             <div class="form-group">
                                 <label for="supplier">Branch</label>
@@ -104,6 +113,7 @@
                             <table class="table table-bordered">
                                 <thead class="thead-light">
                                   <tr>
+                                    <th scope="col">PVC#</th>
                                     <th scope="col">Expense</th>
                                     <th scope="col">Amount</th>
                                     <th scope="col">Description</th>
@@ -120,6 +130,7 @@
                                             :expense-id="$item->id"
                                             :expense="$item->expense"
                                             :amount="$item->amount"
+                                            :pvc="$item->voucher_number"
                                             :description="$item->description"
                                             :branch-id="$item->branch_id"
                                         >
