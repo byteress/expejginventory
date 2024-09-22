@@ -3,6 +3,7 @@
 namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
+use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\DownPaymentReceived;
 use PaymentContracts\Events\FullPaymentReceived;
@@ -72,7 +73,7 @@ class TransactionProjector extends Projector
         }
     }
 
-    public function onCodPaymentReceived(CodPaymentReceived $event): void
+    public function onCodPaymentCollected(CodPaymentCollected $event): void
     {
         $total = 0;
         foreach ($event->paymentMethods as $method){

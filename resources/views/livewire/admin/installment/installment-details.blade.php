@@ -381,19 +381,19 @@
                                 <h4 class="mt-3 ml-1">Installment Balance :</h4>
                             </div>
                             <div class="col-sm-6">
-                                <h4 class="mt-3 ml-1"><strong>@money($balance->installment)</strong></h4>
+                                <h4 class="mt-3 ml-1"><strong>@money($balance->installment ?? 0)</strong></h4>
                             </div>
                             <div class="col-sm-6">
                                 <h4 class="mt-3 ml-1">COD Balance :</h4>
                             </div>
                             <div class="col-sm-6">
-                                <h4 class="mt-3 ml-1"><strong>@money($balance->cod)</strong></h4>
+                                <h4 class="mt-3 ml-1"><strong>@money($balance->cod ?? 0)</strong></h4>
                             </div>
                             <div class="col-sm-6">
                                 <h4 class="mt-3 ml-1">Total Balance :</h4>
                             </div>
                             <div class="col-sm-6">
-                                <h4 class="mt-3 ml-1"><strong>@money($balance->balance)</strong></h4>
+                                <h4 class="mt-3 ml-1"><strong>@money($balance->balance ?? 0)</strong></h4>
                             </div>
                         </div>
                     </div>

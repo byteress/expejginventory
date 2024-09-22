@@ -76,7 +76,7 @@ class Customer extends Aggregate
         }
 
         $codAmount = $this->calculateCODTotalAmount($downPayment);
-        $installmentAmount = $orderTotal - $totalDownPayment - $codAmount;
+        $installmentAmount = $orderTotal - $totalDownPayment;
         $withInterest = round($installmentAmount + ($installmentAmount * ($interestRate / 100)));
 
         $installments = [];
@@ -133,7 +133,9 @@ class Customer extends Aggregate
 
     public function startInstallment(string $orderId, int $codBalance = 0): self
     {
-        if($this->codBalances[$orderId]['balance'] != $codBalance) return $this;
+        $balance = $this->codBalances[$orderId]['balance'] ?? 0;
+
+        if($balance != $codBalance) return $this;
 
         $interestRate = $this->installmentRequests[$orderId]->interestRate;
         $withInterest = round($codBalance + ($codBalance * ($interestRate / 100)));
