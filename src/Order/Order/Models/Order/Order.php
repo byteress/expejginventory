@@ -2,6 +2,7 @@
 
 namespace Order\Models\Order;
 
+use DateTime;
 use Order\Models\Aggregate;
 use OrderContracts\Events\ItemAdded;
 use OrderContracts\Events\ItemPriceUpdated;
@@ -12,6 +13,7 @@ use OrderContracts\Events\OrderCancelled;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderRefunded;
+use OrderContracts\Events\OrderSetAsPrevious;
 use OrderContracts\Events\OrderShipped;
 
 class Order extends Aggregate
@@ -29,6 +31,8 @@ class Order extends Aggregate
      *  }>
      */
     private array $lineItems = [];
+    private bool $previous = false;
+    private ?DateTime $installmentStartDate = null;
 
     /** @param array<array{
      *      'productId': string,
@@ -160,6 +164,13 @@ class Order extends Aggregate
         return $this;
     }
 
+    public function setAsPrevious(?DateTime $installmentStartDate): self
+    {
+        $this->recordThat(new OrderSetAsPrevious($this->uuid(), $installmentStartDate));
+
+        return $this;
+    }
+
     public function applyItemPriceUpdated(ItemPriceUpdated $event): void
     {
         $this->authorizationRequired = $event->orderAuthRequired;
@@ -190,8 +201,24 @@ class Order extends Aggregate
         $this->authorizationRequired = false;
     }
 
+    public function applyOrderSetAsPrevious(OrderSetAsPrevious $event): void
+    {
+        $this->previous = true;
+        $this->installmentStartDate = $event->installmentStartDate;
+    }
+
     public function getLineItems(): array
     {
         return $this->lineItems;
+    }
+
+    public function isPrevious(): bool
+    {
+        return $this->previous;
+    }
+
+    public function getInstallmentStartDate(): ?DateTime
+    {
+        return $this->installmentStartDate;
     }
 }

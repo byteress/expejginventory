@@ -3,6 +3,8 @@
 namespace Payment;
 
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Order\Models\Order\Order;
 use Payment\Models\Customer\Customer;
 use PaymentContracts\IPaymentService;
 use PaymentContracts\Utils\Result;
@@ -24,6 +26,14 @@ class PaymentService implements IPaymentService
     ): Result
     {
         try {
+            $order = DB::table('orders')
+                ->where('order_id', $orderId)
+                ->first();
+
+            if(!$order) throw new Exception('Order not found');
+
+            $orderAggregate = Order::retrieve($orderId);
+
             $customer = Customer::retrieve($customerId);
             $customer->initializeInstallment(
                 $installmentId,
@@ -34,7 +44,9 @@ class PaymentService implements IPaymentService
                 $downPayment,
                 $cashier,
                 $transactionId,
-                $orNumber
+                $orNumber,
+                $order->delivery_type,
+                $orderAggregate->getInstallmentStartDate()
             );
 
             $customer->persist();

@@ -2,6 +2,7 @@
 
 namespace Order;
 
+use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Crypt;
 use Order\Models\Order\Order;
@@ -169,6 +170,20 @@ class OrderService implements IOrderService
 
             $order = Order::retrieve($orderId);
             $order->refund($actor, $notes);
+            $order->persist();
+
+            return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
+    public function setPreviousOrder(string $orderId, ?DateTime $installmentStartDate): Result
+    {
+        try {
+            $order = Order::retrieve($orderId);
+            $order->setAsPrevious($installmentStartDate);
             $order->persist();
 
             return Result::success(null);

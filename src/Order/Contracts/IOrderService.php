@@ -2,6 +2,7 @@
 
 namespace OrderContracts;
 
+use DateTime;
 use OrderContracts\Utils\Result;
 
 interface IOrderService
@@ -40,4 +41,5 @@ interface IOrderService
     public function confirmOrder(string $orderId, string $actor, string $authorization): Result;
     public function cancel(string $orderId, string $actor, string $authorization, ?string $notes): Result;
     public function refund(string $orderId, string $actor, string $authorization, ?string $notes): Result;
+    public function setPreviousOrder(string $orderId, ?DateTime $installmentStartDate): Result;
 }

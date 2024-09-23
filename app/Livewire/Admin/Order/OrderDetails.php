@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Order;
 
 use Akaunting\Money\Money;
 use App\Exceptions\ErrorHandler;
+use DateTime;
 use DeliveryContracts\IDeliveryService;
 use DeliveryContracts\Utils\Result;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
@@ -68,11 +69,14 @@ class OrderDetails extends Component
     public ?string $deliveryAddress = null;
     public bool $sameAddress = true;
 
+
     /**
      * @var array<string, string>
      */
     public array $priceType = [];
 
+    #[Validate('required_if:paymentType,installment')]
+    public string $installmentStartDate = '';
     public function mount(string $order_id): void
     {
         $this->orderId = $order_id;
@@ -534,12 +538,15 @@ class OrderDetails extends Component
     /**
      * @throws \Throwable
      */
-    public function submitPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
+    public function submitPayment(IPaymentService $paymentService, IDeliveryService $deliveryService, IOrderService $orderService): void
     {
         $this->resetErrorBag();
         $this->validate([
             'deliveryAddress' => [
                 Rule::requiredIf($this->deliveryType == 'deliver' && !$this->sameAddress)
+            ],
+            'installmentStartDate' => [
+                Rule::requiredIf($this->deliveryType == 'previous' && $this->paymentType == 'installment')
             ]
         ]);
 
@@ -549,6 +556,10 @@ class OrderDetails extends Component
         if($cancelledOrder && $order->total < $cancelledOrder->total){
             $this->addError('total', 'Order total should be equal or greater than the previous amount of ' . Money::PHP($cancelledOrder->total));
             return;
+        }
+
+        if($this->deliveryType == 'previous'){
+            $orderService->setPreviousOrder($order->order_id, new DateTime($this->installmentStartDate));
         }
 
         if($this->paymentType == 'full'){
@@ -577,7 +588,9 @@ class OrderDetails extends Component
 
         $fee = (float) $this->deliveryFee;
 
-        return $deliveryService->placeOrder($this->orderId, $items, $this->deliveryType, $this->branch, $fee * 100, $address);
+        $deliveryType = $this->deliveryType == 'previous' ? 'pickup' : $this->deliveryType;
+
+        return $deliveryService->placeOrder($this->orderId, $items, $deliveryType, $this->branch, $fee * 100, $address);
     }
 
     /**

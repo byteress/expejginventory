@@ -12,6 +12,7 @@ use OrderContracts\Events\OrderCancelled;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderRefunded;
+use OrderContracts\Events\OrderSetAsPrevious;
 use OrderContracts\Events\OrderShipped;
 use PaymentContracts\Events\InstallmentInitialized;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
@@ -156,6 +157,15 @@ class OrderProjector extends Projector
             ->update([
                 'status' => 4,
                 'notes' => $event->notes
+            ]);
+    }
+
+    public function onOrderSetAsPrevious(OrderSetAsPrevious $event): void
+    {
+        DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'previous' => true
             ]);
     }
 

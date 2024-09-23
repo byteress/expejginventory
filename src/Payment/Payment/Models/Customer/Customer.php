@@ -3,6 +3,7 @@
 namespace Payment\Models\Customer;
 
 use Carbon\Carbon;
+use DateTime;
 use Payment\Models\Aggregate;
 use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentReceived;
@@ -61,7 +62,9 @@ class Customer extends Aggregate
         array $downPayment,
         string $cashier,
         ?string $transactionId,
-        ?string $orNumber
+        ?string $orNumber,
+        string $deliveryType,
+        ?DateTime $installmentStartDate = null
     ): self
     {
         if(!empty($downPayment) && !$transactionId)
@@ -105,6 +108,9 @@ class Customer extends Aggregate
 
         $this->recordThat($event);
 
+        if($codAmount == 0 && $deliveryType == 'pickup')
+            $this->startInstallment($orderId, installmentStartDate: $installmentStartDate);
+
         if(empty($downPayment) || is_null($transactionId) || !$orNumber)
             return $this;
 
@@ -131,7 +137,7 @@ class Customer extends Aggregate
         return $this;
     }
 
-    public function startInstallment(string $orderId, int $codBalance = 0): self
+    public function startInstallment(string $orderId, int $codBalance = 0, ?DateTime $installmentStartDate = null): self
     {
         $balance = $this->codBalances[$orderId]['balance'] ?? 0;
 
@@ -141,11 +147,12 @@ class Customer extends Aggregate
         $withInterest = round($codBalance + ($codBalance * ($interestRate / 100)));
 
         $dues = [];
-        $i = 1;
+        $i = $installmentStartDate ? 0 : 1;
         foreach($this->installments as $installment){
             if($installment['orderId'] == $orderId && !isset($installment['due'])){
+                $date = $installmentStartDate ? \Date::parse($installmentStartDate->format('Y-m-d')) : Carbon::now();
                 $dues[] = [
-                    'due' => \Date::now()->addMonths($i),
+                    'due' => $date->addMonths($i),
                     'index' => $installment['index'],
                     'amount' => round($withInterest / $this->installmentRequests[$orderId]->months),
                 ];

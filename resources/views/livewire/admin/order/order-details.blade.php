@@ -275,7 +275,7 @@
                     </div>
                 </div>
 
-                <div x-data="{ openAddress: $wire.entangle('sameAddress'), openDeliver: $wire.entangle('deliveryType'), openDeliver: $wire.entangle('deliveryType'), deliveryFee: $wire.entangle('deliveryFee').live }" class="card shadow mb-4">
+                <div x-data="{ openAddress: $wire.entangle('sameAddress'), openDeliver: $wire.entangle('deliveryType'), openDeliver: $wire.entangle('deliveryType'), deliveryFee: $wire.entangle('deliveryFee').live, paymentType: $wire.entangle('paymentType') }" class="card shadow mb-4">
                     <div class="card-body">
                         <h5 class ="mb-2 text-primary admin-title">Delivery Information</h5>
                         <hr>
@@ -287,6 +287,9 @@
                                             </label>
                                             <label for="delivery-type-deliver" class="btn btn-secondary btn-option mr-2" :class="openDeliver == 'deliver' && 'active'">
                                                 <input x-on:click="openDeliver = 'deliver'" wire:model="deliveryType" type="radio" id="delivery-type-deliver" value="deliver"  @if($completed) disabled @endif> Deliver
+                                            </label>
+                                            <label for="delivery-type-previous" class="btn btn-secondary btn-option mr-2" :class="openDeliver == 'previous' && 'active'">
+                                                <input x-on:click="openDeliver = 'previous'" wire:model="deliveryType" type="radio" id="delivery-type-previous" value="previous"  @if($completed) disabled @endif> Previous Order
                                             </label>
                                     </div>
                             </div>
@@ -314,6 +317,16 @@
                                 <label for="delivery-address">Address</label>
                                 <textarea wire:model="deliveryAddress" class="form-control" id="delivery-address" @if($completed) disabled @endif></textarea>
                                 @error('deliveryAddress')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div x-show="openDeliver == 'previous' && paymentType == 'installment'" class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="validationTooltip03">Installment Start Date</label>
+                                <input wire:model="installmentStartDate" class = "form-control" id="datepicker" autocomplete="false">
+                                @error('installmentStartDate')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -924,6 +937,16 @@
     <script>
         $wire.on('order-confirmed', () => {
             $('#confirmLogin').modal('hide');
+        });
+
+        $('#datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            weekStart: 1,
+            daysOfWeekHighlighted: "6,0",
+            autoclose: true,
+            todayHighlight: true,
+        }).on('change', function(){
+            @this.set('installmentStartDate', this.value);
         });
 
         function printPage() {

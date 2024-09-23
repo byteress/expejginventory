@@ -21,13 +21,22 @@ class ProcessOrderJob
 
     public function handle(IStockManagementService $stockManagementService): void
     {
-        Log::info("Test log");
+        $order = DB::table('orders')
+            ->where('order_id', $this->orderId)
+            ->first();
+
+        if(!$order) return;
+
         $items = DB::table('line_items')
             ->where('order_id', $this->orderId)
             ->get();
 
         foreach ($items as $item) {
-            $stockManagementService->fulfillReservation($item->product_id, $item->reservation_id);
+            if(!$order->previous){
+                $stockManagementService->fulfillReservation($item->product_id, $item->reservation_id);
+            }else{
+                $stockManagementService->cancelReservation($item->product_id, $item->reservation_id, null);
+            }
         }
     }
 }
