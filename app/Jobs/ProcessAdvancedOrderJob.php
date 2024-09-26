@@ -33,7 +33,8 @@ class ProcessAdvancedOrderJob implements ShouldQueue
                     ->from('line_items')
                     ->join('orders', 'orders.order_id', '=', 'line_items.order_id')
                     ->whereRaw('line_items.reservation_id = advanced_reservations.reservation_id')
-                    ->where('orders.status', '>', 0);
+                    ->where('orders.status', 1)
+                    ->where('previous', 0);
             })->where('advanced_reservations.product_id', $this->productId)
             ->first();
 
