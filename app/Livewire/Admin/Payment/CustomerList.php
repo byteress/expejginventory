@@ -5,15 +5,25 @@ namespace App\Livewire\Admin\Payment;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Title('Customer List')]
 class CustomerList extends Component
 {
+    use WithPagination;
+
+    #[Url]
+    public $search;
     public function getCustomers()
     {
         $query = DB::table('customers')
-            ->leftJoin('customer_balances', 'customers.id', '=', 'customer_balances.customer_id');
+            ->leftJoin('customer_balances', 'customers.id', '=', 'customer_balances.customer_id')
+            ->where(function($q){
+                $q->orWhere('customers.first_name', 'LIKE', '%'.$this->search.'%')
+                    ->orWhere('customers.last_name', 'LIKE', '%'.$this->search.'%');
+            });
 
         if(auth()->user()->branch_id) $query->where('branch_id', auth()->user()->branch_id);
 
