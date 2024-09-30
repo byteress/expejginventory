@@ -410,13 +410,17 @@
 {{--                              <button class="nav-link" id="payment-history-tab" data-toggle="tab" data-target="#cod" type="button" role="tab" aria-controls="payment-history" aria-selected="false">COD</button>--}}
 {{--                            </li>--}}
 {{--                          </ul>--}}
+                          <div class="alert alert-danger d-none" role="alert">
+                           Test
+                          </div>
                           <div class="tab-content" id="paymentContent">
 
                             <div class="tab-pane fade show active" id="installment" role="tabpanel" aria-labelledby="installment-tab">
                                 @forelse($installment_bills as $bills)
                                 <div wire:key="{{ $bills->installment_id }}-{{ $bills->index }}" class="card shadow mb-4" x-data="{ balance: {{ $bills->balance / 100 }}, rate: 0 }">
                                     <div class="card-body">
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                        <input type="checkbox" value="" style = "margin-top:9px;margin-right:5px">
                                         <h5 class="mt-3 ml-1"><strong>Order #{{ str_pad((string) $bills->id, 12, '0', STR_PAD_LEFT) }}</strong> - Installment </h5>
         {{--                                <h5 class="mt-3 ml-1">Balance : <strong>₱32440.00</strong></h5>--}}
                                         </div>
