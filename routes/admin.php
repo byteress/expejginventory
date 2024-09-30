@@ -39,8 +39,11 @@ use App\Livewire\Admin\Order\Orders;
 use App\Livewire\Admin\Order\OrderDetails;
 use App\Livewire\Admin\Installment\InstallmentDetails;
 use App\Livewire\Admin\Expense\DailyExpense;
+use App\Livewire\Admin\Reports\Reports;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+Route::get('/reports', Reports::class)->name('reports');
 
 Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/product', Products::class)->name('product');
