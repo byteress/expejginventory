@@ -12,7 +12,9 @@ class InstallmentPaymentReceived extends ShouldBeStored
         public array $paymentMethods,
         public string $orNumber,
         public string $cashier,
-        public int $amount
+        public int $amount,
+        public string $orderId,
+        public array $installmentIds = []
     )
     {
     }

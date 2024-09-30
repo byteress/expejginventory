@@ -171,25 +171,20 @@ class Customer extends Aggregate
      * @param string $cashier
      * @param string $transactionId
      * @param string $orNumber
+     * @param array<string> $installmentIds
      * @return $this
      * @throws InvalidDomainException
      */
-    public function payInstallment(array $paymentMethods, string $cashier, string $transactionId, string $orNumber): self
+    public function payInstallment(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, array $installmentIds): self
     {
         $total = 0;
         foreach($paymentMethods as $dp){
             $total += $dp['amount'];
         }
 
-//        if($this->balance < $total) throw new InvalidDomainException('Amount should not be more than customer balance.', ['amount' => 'Amount should not be more than customer balance.']);
+        if(!$this->areInstallmentsFromSameOrder($installmentIds)) throw new InvalidDomainException('Please select bills from the same order.', ['installment_ids' => 'Please select bills from the same order.']);
 
-//        foreach ($this->installments as $installment){
-//            if($installment['balance'] >= $total){
-//                $event = new InstallmentPaymentReceived(
-//
-//                );
-//            }
-//        }
+        if($total > $this->getTotalBalance($installmentIds)) throw new InvalidDomainException('Amount should not be greater than the total bill.', ['installment_ids' => 'Amount should not be greater than the total bill.']);
 
         $event = new InstallmentPaymentReceived(
             $transactionId,
@@ -197,7 +192,9 @@ class Customer extends Aggregate
             $paymentMethods,
             $orNumber,
             $cashier,
-             $total
+            $total,
+            $this->getOrderIdByInstallments($installmentIds),
+            $installmentIds
         );
 
         $this->recordThat($event);
@@ -398,6 +395,75 @@ class Customer extends Aggregate
         return $totalCOD;
     }
 
+    /**
+     * @param array<string> $installmentIds
+     * @return bool
+     */
+    public function areInstallmentsFromSameOrder(array $installmentIds): bool
+    {
+        // Filter the installments that match the given installmentIds
+        $filteredInstallments = array_filter($this->installments, function ($installment) use ($installmentIds) {
+            return in_array($installment['installmentId'], $installmentIds, true);
+        });
+
+        // If no installments found or only one, we can assume they match
+        if (count($filteredInstallments) <= 1) {
+            return true;
+        }
+
+        // Get the orderId of the first installment and compare with the rest
+        $firstOrderId = reset($filteredInstallments)['orderId'];
+
+        foreach ($filteredInstallments as $installment) {
+            if ($installment['orderId'] !== $firstOrderId) {
+                return false; // Different orderId found
+            }
+        }
+
+        return true; // All orderIds are the same
+    }
+
+    /**
+     * @param array<string> $installmentIds
+     * @return int
+     */
+    private function getTotalBalance(array $installmentIds): int
+    {
+        // Filter the installments that match the given installmentIds
+        $filteredInstallments = array_filter($this->installments, function ($installment) use ($installmentIds) {
+            return in_array($installment['installmentId'], $installmentIds, true);
+        });
+
+        // Sum up the balance of the filtered installments
+        $totalBalance = array_reduce($filteredInstallments, function ($carry, $installment) {
+            return $carry + $installment['balance'];
+        }, 0);
+
+        return $totalBalance;
+    }
+
+    /**
+     * @param array<string> $installmentIds
+     * @return string
+     * @throws InvalidDomainException
+     */
+    public function getOrderIdByInstallments(array $installmentIds): string
+    {
+        // Filter the installments that match the given installmentIds
+        $filteredInstallments = array_filter($this->installments, function ($installment) use ($installmentIds) {
+            return in_array($installment['installmentId'], $installmentIds, true);
+        });
+
+        // Check if there is at least one installment
+        if (!empty($filteredInstallments)) {
+            // Return the orderId from the first installment (assuming all have the same orderId)
+            return reset($filteredInstallments)['orderId'];
+        }
+
+        // Return null if no installments found
+        throw new InvalidDomainException('No installments found.', ['installment' => 'No installments found.']);
+    }
+
     public function applyInstallmentInitialized(InstallmentInitialized $event): void
     {
         $this->balance += (int) round($event->amount + ($event->amount * ($event->interestRate / 100)));
@@ -444,6 +510,39 @@ class Customer extends Aggregate
     public function applyInstallmentPaymentReceived(InstallmentPaymentReceived $event): void
     {
         $this->balance -= $event->amount;
+
+        $installmentIds = $event->installmentIds;
+        $paymentTotal = $event->amount;
+        // Filter the installments that match the given installmentIds
+        $filteredInstallments = array_filter($this->installments, function ($installment) use ($installmentIds) {
+            return in_array($installment['installmentId'], $installmentIds, true);
+        });
+
+        // Apply the payment to each installment
+        foreach ($filteredInstallments as &$installment) {
+            if ($paymentTotal <= 0) {
+                break; // No payment left to apply
+            }
+
+            if ($installment['balance'] <= $paymentTotal) {
+                // The payment covers the full balance of this installment
+                $paymentTotal -= $installment['balance'];
+                $installment['balance'] = 0;
+            } else {
+                // Only part of the installment is covered by the payment
+                $installment['balance'] -= $paymentTotal;
+                $paymentTotal = 0;
+            }
+        }
+
+        // Update the main $installments array with the modified balances
+        foreach ($this->installments as &$originalInstallment) {
+            foreach ($filteredInstallments as $updatedInstallment) {
+                if ($originalInstallment['installmentId'] === $updatedInstallment['installmentId']) {
+                    $originalInstallment = $updatedInstallment;
+                }
+            }
+        }
     }
 
     public function applyPenaltyApplied(PenaltyApplied $event): void

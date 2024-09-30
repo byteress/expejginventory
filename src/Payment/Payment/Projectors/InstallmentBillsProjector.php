@@ -56,6 +56,7 @@ class InstallmentBillsProjector extends Projector
 
         $bills = DB::table('installment_bills')
             ->where('customer_id', $event->customerId)
+            ->whereIn('installment_id', $event->installmentIds)
             ->orderBy('due')
             ->get();
 

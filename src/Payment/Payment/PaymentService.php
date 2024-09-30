@@ -58,8 +58,7 @@ class PaymentService implements IPaymentService
         }
 
     }
-
-    public function payInstallment(string $customerId, array $paymentMethods, string $cashier, string $transactionId, string $orNumber): Result
+    public function payInstallment(string $customerId, array $paymentMethods, string $cashier, string $transactionId, string $orNumber, array $installmentIds): Result
     {
         try {
             $customer = Customer::retrieve($customerId);
@@ -67,7 +66,8 @@ class PaymentService implements IPaymentService
                 $paymentMethods,
                 $cashier,
                 $transactionId,
-                $orNumber
+                $orNumber,
+                $installmentIds
             );
 
             $customer->persist();

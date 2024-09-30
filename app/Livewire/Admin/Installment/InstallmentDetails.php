@@ -26,6 +26,7 @@ class InstallmentDetails extends Component
 
     public array $rate;
     public array $penalty;
+    public array $installmentIds;
     public function mount(Customer $customer): void
     {
         $this->customer = $customer;
@@ -40,9 +41,11 @@ class InstallmentDetails extends Component
             'receiptNumber' => 'required',
             'amounts.*' => 'required|numeric',
             'referenceNumbers.*' => 'required',
+            'installmentIds' => 'required',
         ], [
             'amounts.*' => 'Amount is required',
             'referenceNumbers.*' => 'Reference Number is required',
+            'installmentIds' => 'Please select bills to pay.',
         ]);
 
         $payment = [];
@@ -56,6 +59,12 @@ class InstallmentDetails extends Component
             }
         }
 
+        $installmentIds = [];
+        foreach ($this->installmentIds as $installmentId) {
+            $iId = strstr($installmentId, '_', true);
+            if(!in_array($iId, $installmentIds)) $installmentIds[] = $iId;
+        }
+
         DB::beginTransaction();
 
         $result = $paymentService->payInstallment(
@@ -63,7 +72,8 @@ class InstallmentDetails extends Component
             $payment,
             auth()->user()?->id,
             Str::uuid()->toString(),
-            $this->receiptNumber
+            $this->receiptNumber,
+            $installmentIds
         );
 
         if($result->isFailure()){

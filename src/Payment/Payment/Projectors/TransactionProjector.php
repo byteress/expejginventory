@@ -60,6 +60,7 @@ class TransactionProjector extends Projector
                 'amount' => $total,
                 'created_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
                 'or_number' => $event->orNumber,
+                'order_id' => $event->orderId
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){
@@ -68,7 +69,8 @@ class TransactionProjector extends Projector
                     'method' => $event->paymentMethods[$i]['method'],
                     'reference' => $event->paymentMethods[$i]['reference'],
                     'amount' => $event->paymentMethods[$i]['amount'],
-                    'transaction_id' => $event->transactionId
+                    'transaction_id' => $event->transactionId,
+                    'order_id' => $event->orderId
                 ]);
         }
     }

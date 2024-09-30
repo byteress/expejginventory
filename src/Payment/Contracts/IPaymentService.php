@@ -38,6 +38,7 @@ interface IPaymentService
      * @param string $cashier
      * @param string $transactionId
      * @param string $orNumber
+     * @param array<string> $installmentIds
      * @return Result
      */
     public function payInstallment(
@@ -45,7 +46,8 @@ interface IPaymentService
         array $paymentMethods,
         string $cashier,
         string $transactionId,
-        string $orNumber
+        string $orNumber,
+        array $installmentIds
     ): Result;
     public function applyPenalty(
         string $customerId,
