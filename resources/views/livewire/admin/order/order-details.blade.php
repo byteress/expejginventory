@@ -866,6 +866,7 @@
             margin: 0;
             padding: 0;
             float: left;
+            margin-top:102px;
         }
 
         .receipt-header {

@@ -17,6 +17,30 @@
 
         </div>
     </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Date</div>
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button  type="button" class="btn btn-primary">
+                            <i class="fas fa-chevron-left"></i></button>
+
+                        <input class = "form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style ="border-radius: 0;">
+
+                        <button  type="button" class="btn btn-primary">
+                            <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
     <!-- Tabs Navigation -->
     <ul class="nav nav-tabs" id="reportTabs" role="tablist">
         <li class="nav-item">
@@ -428,8 +452,12 @@
 
 @script
     <script>
-        function printPage() {
-            window.print();
-        }
+        $('#datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                weekStart: 1,
+                daysOfWeekHighlighted: "6,0",
+                autoclose: true,
+                todayHighlight: true,
+        });
     </script>
 @endscript
