@@ -26,12 +26,12 @@
                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                         Date</div>
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                        <button  type="button" class="btn btn-primary">
+                        <button wire:click="changeDate('decrement')" type="button" class="btn btn-primary">
                             <i class="fas fa-chevron-left"></i></button>
 
                         <input class = "form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style ="border-radius: 0;">
 
-                        <button  type="button" class="btn btn-primary">
+                        <button wire:click="changeDate('increment')" type="button" class="btn btn-primary">
                             <i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
@@ -88,26 +88,44 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @forelse($transactions as $transaction)
+                            @php
+                            $items = $this->getItems($transaction->order_id);
+                            $rowspan = count($items);
+                            @endphp
+                                @foreach($items as $item)
+                                @if($loop->index == 0)
+                                <tr>
+                                    <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
+                                    <td rowspan="{{ $rowspan }}">SI-001</td>
+                                    <td rowspan="{{ $rowspan }}">DR-001</td>
+                                    <td rowspan="{{ $rowspan }}">CI-001</td>
+                                    <td rowspan="{{ $rowspan }}">CR-001</td>
+                                    <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>{{ $item->title }}</td>
+                                    <td>@money($item->price)</td>
+                                    <td rowspan="{{ $rowspan }}">$950</td>
+                                    <td rowspan="{{ $rowspan }}">$50</td>
+                                    <td rowspan="{{ $rowspan }}">$950</td>
+                                    <td rowspan="{{ $rowspan }}">$500</td>
+                                    <td rowspan="{{ $rowspan }}">$300</td>
+                                    <td rowspan="{{ $rowspan }}">$50</td>
+                                    <td rowspan="{{ $rowspan }}">$100</td>
+                                    <td rowspan="{{ $rowspan }}">$0</td>
+                                    <td rowspan="{{ $rowspan }}">0%</td>
+                                </tr>
+                                @else
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>{{ $item->title }}</td>
+                                    <td>@money($item->price)</td>
+                                @endif
+                                @endforeach
+                        @empty
                             <tr>
-                                <td>1</td>
-                                <td>SI-001</td>
-                                <td>DR-001</td>
-                                <td>CI-001</td>
-                                <td>CR-001</td>
-                                <td>John Doe</td>
-                                <td>Unit A</td>
-                                <td>Item 1</td>
-                                <td>$1000</td>
-                                <td>$950</td>
-                                <td>$50</td>
-                                <td>$950</td>
-                                <td>$500</td>
-                                <td>$300</td>
-                                <td>$50</td>
-                                <td>$100</td>
-                                <td>$0</td>
-                                <td>0%</td>
+                                <td colspan="100" align="center">No records found.</td>
                             </tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -458,6 +476,10 @@
                 daysOfWeekHighlighted: "6,0",
                 autoclose: true,
                 todayHighlight: true,
+        });
+
+        $wire.on('date-changed', (event) => {
+            $('#datepicker').datepicker('setDate', $wire.get('date'));
         });
     </script>
 @endscript

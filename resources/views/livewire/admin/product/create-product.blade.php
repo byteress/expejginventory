@@ -6,7 +6,7 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <a href="{{ route('admin.product') }}" wire:navigate type="button" class="btn btn-secondary btn-icon-split float-right btn-sm">
+            <a href="#" onclick="history.back()" type="button" class="btn btn-secondary btn-icon-split float-right btn-sm">
                 <span class="icon text-white-50">
                     <i class="fas fa-chevron-left"></i>
                 </span>

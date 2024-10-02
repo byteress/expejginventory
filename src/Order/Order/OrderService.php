@@ -66,6 +66,7 @@ class OrderService implements IOrderService
         string $productId,
         string $title,
         int $price,
+        int $originalPrice,
         int $quantity,
         string $reservationId,
         string $priceType
@@ -73,7 +74,7 @@ class OrderService implements IOrderService
     {
         try {
             $order = Order::retrieve($orderId);
-            $order->addItem($productId, $title, $price, $quantity, $reservationId, $priceType);
+            $order->addItem($productId, $title, $price, $originalPrice, $quantity, $reservationId, $priceType);
             $order->persist();
 
             return Result::success(null);

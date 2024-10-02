@@ -13,6 +13,7 @@ interface IOrderService
      *      'title': string,
      *      'quantity': int,
      *      'price': int,
+     *      'originalPrice': int,
      *      'reservationId': string,
      *     'priceType': string
      * }> $items */
@@ -31,6 +32,7 @@ interface IOrderService
         string $productId,
         string $title,
         int $price,
+        int $originalPrice,
         int $quantity,
         string $reservationId,
         string $priceType

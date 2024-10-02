@@ -23,7 +23,7 @@ class ProductRequestsProjector extends Projector
                 'product_id' => $event->productId,
                 'receiver' => $event->receiver,
                 'quantity' => $event->quantity,
-                'date_requested' => $event->createdAt()?->toDateTimeString()
+                'date_requested' => $event->createdAt()?->tz(config('app.timezone'))
             ]);
 
             return;

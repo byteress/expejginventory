@@ -16,7 +16,7 @@ class TransferRequestsProjector extends Projector
                 'data' => json_encode([
                     'requested_by' => $event->branchId,
                     'num_products' => count($event->products),
-                    'date' => $event->createdAt()
+                    'date' => $event->createdAt()?->tz(config('app.timezone'))
                 ])
             ]);
     }

@@ -362,6 +362,8 @@ class Customer extends Aggregate
             $orderId
         );
 
+        $this->recordThat($event);
+
         $codAmount = $this->calculateCODTotalAmount($paymentMethods);
         if($codAmount == 0) return $this;
 
@@ -371,8 +373,6 @@ class Customer extends Aggregate
             $codAmount,
             'full'
         ));
-
-        $this->recordThat($event);
 
         return $this;
     }

@@ -280,7 +280,7 @@ class OrderDetails extends Component
             return session()->flash('alert', ErrorHandler::getErrorMessage($reserveResult->getError()));
         }
         $priceType = $this->priceType[$productId] ?? 'regular_price';
-        $addResult = $orderService->addItem($this->orderId, $productId, "{$product->model} {$product->description}", $product->$priceType, 1, $newReservationId, $priceType);
+        $addResult = $orderService->addItem($this->orderId, $productId, "{$product->model} {$product->description}", $product->$priceType, $product->$priceType, 1, $newReservationId, $priceType);
         if ($addResult->isFailure()) {
             DB::rollBack();
             return session()->flash('alert', ErrorHandler::getErrorMessage($addResult->getError()));

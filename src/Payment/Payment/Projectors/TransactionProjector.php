@@ -4,7 +4,6 @@ namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
 use PaymentContracts\Events\CodPaymentCollected;
-use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\DownPaymentReceived;
 use PaymentContracts\Events\FullPaymentReceived;
 use PaymentContracts\Events\InstallmentPaymentReceived;
@@ -27,7 +26,7 @@ class TransactionProjector extends Projector
                 'cashier' => $event->cashier,
                 'type' => 'down',
                 'amount' => $total,
-                'created_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'created_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'or_number' => $event->orNumber,
             ]);
 
@@ -58,7 +57,7 @@ class TransactionProjector extends Projector
                 'cashier' => $event->cashier,
                 'type' => 'installment',
                 'amount' => $total,
-                'created_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'created_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'or_number' => $event->orNumber,
                 'order_id' => $event->orderId
             ]);
@@ -90,7 +89,7 @@ class TransactionProjector extends Projector
                 'cashier' => $event->cashier,
                 'type' => 'cod',
                 'amount' => $total,
-                'created_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'created_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'or_number' => $event->orNumber,
             ]);
 
@@ -121,7 +120,7 @@ class TransactionProjector extends Projector
                 'cashier' => $event->cashier,
                 'type' => 'full',
                 'amount' => $total,
-                'created_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'created_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'or_number' => $event->orNumber,
             ]);
 

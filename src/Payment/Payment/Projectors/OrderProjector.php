@@ -22,7 +22,7 @@ class OrderProjector extends Projector
                 'cashier' => $event->cashier,
                 'months' => $event->months,
                 'rate' => $event->interestRate,
-                'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s')
+                'completed_at' => $event->createdAt()?->tz(config('app.timezone'))
             ]);
     }
 
@@ -47,7 +47,7 @@ class OrderProjector extends Projector
                 'status' => 1,
                 'receipt_number' => $event->orNumber,
                 'cashier' => $event->cashier,
-                'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s')
+                'completed_at' => $event->createdAt()?->tz(config('app.timezone'))
             ]);
     }
 

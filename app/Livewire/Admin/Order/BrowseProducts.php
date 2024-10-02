@@ -115,6 +115,7 @@ class BrowseProducts extends Component
             'extra_info' => [
                 'reservation_id' => $reservationId,
                 'price_type' => $priceType,
+                'original_price' => $product->$priceType / 100,
             ]
         ]);
 

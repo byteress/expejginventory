@@ -27,6 +27,7 @@ class Order extends Aggregate
      *       'title': string,
      *       'quantity': int,
      *       'price': int,
+     *       'originalPrice': int,
      *       'reservationId': string
      *  }>
      */
@@ -39,6 +40,7 @@ class Order extends Aggregate
      *      'title': string,
      *      'quantity': int,
      *      'price': int,
+     *      'originalPrice': int,
      *      'reservationId': string
      * }> $items */
     public function place(
@@ -69,12 +71,13 @@ class Order extends Aggregate
         string $productId,
         string $title,
         int $price,
+        int $originalPrice,
         int $quantity,
         string $reservationId,
         string $priceType
     ): self
     {
-        $event = new ItemAdded($this->uuid(), $productId, $title, $price, $quantity, $reservationId, $priceType);
+        $event = new ItemAdded($this->uuid(), $productId, $title, $price, $quantity, $reservationId, $priceType, $originalPrice);
         $this->recordThat($event);
 
         return $this;

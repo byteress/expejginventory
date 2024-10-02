@@ -31,6 +31,7 @@ class OrderProjector extends Projector
                     'order_id' => $event->orderId,
                     'title' => $item['title'],
                     'price' => $item['price'],
+                    'original_price' => $item['originalPrice'],
                     'quantity' => $item['quantity'],
                     'reservation_id' => $item['reservationId'],
                     'price_type' => $item['priceType'],
@@ -44,7 +45,7 @@ class OrderProjector extends Projector
                 'customer_id' => $event->customerId,
                 'assistant_id' => $event->assistantId,
                 'total' => $total,
-                'placed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s') ?? '',
+                'placed_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'order_type' => $event->orderType,
                 'cancelled_order_id' => $event->cancelledOrder
             ]);
@@ -58,6 +59,7 @@ class OrderProjector extends Projector
                 'order_id' => $event->orderId,
                 'title' => $event->title,
                 'price' => $event->price,
+                'original_price' => $event->originalPrice,
                 'quantity' => $event->quantity,
                 'reservation_id' => $event->reservationId,
                 'price_type' => $event->priceType,

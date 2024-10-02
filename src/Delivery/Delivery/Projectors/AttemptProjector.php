@@ -23,7 +23,7 @@ class AttemptProjector extends Projector
                 'branch_id' => $event->branchId,
                 'notes' => $event->notes,
                 'status' => 0,
-                'assigned_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'assigned_at' => $event->createdAt()?->tz(config('app.timezone')),
             ]);
 
         foreach ($event->items as $item){
@@ -54,7 +54,7 @@ class AttemptProjector extends Projector
             ->where('delivery_id', $event->deliveryId)
             ->update([
                 'status' => DeliveryStatus::COMPLETED->value,
-                'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'completed_at' => $event->createdAt()?->tz(config('app.timezone')),
             ]);
     }
 
@@ -64,7 +64,7 @@ class AttemptProjector extends Projector
             ->where('delivery_id', $event->deliveryId)
             ->update([
                 'status' => DeliveryStatus::PARTIALLY_COMPLETED->value,
-                'completed_at' => $event->createdAt()?->toDateTime()->format('Y-m-d H:i:s'),
+                'completed_at' => $event->createdAt()?->tz(config('app.timezone')),
             ]);
     }
 
