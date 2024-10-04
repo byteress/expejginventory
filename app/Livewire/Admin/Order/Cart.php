@@ -148,7 +148,7 @@ class Cart extends Component
                 'title' => $item->getTitle(),
                 'quantity' => $item->getQuantity(),
                 'price' => $item->getPrice() * 100,
-                'originalPrice' => $item->getExtraInfo()['original_price'],
+                'originalPrice' => $item->getExtraInfo()['original_price'] * 100,
                 'reservationId' => $item->getExtraInfo()['reservation_id'],
                 'priceType' => $item->getExtraInfo()['price_type']
             ];

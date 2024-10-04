@@ -575,6 +575,8 @@
                                                             <option value="Bank Transfer">Bank Transfer</option>
                                                             <option value="COD">COD</option>
                                                             <option value="Check">Check</option>
+                                                            <option value="Card">Card</option>
+                                                            <option value="Financing">Financing</option>
                                                         </select>
                                                     </div>
                                                     @error('paymentMethodsCod.' . $loop->index)

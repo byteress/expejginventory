@@ -133,8 +133,7 @@
                                                               <label class="input-group-text"
                                                                      for="inputGroupSelect01">Type</label>
                                                           </div>
-                                                          <select class="custom-select" id="inputGroupSelect01"
-                                                          wire:model="paymentMethods.{{ $loop->index }}">
+                                                          <select class="custom-select" id="inputGroupSelect01" wire:model="paymentMethods.{{ $loop->index }}">
                                                               <option disabled selected>Select Payment Method</option>
                                                               <option value="Cash">Cash</option>
                                                               <option value="Gcash">Gcash</option>
@@ -142,6 +141,8 @@
                                                               <option value="Bank Transfer">Bank Transfer</option>
                                                               <option value="COD">COD</option>
                                                               <option value="Check">Check</option>
+                                                              <option value="Card">Card</option>
+                                                              <option value="Financing">Financing</option>
                                                           </select>
                                                       </div>
                                                       @error('paymentMethods.' . $loop->index)

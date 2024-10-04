@@ -47,9 +47,6 @@
             <a class="nav-link active" id="sales-tab" data-toggle="tab" href="#sales" role="tab" aria-controls="sales" aria-selected="true">Sales</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="collections-tab" data-toggle="tab" href="#collections" role="tab" aria-controls="collections" aria-selected="false">Collections</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" id="pcv-tab" data-toggle="tab" href="#pcv" role="tab" aria-controls="pcv" aria-selected="false">PCVs</a>
         </li>
     </ul>
@@ -61,6 +58,7 @@
                 <div class="card-body">
                     <h3>Sales</h3>
                     <!-- Sales table content -->
+                    <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -88,100 +86,109 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @php
+                        $totalGrossPrice = 0;
+                        $totalAmount = 0;
+                        $totalDiscount = 0;
+                        @endphp
                         @forelse($transactions as $transaction)
                             @php
                             $items = $this->getItems($transaction->order_id);
                             $rowspan = count($items);
+
+                            if($transaction->delivery_fee > 0) $rowspan = $rowspan + 1;
+                            $receiptType = $this->getReceiptType($transaction);
+
                             @endphp
                                 @foreach($items as $item)
                                 @if($loop->index == 0)
+                                    @php
+                                        $discount = $this->getDiscount($transaction->order_id);
+
+                                        $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                        $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
+                                        $totalDiscount = $totalDiscount + $discount;
+                                    @endphp
                                 <tr>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
-                                    <td rowspan="{{ $rowspan }}">SI-001</td>
-                                    <td rowspan="{{ $rowspan }}">DR-001</td>
-                                    <td rowspan="{{ $rowspan }}">CI-001</td>
-                                    <td rowspan="{{ $rowspan }}">CR-001</td>
+                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'SI' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'DR' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CI' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $receiptType . $transaction->receipt_number : '' }}</td>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ $item->title }}</td>
-                                    <td>@money($item->price)</td>
-                                    <td rowspan="{{ $rowspan }}">$950</td>
-                                    <td rowspan="{{ $rowspan }}">$50</td>
-                                    <td rowspan="{{ $rowspan }}">$950</td>
-                                    <td rowspan="{{ $rowspan }}">$500</td>
-                                    <td rowspan="{{ $rowspan }}">$300</td>
-                                    <td rowspan="{{ $rowspan }}">$50</td>
-                                    <td rowspan="{{ $rowspan }}">$100</td>
-                                    <td rowspan="{{ $rowspan }}">$0</td>
-                                    <td rowspan="{{ $rowspan }}">0%</td>
+                                    <td>@money($item->original_price * $item->quantity)</td>
+                                    <td rowspan="{{ $rowspan }}">@money($transaction->total + $transaction->delivery_fee)</td>
+                                    <td rowspan="{{ $rowspan }}">@money($discount)</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'COD'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cart'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))</td>
                                 </tr>
                                 @else
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>{{ $item->title }}</td>
-                                    <td>@money($item->price)</td>
+                                    @php
+                                        $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>{{ $item->title }}</td>
+                                        <td>@money($item->original_price * $item->quantity)</td>
+                                    </tr>
                                 @endif
                                 @endforeach
+
+                            @if($transaction->delivery_fee > 0)
+                                <tr>
+                                    <td>1</td>
+                                    <td>Delivery Fee</td>
+                                    <td>@money($transaction->delivery_fee)</td>
+                                </tr>
+                            @endif
+
                         @empty
                             <tr>
                                 <td colspan="100" align="center">No records found.</td>
                             </tr>
                         @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
-        <!-- Collections Tab -->
-        <div class="tab-pane fade" id="collections" role="tabpanel" aria-labelledby="collections-tab">
-            <div class="card shadow mb-4">
-                <div class="card-body">
-                    <h3>Collections</h3>
-
-                    <table class="table table-bordered">
-                        <tbody>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>119</td>
-                            <td>28100</td>
-                            <td>Golden Tuscano</td>
-                            <td></td>
-                            <td>AR#28100</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>26,400</td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>119</td>
-                            <td>28100</td>
-                            <td>Golden Tuscano</td>
-                            <td></td>
-                            <td>AR#28100</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>26,400</td>
-                            <td></td>
-                            <td></td>
+                            <td colspan="99"><h4><strong>Collections</strong></h4></td>
                         </tr>
 
-                        {{-- Total --}}
+                        @forelse($collections as $collection)
+                            @php
+                                $receiptType = $this->getReceiptType($collection);
+                            @endphp
+                        <tr>
+                            <td></td>
+                            <td>{{ $receiptType == 'SI' ? $receiptType . $collection->receipt_number : '' }}</td>
+                            <td>{{ $receiptType == 'DR' ? $receiptType . $collection->receipt_number : '' }}</td>
+                            <td>{{ $receiptType == 'CI' ? $receiptType . $collection->receipt_number : '' }}</td>
+                            <td>{{ $collection->or_number }}</td>
+                            <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
+                            <td></td>
+                            <td>AR#{{ $collection->or_number }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
+                        </tr>
+                        @empty
+                            <tr>
+                                <td colspan="100" align="center">No records found.</td>
+                            </tr>
+                        @endforelse
+
                         <tr>
                             <td><strong>Totals</strong></td>
                             <td></td>
@@ -191,20 +198,20 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td>138,860</td>
-                            <td>128,947</td>
-                            <td>9,913</td>
-                            <td><strong>0.00</strong></td>
-                            <td><strong>65,840.00</strong></td>
-                            <td><strong>0.00</strong></td>
-                            <td><strong>0.00</strong></td>
-                            <td><strong>136,697.00</strong></td>
-                            <td><strong>0.00</strong></td>
-                            <td><strong>23,804.00</strong></td>
+                            <td>@money($totalGrossPrice)</td>
+                            <td>@money($totalAmount)</td>
+                            <td>@money($totalDiscount)</td>
+                            <td><strong>@money($this->getPaymentAmountTotal('COD'))</strong></td>
+                            <td><strong>@money($this->getPaymentAmountTotal('Check'))</strong></td>
+                            <td><strong>@money($this->getPaymentAmountTotal('Bank Transfer'))</strong></td>
+                            <td><strong>@money($this->getPaymentAmountTotal('Card'))</strong></td>
+                            <td><strong>@money($this->getPaymentAmountTotal('Cash'))</strong></td>
+                            <td><strong>@money($this->getPaymentAmountTotal('Gcash'))</strong></td>
+                            <td><strong>@money($this->getPaymentAmountTotal('Financing'))</strong></td>
                         </tr>
-                        {{-- Total --}}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -224,18 +231,24 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @forelse($expenses as $expense)
                             <tr>
-                                <td>PCV-001</td>
-                                <td>John Doe - Services Rendered</td>
-                                <td>2024-09-29</td>
-                                <td>$500</td>
+                                <td>{{ $expense->voucher_number }}</td>
+                                <td>{{ $expense->description }}</td>
+                                <td>{{ $expense->first_name }} {{ $expense->last_name }}</td>
+                                <td>@money($expense->amount)</td>
                             </tr>
+                        @empty
+                            <tr>
+                                <td colspan="100" align="center">No records found.</td>
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                     <div class="row">
                         <div class="col-md-10"></div>
                         <div class="col-md-2 text-right">
-                            <h4><strong>Total: $500.00</strong></h4>
+                            <h4><strong>Total: @money($this->getExpensesTotal())</strong></h4>
                         </div>
                     </div>
                 </div>
@@ -256,7 +269,7 @@
                 </td>
                 <td align = "center">
                     <h4><strong>DAILY SALES AND COLLECTION REPORT</strong></h4>
-                    <h4><strong>Jenny Grace Sta Maria August 30, 2024</strong> <small>Page 1 of 1 Printed August 31 3:25PM</small></h4>
+                    <h4><strong>Jenny Grace Sta Maria {{ date('F j, Y', strtotime($date)) }}</strong> <small>Page 1 of 1 Printed {{ date('F j h:iA') }}</small></h4>
                 </td>
             </tr>
         </table>
@@ -287,73 +300,129 @@
                 </tr>
             </thead>
             <tbody>
+            @php
+                $totalGrossPrice = 0;
+                $totalAmount = 0;
+                $totalDiscount = 0;
+            @endphp
+            @forelse($transactions as $transaction)
+                @php
+                    $items = $this->getItems($transaction->order_id);
+                    $rowspan = count($items);
+
+                    if($transaction->delivery_fee > 0) $rowspan = $rowspan + 1;
+                    $receiptType = $this->getReceiptType($transaction);
+
+                @endphp
+                @foreach($items as $item)
+                    @if($loop->index == 0)
+                        @php
+                            $discount = $this->getDiscount($transaction->order_id);
+
+                            $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                            $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
+                            $totalDiscount = $totalDiscount + $discount;
+                        @endphp
+                        <tr>
+                            <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'SI' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'DR' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CI' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>{{ $item->title }}</td>
+                            <td>@money($item->original_price * $item->quantity)</td>
+                            <td rowspan="{{ $rowspan }}">@money($transaction->total + $transaction->delivery_fee)</td>
+                            <td rowspan="{{ $rowspan }}">@money($discount)</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'COD'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cart'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))</td>
+                        </tr>
+                    @else
+                        @php
+                            $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                        @endphp
+                        <tr>
+                            <td>{{ $item->quantity }}</td>
+                            <td>{{ $item->title }}</td>
+                            <td>@money($item->original_price * $item->quantity)</td>
+                        </tr>
+                    @endif
+                @endforeach
+
+                @if($transaction->delivery_fee > 0)
+                    <tr>
+                        <td>1</td>
+                        <td>Delivery Fee</td>
+                        <td>@money($transaction->delivery_fee)</td>
+                    </tr>
+                @endif
+
+            @empty
                 <tr>
-                    <td>1</td>
-                    <td>SI-001</td>
-                    <td>DR-001</td>
-                    <td>CI-001</td>
-                    <td>CR-001</td>
-                    <td>John Doe</td>
-                    <td>Unit A</td>
-                    <td>Item 1</td>
-                    <td>$1000</td>
-                    <td>$950</td>
-                    <td>$50</td>
-                    <td>$950</td>
-                    <td>$500</td>
-                    <td>$300</td>
-                    <td>$50</td>
-                    <td>$100</td>
-                    <td>$0</td>
-                    <td>0%</td>
+                    <td colspan="100" align="center">No records found.</td>
                 </tr>
+            @endforelse
 
                 <tr>
                     <td colspan="99"><h4><strong>Collections</strong></h4></td>
                 </tr>
 
+            @forelse($collections as $collection)
+                @php
+                    $receiptType = $this->getReceiptType($collection);
+                @endphp
                 <tr>
                     <td></td>
+                    <td>{{ $receiptType == 'SI' ? $receiptType . $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'DR' ? $receiptType . $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'CI' ? $receiptType . $collection->receipt_number : '' }}</td>
+                    <td>{{ $collection->or_number }}</td>
+                    <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
                     <td></td>
-                    <td></td>
-                    <td>119</td>
-                    <td>28100</td>
-                    <td>Golden Tuscano</td>
-                    <td></td>
-                    <td>AR#28100</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>AR#{{ $collection->or_number }}</td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>26,400</td>
-                    <td></td>
-                    <td></td>
+                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
+                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
+                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
+                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
+                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
+                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
                 </tr>
+            @empty
+                <tr>
+                    <td colspan="100" align="center">No records found.</td>
+                </tr>
+            @endforelse
 
-                {{-- Total --}}
-                <tr>
-                    <td><strong>Totals</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>138,860</td>
-                    <td>128,947</td>
-                    <td>9,913</td>
-                    <td><strong>0.00</strong></td>
-                    <td><strong>65,840.00</strong></td>
-                    <td><strong>0.00</strong></td>
-                    <td><strong>0.00</strong></td>
-                    <td><strong>136,697.00</strong></td>
-                    <td><strong>0.00</strong></td>
-                    <td><strong>23,804.00</strong></td>
-                </tr>
+            <tr>
+                <td><strong>Totals</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>@money($totalGrossPrice)</td>
+                <td>@money($totalAmount)</td>
+                <td>@money($totalDiscount)</td>
+                <td><strong>@money($this->getPaymentAmountTotal('COD'))</strong></td>
+                <td><strong>@money($this->getPaymentAmountTotal('Check'))</strong></td>
+                <td><strong>@money($this->getPaymentAmountTotal('Bank Transfer'))</strong></td>
+                <td><strong>@money($this->getPaymentAmountTotal('Card'))</strong></td>
+                <td><strong>@money($this->getPaymentAmountTotal('Cash'))</strong></td>
+                <td><strong>@money($this->getPaymentAmountTotal('Gcash'))</strong></td>
+                <td><strong>@money($this->getPaymentAmountTotal('Financing'))</strong></td>
+            </tr>
                 {{-- Total --}}
             </tbody>
         </table>
@@ -370,12 +439,18 @@
                 </tr>
             </thead>
             <tbody>
+            @forelse($expenses as $expense)
                 <tr>
-                    <td>PCV-001</td>
-                    <td>John Doe - Services Rendered</td>
-                    <td>2024-09-29</td>
-                    <td>$500</td>
+                    <td>{{ $expense->voucher_number }}</td>
+                    <td>{{ $expense->description }}</td>
+                    <td>{{ $expense->first_name }} {{ $expense->last_name }}</td>
+                    <td>@money($expense->amount)</td>
                 </tr>
+            @empty
+                <tr>
+                    <td colspan="100" align="center">No records found.</td>
+                </tr>
+            @endforelse
                 <!-- Add more rows here as needed -->
             </tbody>
         </table>
@@ -384,14 +459,15 @@
         <div class="row">
             <div class="col-md-10"></div>
             <div class="col-md-2 text-right">
-                <h4><strong>Total: $500.00</strong></h4>
+                <h4><strong>Total: @money($this->getExpensesTotal())</strong></h4>
             </div>
         </div>
     </div>
 </x-slot>
 
 @assets
-    <style>
+    <style type="text/css" media="print">
+        @page { size: landscape; }
         body {
             font-family: Arial, sans-serif;
         }
