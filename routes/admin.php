@@ -43,8 +43,6 @@ use App\Livewire\Admin\Reports\Reports;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
-Route::get('/reports', Reports::class)->name('reports');
-
 Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/product', Products::class)->name('product');
     Route::get('/product/new', CreateProduct::class)->name('create.product');
@@ -100,4 +98,8 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
 
     Route::get('/customers', CustomerList::class)->name('customer.list');
     Route::get('/daily-expense/new', DailyExpense::class)->name('expense');
+});
+
+Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
+    Route::get('/reports/daily', Reports::class)->name('reports.daily');
 });

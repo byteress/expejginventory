@@ -466,8 +466,7 @@
 </x-slot>
 
 @assets
-    <style type="text/css" media="print">
-        @page { size: landscape; }
+    <style>
         body {
             font-family: Arial, sans-serif;
         }

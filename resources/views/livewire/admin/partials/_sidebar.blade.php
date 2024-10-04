@@ -264,27 +264,24 @@
     </li>
     @endhasanyrole
 
+    @hasanyrole('admin|inventory_head')
     <!-- Divider -->
     <hr class="sidebar-divider">
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Addons
-    </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
             aria-expanded="true" aria-controls="collapsePages">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Settings</span>
+            <i class="fas fa-fw fa-chart-line"></i>
+            <span>Reports</span>
         </a>
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a wire:navigate class="collapse-item" href="#">System Settings</a>
+                <a href="{{ route('admin.reports.daily') }}" wire:navigate class="collapse-item" href="#">Daily Report</a>
             </div>
         </div>
     </li>
+    @endhasanyrole
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
