@@ -264,7 +264,7 @@
     </li>
     @endhasanyrole
 
-    @hasanyrole('admin|inventory_head')
+    @hasanyrole('admin|cashier')
     <!-- Divider -->
     <hr class="sidebar-divider">
 
