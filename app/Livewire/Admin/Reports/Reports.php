@@ -9,6 +9,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -33,7 +34,17 @@ class Reports extends Component
             $this->date = (new DateTime($date))->modify('-1 day')->format('Y-m-d');
         }
 
-        $this->dispatch('date-changed');
+        $this->redirect(route('admin.reports.daily', [
+            'date' => $this->date
+        ]), true);
+    }
+
+    #[On('date-set')]
+    public function setDate(string $date): void
+    {
+        $this->redirect(route('admin.reports.daily', [
+            'date' => $date
+        ]), true);
     }
 
     /**

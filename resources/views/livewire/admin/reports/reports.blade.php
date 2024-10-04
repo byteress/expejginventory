@@ -554,6 +554,9 @@
                 daysOfWeekHighlighted: "6,0",
                 autoclose: true,
                 todayHighlight: true,
+        }).on('change', function (){
+            var date = $(this).val();
+            $wire.dispatch('date-set', {date: date});
         });
 
         $wire.on('date-changed', (event) => {
