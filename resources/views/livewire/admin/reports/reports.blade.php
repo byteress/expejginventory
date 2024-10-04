@@ -273,33 +273,32 @@
                 </td>
             </tr>
         </table>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th rowspan="2">ID</th>
-                    <th rowspan="2">SI</th>
-                    <th rowspan="2">DR</th>
-                    <th rowspan="2">CI</th>
-                    <th rowspan="2">CR</th>
-                    <th rowspan="2">Customer</th>
-                    <th rowspan="2">Unit</th>
-                    <th rowspan="2">Particulars</th>
-                    <th rowspan="2">Gross Price</th>
-                    <th rowspan="2">Total Amount</th>
-                    <th rowspan="2">Discount</th>
-                    <th rowspan="2">COD</th>
-                    <th colspan="5" class="text-center">Mode of Payment</th>
-                    <th rowspan="2">Financing</th>
-                </tr>
-                <tr>
-                    <th>Check</th>
-                    <th>Bank</th>
-                    <th>Card</th>
-                    <th>Cash</th>
-                    <th>Gcash</th>
-                </tr>
-            </thead>
+        <table class="table table-bordered receipt-table">
             <tbody>
+
+            <tr>
+                <th rowspan="2">ID</th>
+                <th rowspan="2">SI</th>
+                <th rowspan="2">DR</th>
+                <th rowspan="2">CI</th>
+                <th rowspan="2">CR</th>
+                <th rowspan="2">Customer</th>
+                <th rowspan="2">Unit</th>
+                <th rowspan="2">Particulars</th>
+                <th rowspan="2">Gross Price</th>
+                <th rowspan="2">Total Amount</th>
+                <th rowspan="2">Discount</th>
+                <th rowspan="2">COD</th>
+                <th colspan="5" class="text-center">Mode of Payment</th>
+                <th rowspan="2">Financing</th>
+            </tr>
+            <tr>
+                <th>Check</th>
+                <th>Bank</th>
+                <th>Card</th>
+                <th>Cash</th>
+                <th>Gcash</th>
+            </tr>
             @php
                 $totalGrossPrice = 0;
                 $totalAmount = 0;
@@ -370,7 +369,7 @@
             @endforelse
 
                 <tr>
-                    <td colspan="99"><h4><strong>Collections</strong></h4></td>
+                    <td colspan="99"><h4 style = "margin:0;"><strong>Collections</strong></h4></td>
                 </tr>
 
             @forelse($collections as $collection)
@@ -424,44 +423,35 @@
                 <td><strong>@money($this->getPaymentAmountTotal('Financing'))</strong></td>
             </tr>
                 {{-- Total --}}
+
+
+                <tr>
+                    <th colspan = "3">PCVs</th>
+                    <th colspan = "10">DISBURSEMENT: Payee-Particulars</th>
+                    <th colspan = "3">Released</th>
+                    <th colspan = "3">Amount</th>
+                </tr>
+                @forelse($expenses as $expense)
+                    <tr>
+                        <td colspan = "3">{{ $expense->voucher_number }}</td>
+                        <td colspan = "10">{{ $expense->description }}</td>
+                        <td colspan = "3">{{ $expense->first_name }} {{ $expense->last_name }}</td>
+                        <td colspan = "3">@money($expense->amount)</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="100" align="center">No records found.</td>
+                    </tr>
+                @endforelse
+                <tr>
+                    <td colspan="99">
+                        <div class="text-right">
+                            <h5><strong>Total: @money($this->getExpensesTotal())</strong></h5>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
-
-
-        <!-- New Disbursement Table -->
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>PCVs</th>
-                    <th>DISBURSEMENT: Payee-Particulars</th>
-                    <th>Released</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-            @forelse($expenses as $expense)
-                <tr>
-                    <td>{{ $expense->voucher_number }}</td>
-                    <td>{{ $expense->description }}</td>
-                    <td>{{ $expense->first_name }} {{ $expense->last_name }}</td>
-                    <td>@money($expense->amount)</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="100" align="center">No records found.</td>
-                </tr>
-            @endforelse
-                <!-- Add more rows here as needed -->
-            </tbody>
-        </table>
-
-        <!-- Total Amount Text -->
-        <div class="row">
-            <div class="col-md-10"></div>
-            <div class="col-md-2 text-right">
-                <h4><strong>Total: @money($this->getExpensesTotal())</strong></h4>
-            </div>
-        </div>
     </div>
 </x-slot>
 
@@ -533,12 +523,25 @@
             display: none;
         }
         @media print {
+            @page {
+                size: landscape; /* Ensures the page is printed in landscape */
+                margin: 1cm; /* Set margins to ensure no content is cut off */
+            }
+
             .no-print {
                 display: none;
             }
+
             .printable {
                 display: block;
             }
+
+            /* Apply a scaling factor to fit the table within the page */
+            body {
+                transform: scale(0.85); /* Scale down the entire content */
+                transform-origin: top left; /* Ensure scaling starts from top-left corner */
+            }
+
         }
     </style>
 @endassets
