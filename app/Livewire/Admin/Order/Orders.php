@@ -36,6 +36,8 @@ class Orders extends Component
     public string $email;
     #[Validate('required')]
     public string $password;
+
+    public string $pcv = '';
     public ?string $notes = null;
 
     public function mount(string $type, string $status): void
@@ -153,7 +155,11 @@ class Orders extends Component
         string $orderId
     ): void
     {
-        $this->validate();
+        $this->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'pcv' => 'required'
+        ]);
 
         DB::beginTransaction();
 
@@ -174,13 +180,18 @@ class Orders extends Component
 
         $order = $this->getOrder($orderId);
 
-        $amount = $order->total + $order->delivery_fee;
+        $amount = DB::table('payment_methods')
+            ->where('payment_methods.credit', 0)
+            ->where('payment_methods.order_id', $orderId)
+            ->sum('payment_methods.amount');
+
         $orNumber = str_pad((string) $order->id, 12, '0', STR_PAD_LEFT);
         $expenseResult = $expenseManagementService->create(
             Str::uuid()->toString(),
             date('Y-m-d'),
             Expense::REFUND,
             $amount,
+            $this->pcv,
             "Refunded Order# $orNumber",
             auth()->user()->id,
             $order->branch_id

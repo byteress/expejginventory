@@ -105,9 +105,11 @@
                                     @php
                                         $discount = $this->getDiscount($transaction->order_id);
 
-                                        $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
-                                        $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
-                                        $totalDiscount = $totalDiscount + $discount;
+                                        if($transaction->status != 3 || !$this->isSameDayCancelled($transaction->order_id)){
+                                            $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                            $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
+                                            $totalDiscount = $totalDiscount + $discount;
+                                        }
                                     @endphp
                                 <tr>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
@@ -118,9 +120,9 @@
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ $item->title }}</td>
-                                    <td>@money($item->original_price * $item->quantity)</td>
-                                    <td rowspan="{{ $rowspan }}">@money($transaction->total + $transaction->delivery_fee)</td>
-                                    <td rowspan="{{ $rowspan }}">@money($discount)</td>
+                                    <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @else @money($item->original_price * $item->quantity) @endif</td>
+                                    <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
+                                    <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @else @money($discount) @endif</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'COD'))</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
@@ -318,9 +320,11 @@
                         @php
                             $discount = $this->getDiscount($transaction->order_id);
 
-                            $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
-                            $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
-                            $totalDiscount = $totalDiscount + $discount;
+                            if($transaction->status != 3 || !$this->isSameDayCancelled($transaction->order_id)){
+                                $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
+                                $totalDiscount = $totalDiscount + $discount;
+                            }
                         @endphp
                         <tr>
                             <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
@@ -331,9 +335,9 @@
                             <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                             <td>{{ $item->quantity }}</td>
                             <td>{{ $item->title }}</td>
-                            <td>@money($item->original_price * $item->quantity)</td>
-                            <td rowspan="{{ $rowspan }}">@money($transaction->total + $transaction->delivery_fee)</td>
-                            <td rowspan="{{ $rowspan }}">@money($discount)</td>
+                            <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @else @money($item->original_price * $item->quantity) @endif</td>
+                            <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
+                            <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @else @money($discount) @endif</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'COD'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>

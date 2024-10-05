@@ -174,6 +174,13 @@
                                                                         @enderror
                                                                     </div>
 
+                                                                        <div class="form-group">
+                                                                            <input wire:model="pcv" class="form-control" placeholder="PCV"></input>
+                                                                            @error('pcv')
+                                                                            <span class="text-danger">{{ $message }}</span>
+                                                                            @enderror
+                                                                        </div>
+
                                                                     <div class="form-group">
                                                                         <textarea wire:model="notes" class="form-control" placeholder="Notes"></textarea>
                                                                         @error('notes')

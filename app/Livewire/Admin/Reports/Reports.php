@@ -60,6 +60,7 @@ class Reports extends Component
             ->select(['transactions.id as transaction_id', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*'])
             ->whereDate('transactions.created_at', $date)
             ->whereIn('transactions.type', ['full', 'down'])
+            ->where('orders.previous', 0)
             ->get();
     }
 
@@ -154,6 +155,28 @@ class Reports extends Component
         return DB::table('expenses')
             ->whereDate('date', $date)
             ->sum('amount');
+    }
+
+    public function isSameDayCancelled(string $orderId): bool
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if(!$order || !$order->completed_at) return false;
+
+        $newOrder = DB::table('orders')
+            ->where('cancelled_order_id', $orderId)
+            ->first();
+
+        if(!$newOrder || !$newOrder->completed_at) return false;
+
+        $orderDate = date('Y-m-d', strtotime($order->completed_at));
+        $newOrderDate = date('Y-m-d', strtotime($newOrder->completed_at));
+
+        if($orderDate != $newOrderDate) return false;
+
+        return true;
     }
 
     #[Layout('livewire.admin.base_layout')]
