@@ -35,6 +35,22 @@
                             <i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
+                <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
+                    <div class="form-group">
+                        <label for="supplier">Branch</label>
+                        <select class="form-control" id="supplier" wire:model.live="branch">
+                            <option selected value="">Select Branch</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                        @if (auth()->user()->branch_id == $branch->id) selected @endif>
+                                    {{ $branch->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('branch')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -178,12 +194,12 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
                         </tr>
                         @empty
                             <tr>
@@ -393,12 +409,12 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
-                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
-                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
-                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
-                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
-                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
                 </tr>
             @empty
                 <tr>

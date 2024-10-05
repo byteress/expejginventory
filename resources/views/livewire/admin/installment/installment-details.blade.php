@@ -194,7 +194,7 @@
                                   </div>
                               </div>
                                 <div class="d-flex justify-content-end mt-1">
-                                    <button wire:click="submitPayment" class="btn btn-primary btn-icon-split">
+                                    <button wire:click="submitPayment" wire:loading.attr="disabled" wire:target="submitPayment" class="btn btn-primary btn-icon-split">
                                         <span class="text">Submit Payment</span>
                                     </button>
                                 </div>
@@ -310,7 +310,7 @@
                                                       <div class="input-group mb-3">
                                                               <input type="text" class="form-control" wire:model="codAmounts.{{ $order->order_id }}">
                                                           <div class="input-group-append">
-                                                              <button wire:click="collectCod('{{ $order->order_id }}')" class="btn btn-primary">Collect</button>
+                                                              <button wire:click="collectCod('{{ $order->order_id }}')" wire:loading.attr="disabled" wire:target="collectCod" class="btn btn-primary">Collect</button>
                                                           </div>
                                                       </div>
                                                       @error("codAmounts.$order->order_id") <span class="text-danger">{{ $message }}</span> @enderror
@@ -486,11 +486,11 @@
                                             @if($bills->due <= date('Y-m-d'))
                                             <div class="d-flex justify-content-end mt-1">
                                                 @if($bills->penalty == 0)
-                                                <button wire:click="submitPenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}', {{ $bills->balance }})" class="btn btn-primary btn-icon-split">
+                                                <button wire:click="submitPenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}', {{ $bills->balance }})" wire:loading.attr="disabled" wire:target="submitPenalty" class="btn btn-primary btn-icon-split">
                                                     <span class="text">Add Penalty</span>
                                                 </button>
                                                 @else
-                                                    <button wire:click="removePenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}')" class="btn btn-danger btn-icon-split">
+                                                    <button wire:click="removePenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}')" wire:loading.attr="disabled" wire:target="removePenalty" class="btn btn-danger btn-icon-split">
                                                         <span class="text">Waive Penalty</span>
                                                     </button>
                                                 @endif

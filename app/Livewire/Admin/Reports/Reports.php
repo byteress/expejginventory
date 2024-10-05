@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports;
 
+use BranchManagement\Models\Branch;
 use DateTime;
 use Exception;
 use Illuminate\Contracts\View\Factory;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Session;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -20,6 +22,18 @@ class Reports extends Component
 {
     #[Url]
     public ?string $date = null;
+
+    #[Session]
+    public ?string $branch = null;
+
+    public function updatedBranch(string $branch): void
+    {
+        $this->branch = $branch;
+
+        $this->redirect(route('admin.reports.daily', [
+            'date' => $this->date
+        ]), true);
+    }
 
     /**
      * @throws Exception
@@ -54,14 +68,17 @@ class Reports extends Component
     {
         $date = $this->date ?? now()->format('Y-m-d');
 
-        return DB::table('transactions')
+        $query = DB::table('transactions')
             ->join('orders', 'transactions.order_id', '=', 'orders.order_id')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
             ->select(['transactions.id as transaction_id', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*'])
             ->whereDate('transactions.created_at', $date)
             ->whereIn('transactions.type', ['full', 'down'])
-            ->where('orders.previous', 0)
-            ->get();
+            ->where('orders.previous', 0);
+
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
+        return $query->get();
     }
 
     /**
@@ -71,13 +88,16 @@ class Reports extends Component
     {
         $date = $this->date ?? now()->format('Y-m-d');
 
-        return DB::table('transactions')
+        $query =  DB::table('transactions')
             ->join('orders', 'transactions.order_id', '=', 'orders.order_id')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
             ->select(['transactions.id as transaction_id', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*'])
             ->whereDate('transactions.created_at', $date)
-            ->whereIn('transactions.type', ['installment', 'cod'])
-            ->get();
+            ->whereIn('transactions.type', ['installment', 'cod']);
+
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
+        return $query->get();
     }
 
     /**
@@ -142,10 +162,13 @@ class Reports extends Component
     {
         $date = $this->date ?? now()->format('Y-m-d');
 
-        return DB::table('expenses')
+        $query = DB::table('expenses')
             ->join('users', 'expenses.actor', '=', 'users.id')
-            ->whereDate('expenses.date', $date)
-            ->get();
+            ->whereDate('expenses.date', $date);
+
+        if($this->branch) $query->where('expenses.branch_id', $this->branch);
+
+        return $query->get();
     }
 
     public function getExpensesTotal(): int
@@ -185,7 +208,8 @@ class Reports extends Component
         return view('livewire.admin.reports.reports', [
             'transactions' => $this->getTransactions(),
             'collections' => $this->getCollections(),
-            'expenses' => $this->getExpenses()
+            'expenses' => $this->getExpenses(),
+            'branches' => Branch::all(),
         ]);
     }
 }
