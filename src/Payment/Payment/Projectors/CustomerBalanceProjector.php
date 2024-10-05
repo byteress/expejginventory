@@ -68,7 +68,10 @@ class CustomerBalanceProjector extends Projector
         if(!$cod) return;
 
         $this->updateBalance($order->customer_id, $cod->balance, 'decrement', 'cod');
-        $cod->delete();
+
+        DB::table('cod_balances')
+            ->where('order_id', $event->orderId)
+            ->delete();
     }
 
     public function onCodReceived(CodReceived $event): void
