@@ -32,7 +32,7 @@ class ViewRequest extends Component
 
     #[Validate('required')]
     public $truck = null;
-    public string $notes;
+    public string $notes = '';
 
     public function mount()
     {
