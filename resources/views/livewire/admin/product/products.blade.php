@@ -1,7 +1,16 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Product List</h1>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>Product List</strong></h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -15,7 +24,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="sr-only" for="inlineFormInputGroup">Username</label>
-                    <div class="input-group mb-2">
+                    <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">Filter By Supplier</div>
                         </div>
@@ -52,9 +61,9 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                     <thead>
-                        <tr>
+                        <tr class="bg-secondary font-w">
                             <th>Featured Photo</th>
                             <th>SKU</th>
                             <th>Model</th>

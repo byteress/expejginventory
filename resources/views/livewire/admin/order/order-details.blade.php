@@ -17,8 +17,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-10">
-                        <h1 class="h3 mb-2 text-primary admin-title">@if($orderType != 'regular') {{ ucfirst($orderType) }} @endif Order
-                            #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</h1>
+                        <h1 class="h3 text-primary admin-title"><strong>@if($orderType != 'regular') {{ ucfirst($orderType) }} @endif Order
+                            #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</strong></h1>
                     </div>
                     @if(!$completed)
                     <div class="col-md-2">
@@ -796,11 +796,11 @@
         <div class="receipt-details">
             <p>{{ $customer->first_name }} {{ $customer->last_name }}</p>
             <p>{{ $customer->phone }}</p>
-            <p>{{ $customer->address }}</p>
+            <p style = "margin-top:20px;">{{ $customer->address }}</p>
             {{-- <p>DOB: 04/01</p> --}}
         </div>
         <div class="receipt-table-container">
-            <table class="receipt-table">
+            <table class="receipt-table" style = "margin-top:60px;">
                 @foreach ($cartItems as $item)
                 <tr>
                     <td>{{ $item->quantity }}</td>

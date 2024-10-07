@@ -12,10 +12,16 @@
                 {{ session('success') }}
             </div>
         @endif
+
         <!-- Page Heading -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                <h1 class="h3 mb-2 text-primary admin-title">Cart</h1>
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="h3 text-primary admin-title mb-0"><strong>Cart</strong></h1>
+                    </div>
+                </div>
+
             </div>
         </div>
 

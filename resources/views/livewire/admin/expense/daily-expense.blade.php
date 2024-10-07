@@ -3,9 +3,13 @@
     <!-- Page Heading -->
     <div class="card shadow mb-4">
         <div class="card-body">
-            <h1 class="h3 mb-2 text-gray-800">Daily Expense</h1>
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>Branch List</strong></h1>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">

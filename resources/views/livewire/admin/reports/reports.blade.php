@@ -6,7 +6,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-10">
-                    <h1 class="h3 mb-2 text-primary admin-title">Reports</h1>
+                    <h1 class="h3 mb-2 text-primary admin-title"><strong>Reports</strong></h1>
                 </div>
                 <div class="col-md-2">
                     <div class="d-flex justify-content-end">

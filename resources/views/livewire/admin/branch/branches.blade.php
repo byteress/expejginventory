@@ -1,7 +1,16 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Branch List</h1>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>Branch List</strong></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -14,6 +23,8 @@
             </a>
         </div>
         <div class="card-body">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
             <div class="table-responsive">
                 @if (session('alert'))
                     <div class="alert alert-danger" role="alert">
@@ -26,14 +37,13 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                     <thead>
-                        <tr>
+                        <tr class="bg-secondary font-w">
                             <th>Name</th>
                             <th>Address</th>
                             <th>Phone</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th><center>Action</center></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,30 +52,42 @@
                             <td>{{ $branch->name }}</td>
                             <td>{{ $branch->address ?? '-' }}</td>
                             <td>{{ $branch->phone ?? '-' }}</td>
-                            <td><a wire:navigate href="{{ route('admin.edit.branch', ['branch' => $branch->id]) }}" class="btn btn-info btn-sm">Edit</a></td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $branch->id }}">Delete</button>
-                                <!-- Delete Modal -->
-                                <div wire:ignore.self class="modal fade" id="deleteModal{{ $branch->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModal{{ $branch->id }}Label" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModal{{ $branch->id }}Label">Delete Branch</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete this branch?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                <button wire:click="delete('{{ $branch->id }}')" type="button" class="btn btn-danger">Delete</button>
+                            <td align = "center">
+                                <div class="btn-group">
+                                    <a wire:navigate href="{{ route('admin.edit.branch', ['branch' => $branch->id]) }}"
+                                        type="button" class="btn btn-primary">Edit</a>
+                                    <button type="button"
+                                        class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a data-toggle="modal" data-target="#deleteModal{{ $branch->id }}" class="dropdown-item"
+                                            href="#">Delete</a>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div wire:ignore.self class="modal fade" id="deleteModal{{ $branch->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModal{{ $branch->id }}Label" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModal{{ $branch->id }}Label">Delete Branch</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this branch?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                    <button wire:click="delete('{{ $branch->id }}')" type="button" class="btn btn-danger">Delete</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- End Delete Modal -->
                                 </div>
-                                <!-- End Delete Modal -->
                             </td>
                         </tr>
                         @empty
@@ -76,6 +98,8 @@
                     </tbody>
                 </table>
                 {{ $branches->links() }}
+            </div>
+                </div>
             </div>
         </div>
     </div>

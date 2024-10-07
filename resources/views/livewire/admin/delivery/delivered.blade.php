@@ -3,7 +3,16 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Delivered</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="h3 text-primary admin-title mb-0"><strong>Delivered</strong></h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-body">
@@ -19,9 +28,9 @@
                     </div>
                 @endif
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                         <thead>
-                        <tr>
+                        <tr class="bg-secondary font-w">
                             <th>Order #</th>
                             <th>Customer</th>
                             <th>Items</th>
@@ -29,7 +38,7 @@
                             <th>Branch</th>
                             @endhasrole
                             <th>Address</th>
-                            <th>Status</th>
+                            <th><center>Status</center></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -48,7 +57,7 @@
                                 <td>{{ $order->branch_name }}</td>
                                 @endhasrole
                                 <td>{{ $order->customer_address }}</td>
-                                <td>
+                                <td align="center">
                                     @if(($item->to_ship + $item->out_for_delivery + $item->delivered ) == $item->delivered)
                                         <span class="badge badge-success">Delivered</span>
                                     @else

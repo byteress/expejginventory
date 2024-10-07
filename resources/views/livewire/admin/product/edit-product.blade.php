@@ -1,7 +1,16 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Edit {{ $product->model }} - {{ $product->description }}</h1>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0">Edit "<strong>{{ $product->model }} - {{ $product->description }}</strong>"</h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -44,14 +53,14 @@
                                                 {{ $defaultFeaturedImage->img()->attributes(['class' => 'img-fluid']) }}
                                             </div>
                                             <a @click="$refs.featuredImage.click()"
-                                                class="btn btn-primary btn-full select-image">Change Featured Image</a>
+                                                class="btn btn-primary btn-block select-image font-w">Change Featured Image</a>
                                         @else
                                             <div class="img-area" data-img="">
                                                 <img id="chosen-image" class = "school-img"
                                                     src ="{{ $featuredImage->temporaryUrl() }}">
                                             </div>
                                             <a wire:click="removeFeaturedImage"
-                                                class="btn btn-danger btn-full select-image"> Remove</a>
+                                                class="btn btn-danger btn-block select-image font-w"> Remove</a>
                                         @endif
                                     </div>
                                 </div>
@@ -67,12 +76,12 @@
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                     <div class="row mt-3">
-                                        <div class="col-md-9">
+                                        <div class="col-md-8">
                                             <h4>Additional Images </h4>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <a @click="$refs.gallery.click()"
-                                                class="btn btn-primary btn-block select-multiple mb-3"><i
+                                                class="btn btn-primary btn-block select-multiple mb-3 font-w"><i
                                                     class="fas fa-plus"></i> Select Images</a>
                                             <input x-ref="gallery" type="file" id="additionalImg"
                                                 class = "additional-img" accept="image/*" wire:model="gallery" hidden

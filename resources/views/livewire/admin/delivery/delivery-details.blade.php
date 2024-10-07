@@ -22,8 +22,22 @@
                     $class = 'primary';
             }
         @endphp
-        <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Delivery #{{ str_pad((string) $delivery->id, 12, '0', STR_PAD_LEFT) }} <span class="badge badge-{{ $class }}">{{ $this->getStatus($delivery->status) }}</span></h1>
+
+    <!-- Page Heading -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>Delivery #{{ str_pad((string) $delivery->id, 12, '0', STR_PAD_LEFT) }} <span class="badge badge-{{ $class }}">{{ $this->getStatus($delivery->status) }}</span></strong></h1>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex justify-content-end">
+                        <a href = "#" class="btn btn-outline-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print Reports</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
         <!-- DataTales Example -->
         <form wire:submit="setAsDelivered">
             <div class="card shadow mb-4">
@@ -155,3 +169,176 @@
     <!-- /.container-fluid -->
 
 </div>
+
+
+<x-slot:print>
+    <div class="printable">
+        <table>
+            <tr>
+                <td style = "width: 38%">
+                    <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style = "width:350px">
+                </td>
+                <td align = "center">
+                    <h5><strong>JENNY GRACE</strong></h5>
+                    <h6><strong>DAILY MONITORING DELIVERY REPORT</strong></h6>
+                    <h6><strong>Branch: Candon Date: August 31, 2024</strong></h6>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered receipt-table">
+            <thead>
+            <tr>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Invoice#</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Customer</th>
+                <th colspan="3" style = "text-align:center ">Items</th>
+                <th colspan="2" style = "text-align:center ">Time</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">COD</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Customer Signature</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Comments</th>
+            </tr>
+            <tr>
+                <th style = "text-align:center ">QTY</th>
+                <th style = "text-align:center ">Particulars</th>
+                <th style = "text-align:center ">B/A</th>
+                <th style = "text-align:center ">IN</th>
+                <th style = "text-align:center ">OUT</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CHG#0411</td>
+                    <td>
+                        <strong>Rudeylen E. Sabado</strong><br>
+                        AMBUCAO, SANTIAGO ILOCOS SUR<br>
+                        0995-524-4954
+                    </td>
+                    <td>1</td>
+                    <td>JG t-88-1 + DC-77-2Light Brown Dining Table</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered receipt-table" style = "margin-top:100px;">
+            <thead>
+                <tr>
+                    <th colspan = "6"><center>SIGNATURE OVER PRINTED NAME</center></th>
+                </tr>
+                <tr>
+                    <th><center>CHECKED</center></th>
+                    <th><center>DRIVER</center></th>
+                    <th><center>HELPER</center></th>
+                    <th><center>TIME IN</center></th>
+                    <th><center>TIME OUT</center></th>
+                    <th><center>VERIFIED BY</center></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                    <td>T</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</x-slot>
+
+@assets
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .receipt-container {
+            width: 600px;
+            margin: 0;
+            padding: 0;
+            float: left;
+        }
+
+        .receipt-header {
+            text-align: right;
+        }
+
+        .receipt-details {
+            margin-top: 20px;
+            margin-left: 40px;
+        }
+
+        .receipt-details p {
+            margin: 2px 0;
+        }
+
+        .receipt-table-container {
+            margin-top: 20px;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .receipt-table th,
+        .receipt-table td {
+            border: none;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .receipt-totals {
+            margin-top: 20px;
+            float: right;
+        }
+
+        .receipt-totals p {
+            margin: 2px 0;
+        }
+
+        .receipt-footer {
+            margin-top: 80px;
+            margin-left: 50px;
+            max-width:250px;
+            word-wrap:break-word;
+        }
+
+        .receipt-footer p {
+            margin: 2px 0;
+        }
+        .no-print {
+            display: block;
+        }
+        .printable {
+            display: none;
+        }
+        @media print {
+            @page {
+                size: landscape; /* Ensures the page is printed in landscape */
+                margin: 1cm; /* Set margins to ensure no content is cut off */
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            .printable {
+                display: block;
+            }
+
+            /* Apply a scaling factor to fit the table within the page */
+            body {
+                transform: scale(0.99); /* Scale down the entire content */
+                transform-origin: top left; /* Ensure scaling starts from top-left corner */
+            }
+        }
+    </style>
+@endassets

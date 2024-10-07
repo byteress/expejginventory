@@ -1,7 +1,16 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">New Branch</h1>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>New Branch</strong></h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">

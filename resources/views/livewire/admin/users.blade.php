@@ -1,7 +1,16 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">User List</h1>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>User List</strong></h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -27,16 +36,15 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                     <thead>
-                        <tr>
+                        <tr class="bg-secondary font-w">
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
                             <th>Branch</th>
                             <th>User Role</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,11 +56,21 @@
                                 <td>{{ $user->branch?->name ?? '-' }}</td>
                                 <td>{{ !is_null($user->roles->first()) ? \IdentityAndAccessContracts\Enums\Role::from($user->roles->first()->name)->displayName() : '-' }}
                                 </td>
-                                <td><a wire:navigate href="{{ route('admin.edit.user', ['user' => $user->id]) }}"
-                                        class="btn btn-info btn-sm">Edit</a></td>
                                 <td>
-                                    <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                        data-target="#deleteModal{{ $user->id }}">Delete</button>
+
+                                <div class="btn-group">
+                                    <a wire:navigate href="{{ route('admin.edit.user', ['user' => $user->id]) }}"
+                                        type="button" class="btn btn-primary">Edit</a>
+                                    <button type="button"
+                                        class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a data-toggle="modal" data-toggle="modal" data-toggle="modal"
+                                        data-target="#deleteModal{{ $user->id }}" class="dropdown-item"
+                                            href="#">Delete</a>
+                                    </div>
                                     <!-- Delete Modal -->
                                     <div wire:ignore.self class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1"
                                         role="dialog" aria-labelledby="deleteModal{{ $user->id }}Label" aria-hidden="true">
@@ -78,6 +96,7 @@
                                         </div>
                                     </div>
                                     <!-- End Delete Modal -->
+                                </div>
                                 </td>
                             </tr>
                         @empty

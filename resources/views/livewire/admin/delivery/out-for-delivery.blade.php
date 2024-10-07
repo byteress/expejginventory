@@ -3,7 +3,16 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Out for Delivery</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="h3 text-primary admin-title mb-0"><strong>Out for Delivery</strong></h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-body">
@@ -19,9 +28,9 @@
                         </div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
+                        <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                             <thead>
-                            <tr>
+                            <tr class="bg-secondary font-w">
                                 <th>Delivery #</th>
                                 <th>Driver</th>
                                 <th>Truck</th>
@@ -42,7 +51,7 @@
                                     <td>{{ $delivery->branch_name }}</td>
                                     @endhasrole
                                     <td>{{ date('h:i a F j, Y', strtotime($delivery->assigned_at)) }}</td>
-                                    <td>
+                                    <td align = "center">
                                         <div class="btn-group">
                                             <a href="{{ route('admin.delivery.details', ['delivery_id' => $delivery->delivery_id]) }}" type="button"
                                                class="btn btn-primary">View</a>

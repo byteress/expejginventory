@@ -3,7 +3,16 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Request Transfer</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="h3 text-primary admin-title mb-0"><strong>Request Transfer</strong></h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <!-- DataTales Example -->
@@ -18,9 +27,9 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
+                            <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                                 <thead>
-                                    <tr>
+                                    <tr class="bg-secondary font-w">
                                         <th>Supplier</th>
                                         <th>SKU</th>
                                         <th>Model</th>
@@ -43,7 +52,7 @@
                                             <td>
                                                 <form wire:submit="submit('{{ $product->id }}')">
                                                 <div class="input-group mb-3">
-                                                    @if($product->requested_quantity > 0)   
+                                                    @if($product->requested_quantity > 0)
                                                     <input type="text" class="form-control disabled" disabled placeholder="{{ $product->requested_quantity }}">
                                                     @else
                                                     <input wire:model="quantityToRequest.{{ $product->id }}" type="number" min="1" class="form-control"

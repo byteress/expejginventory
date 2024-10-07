@@ -3,14 +3,23 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">{{ $title }}</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="h3 text-primary admin-title mb-0"><strong>{{ $title }}</strong></h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                         <thead>
-                            <tr>
+                            <tr class="bg-secondary font-w">
                                 <th>Supplier</th>
                                 <th>SKU</th>
                                 <th>Model</th>
