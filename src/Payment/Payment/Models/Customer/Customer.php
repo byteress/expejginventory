@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use DateTime;
 use Payment\Models\Aggregate;
 use PaymentContracts\Events\CodPaymentCollected;
-use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\CodPaymentRequested;
 use PaymentContracts\Events\CodReceived;
 use PaymentContracts\Events\FullPaymentReceived;

@@ -202,6 +202,29 @@ class Reports extends Component
         return true;
     }
 
+    public function isSameDayRefunded(string $orderId): bool
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if(!$order || !$order->completed_at) return false;
+
+        $orderNumber = str_pad((string) $order->id, 12, '0', STR_PAD_LEFT);
+        $expense = DB::table('expenses')
+            ->where('description', "Refunded Order# $orderNumber")
+            ->first();
+
+        if(!$expense || !$expense->created_at) return false;
+
+        $orderDate = date('Y-m-d', strtotime($order->completed_at));
+        $newOrderDate = date('Y-m-d', strtotime($expense->created_at));
+
+        if($orderDate != $newOrderDate) return false;
+
+        return true;
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {

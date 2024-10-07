@@ -4,6 +4,7 @@ namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
 use OrderContracts\Events\OrderCancelled;
+use OrderContracts\Events\OrderRefunded;
 use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentReceived;
 use PaymentContracts\Events\CodPaymentRequested;
@@ -48,6 +49,33 @@ class CustomerBalanceProjector extends Projector
     }
 
     public function onOrderCancelled(OrderCancelled $event): void
+    {
+        $balance = DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->sum('balance');
+
+        $order = DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->first();
+
+        if(!$order) return;
+
+        $this->updateBalance($order->customer_id, $balance, 'decrement', 'installment');
+
+        $cod = DB::table('cod_balances')
+            ->where('order_id', $event->orderId)
+            ->first();
+
+        if(!$cod) return;
+
+        $this->updateBalance($order->customer_id, $cod->balance, 'decrement', 'cod');
+
+        DB::table('cod_balances')
+            ->where('order_id', $event->orderId)
+            ->delete();
+    }
+
+    public function onOrderRefunded(OrderRefunded $event): void
     {
         $balance = DB::table('installment_bills')
             ->where('order_id', $event->orderId)

@@ -4,6 +4,7 @@ namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
 use OrderContracts\Events\OrderCancelled;
+use OrderContracts\Events\OrderRefunded;
 use PaymentContracts\Events\InstallmentInitialized;
 use PaymentContracts\Events\InstallmentPaymentReceived;
 use PaymentContracts\Events\InstallmentStarted;
@@ -118,6 +119,13 @@ class InstallmentBillsProjector extends Projector
     }
 
     public function onOrderCancelled(OrderCancelled $event): void
+    {
+        DB::table('installment_bills')
+            ->where('order_id', $event->orderId)
+            ->delete();
+    }
+
+    public function onOrderRefunded(OrderRefunded $event): void
     {
         DB::table('installment_bills')
             ->where('order_id', $event->orderId)
