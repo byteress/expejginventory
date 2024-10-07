@@ -138,6 +138,7 @@ class StockManagement extends Component
                     ->orWhere('sku_number', 'LIKE', '%'.$this->search.'%')
                     ->orWhere('description', 'LIKE', '%'.$this->search.'%');
             })->select('products.*', 'suppliers.code', DB::raw('COALESCE(stocks.available, 0) as quantity'))
+            ->whereNull('products.deleted_at')
             ->orderByDesc('quantity');
 
         return $query->paginate(10);

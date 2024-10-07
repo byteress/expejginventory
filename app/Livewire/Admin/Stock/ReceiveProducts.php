@@ -104,6 +104,7 @@ class ReceiveProducts extends Component
                     ->orWhere('description', 'LIKE', '%'.$this->search.'%');
             })->select('products.*', 'suppliers.code', DB::raw('COALESCE(stocks.available, 0) as quantity'))
             ->whereNotIn('products.id', $this->selected)
+            ->whereNull('products.deleted_at')
             ->orderByDesc('quantity');
 
         return $query->paginate(10);
