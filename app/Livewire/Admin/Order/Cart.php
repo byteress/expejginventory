@@ -366,7 +366,7 @@ class Cart extends Component
             return;
         }
 
-        $this->calculateDiscount($item->getHash(), $price * 100);
+        $this->calculateDiscount($item->getHash(), $price * 100, $item->getExtraInfo()['price_type']);
     }
 
     public function getProduct($hash)
