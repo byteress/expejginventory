@@ -149,12 +149,14 @@
                                 </tr>
                                 @else
                                     @php
-                                        $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                        if($transaction->status == 1 || (!$this->isSameDayCancelled($transaction->order_id) && !$this->isSameDayRefunded($transaction->order_id))){
+                                            $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                        }
                                     @endphp
                                     <tr>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->title }}</td>
-                                        <td>@money($item->original_price * $item->quantity)</td>
+                                        <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity)@endif</td>
                                     </tr>
                                 @endif
                                 @endforeach
