@@ -142,7 +142,7 @@
                                     <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($this->getPaymentAmount($transaction->transaction_id, 'COD'))@endif</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cart'))</td>
+                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Card'))</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))</td>
                                     <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))</td>
@@ -198,7 +198,7 @@
                             <td></td>
                             <td>@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
                             <td>@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
+                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Card'))</td>
                             <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
                             <td>@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
                             <td>@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
@@ -359,7 +359,7 @@
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'COD'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cart'))</td>
+                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Card'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))</td>
@@ -413,7 +413,7 @@
                     <td></td>
                     <td>@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
                     <td>@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
-                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cart'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Card'))</td>
                     <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
                     <td>@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
                     <td>@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>

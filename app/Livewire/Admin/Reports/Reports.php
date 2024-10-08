@@ -26,6 +26,11 @@ class Reports extends Component
     #[Session]
     public ?string $branch = null;
 
+    public function mount(): void
+    {
+        $this->date = $this->date ?? now()->format('Y-m-d');
+    }
+
     public function updatedBranch(string $branch): void
     {
         $this->branch = $branch;
@@ -168,7 +173,7 @@ class Reports extends Component
 
         if($this->branch) $query->where('expenses.branch_id', $this->branch);
 
-        return $query->get();
+        return $query->orderBy('expenses.created_at')->get();
     }
 
     public function getExpensesTotal(): int

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Delivery;
 
+use Akaunting\Money\Money;
 use App\Exceptions\ErrorHandler;
 use Delivery\Models\Delivery\Enums\DeliveryStatus;
 use DeliveryContracts\IDeliveryService;
@@ -98,7 +99,7 @@ class DeliveryDetails extends Component
              ->join('customers', 'orders.customer_id', '=', 'customers.id')
              ->join('branches', 'orders.branch_id', '=', 'branches.id')
              ->join('users', 'orders.assistant_id', '=', 'users.id')
-             ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'orders.delivery_address as customer_address', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
+             ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'customers.phone as customer_phone', 'orders.delivery_address as customer_address', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
              ->where('attempt_items.delivery_id', $this->deliveryId)
              ->distinct()
              ->get();
@@ -136,6 +137,18 @@ class DeliveryDetails extends Component
         if(!$result) return '';
 
         return $result->title;
+    }
+
+    public function getCodAmount(string $orderId): string
+    {
+        $result = DB::table('cod_balances')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if(!$result) return '';
+        if($result->balance == 0) return '';
+
+        return Money::PHP($result->balance);
     }
 
     #[Layout('livewire.admin.base_layout')]

@@ -205,22 +205,24 @@
             </tr>
             </thead>
             <tbody>
+            @foreach ($orders as $order)
                 <tr>
-                    <td>CHG#0411</td>
+                    <td>{{ $order->receipt_number }}</td>
                     <td>
-                        <strong>Rudeylen E. Sabado</strong><br>
-                        AMBUCAO, SANTIAGO ILOCOS SUR<br>
-                        0995-524-4954
+                        <strong>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</strong><br>
+                        {{ $order->delivery_address }}<br>
+                        {{ $order->customer_phone }}
                     </td>
-                    <td>1</td>
-                    <td>JG t-88-1 + DC-77-2Light Brown Dining Table</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
+                    <td>@foreach($this->getItems($order->order_id) as $item) {{ $item->quantity }}<br> @endforeach</td>
+                    <td>@foreach($this->getItems($order->order_id) as $item) {{ $this->getProductTitle($order->order_id, $item->product_id) }}<br> @endforeach</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ $this->getCodAmount($order->order_id) }}</td>
+                    <td></td>
+                    <td></td>
                 </tr>
+            @endforeach
             </tbody>
         </table>
 
@@ -240,12 +242,12 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
-                    <td>T</td>
+                    <td><br><br></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>

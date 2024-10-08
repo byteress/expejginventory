@@ -4,6 +4,7 @@ namespace Payment\Models\Customer;
 
 use Carbon\Carbon;
 use DateTime;
+use Exception;
 use Payment\Models\Aggregate;
 use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentRequested;
@@ -71,6 +72,8 @@ class Customer extends Aggregate
 
         if(!empty($downPayment) && !$orNumber)
             throw new InvalidDomainException('OR Number is required.', ['or_number' => 'OR Number is required.']);
+
+        $this->validatePaymentMethods($downPayment);
 
         $totalDownPayment = 0;
         foreach($downPayment as $dp){
@@ -343,9 +346,12 @@ class Customer extends Aggregate
      * @param string $orNumber
      * @param string $orderId
      * @return $this
+     * @throws InvalidDomainException
      */
     public function pay(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId): self
     {
+        $this->validatePaymentMethods($paymentMethods);
+
         $total = 0;
         foreach($paymentMethods as $dp){
             $total += $dp['amount'];
@@ -439,6 +445,33 @@ class Customer extends Aggregate
         }, 0);
 
         return $totalBalance;
+    }
+
+    /**
+     * @param array<array{'method': string, 'reference': string, 'amount': int, 'credit': bool}> $payments
+     * @return void
+     * @throws InvalidDomainException
+     */
+    private function validatePaymentMethods(array $payments): void {
+        $hasCOD = false;
+        $hasCredit = false;
+
+        foreach ($payments as $payment) {
+            if (strtoupper($payment['method']) === 'COD') {
+                $hasCOD = true;
+            }
+
+            if ($payment['credit'] === true) {
+                $hasCredit = true;
+            }
+
+            if ($hasCOD && $hasCredit) {
+                throw new InvalidDomainException(
+                    'Credited COD is not allowed.',
+                    ['methods' => 'Credited COD is not allowed.']
+                );
+            }
+        }
     }
 
     /**

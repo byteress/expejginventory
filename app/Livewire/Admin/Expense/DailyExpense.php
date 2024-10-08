@@ -105,7 +105,7 @@ class DailyExpense extends Component
 
         if(!empty($this->branch)) $query->where('branch_id', $this->branch);
 
-        return $query->get();
+        return $query->orderBy('created_at', 'DESC')->get();
     }
 
     #[Layout('livewire.admin.base_layout')]

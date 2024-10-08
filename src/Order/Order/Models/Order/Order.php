@@ -15,6 +15,7 @@ use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderRefunded;
 use OrderContracts\Events\OrderSetAsPrevious;
 use OrderContracts\Events\OrderShipped;
+use OrderContracts\Exceptions\InvalidDomainException;
 
 class Order extends Aggregate
 {
@@ -34,6 +35,7 @@ class Order extends Aggregate
     private array $lineItems = [];
     private bool $previous = false;
     private ?DateTime $installmentStartDate = null;
+    private int $status = 0;
 
     /** @param array<array{
      *      'productId': string,
@@ -151,16 +153,38 @@ class Order extends Aggregate
         return $this;
     }
 
+    /**
+     * @throws InvalidDomainException
+     */
     public function cancel(string $actor, ?string $notes): self
     {
+        if($this->status == 3) throw new InvalidDomainException('Order already canceled', [
+            'order' => 'Order already canceled.'
+        ]);
+
+        if($this->status == 4) throw new InvalidDomainException('Order already canceled', [
+            'order' => 'Cannot cancel order.'
+        ]);
+
         $event = new OrderCancelled($this->uuid(), $actor, $notes);
 
         $this->recordThat($event);
         return $this;
     }
 
+    /**
+     * @throws InvalidDomainException
+     */
     public function refund(string $actor, ?string $notes): self
     {
+        if($this->status == 4) throw new InvalidDomainException('Order already canceled', [
+            'order' => 'Order already refunded.'
+        ]);
+
+        if($this->status == 3) throw new InvalidDomainException('Order already canceled', [
+            'order' => 'Cannot refund order.'
+        ]);
+
         $event = new OrderRefunded($this->uuid(), $actor, $notes);
 
         $this->recordThat($event);
@@ -202,6 +226,21 @@ class Order extends Aggregate
     {
         $this->productNeedsAuthorization = [];
         $this->authorizationRequired = false;
+    }
+
+    public function applyOrderPlaced(OrderPlaced $event): void
+    {
+        $this->status = 1;
+    }
+
+    public function applyOrderCancelled(OrderCancelled $event): void
+    {
+        $this->status = 3;
+    }
+
+    public function applyOrderRefunded(OrderRefunded $event): void
+    {
+        $this->status = 4;
     }
 
     public function applyOrderSetAsPrevious(OrderSetAsPrevious $event): void
