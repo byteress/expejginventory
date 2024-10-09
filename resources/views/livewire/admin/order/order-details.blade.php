@@ -806,7 +806,7 @@
                 @foreach ($cartItems as $item)
                 <tr>
                     <td>{{ $item->quantity }}</td>
-                    <td>{{ $item->title }}</td>
+                    <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                     <td style="text-align: right;"><x-money amount="{{ $item->price * $item->quantity }}"></x-money></td>
                 </tr>
                 @endforeach

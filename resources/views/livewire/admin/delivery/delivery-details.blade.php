@@ -179,9 +179,9 @@
                     <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style = "width:350px">
                 </td>
                 <td align = "center">
-                    <h5><strong>JENNY GRACE</strong></h5>
+                    <h5><strong>{{ $delivery->branch_name }}</strong></h5>
                     <h6><strong>DAILY MONITORING DELIVERY REPORT</strong></h6>
-                    <h6><strong>Branch: Candon Date: August 31, 2024</strong></h6>
+                    <h6><strong>Date: {{ date('F j h:iA') }}</strong></h6>
                 </td>
             </tr>
         </table>

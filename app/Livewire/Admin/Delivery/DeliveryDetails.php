@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Delivery;
 
 use Akaunting\Money\Money;
 use App\Exceptions\ErrorHandler;
+use BranchManagement\Models\Branch;
 use Delivery\Models\Delivery\Enums\DeliveryStatus;
 use DeliveryContracts\IDeliveryService;
 use Illuminate\Contracts\View\Factory;
@@ -156,7 +157,7 @@ class DeliveryDetails extends Component
     {
         return view('livewire.admin.delivery.delivery-details', [
             'orders' => $this->getOrders(),
-            'delivery' => $this->getDelivery($this->deliveryId),
+            'delivery' => $this->getDelivery($this->deliveryId)
         ]);
     }
 }

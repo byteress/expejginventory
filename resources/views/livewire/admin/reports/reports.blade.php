@@ -135,7 +135,7 @@
                                     <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $receiptType . $transaction->receipt_number : '' }}</td>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>{{ $item->title }}</td>
+                                    <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                                     <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity) @endif</td>
                                     <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
                                     <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($discount) @endif</td>
@@ -155,7 +155,7 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->title }}</td>
+                                        <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                                         <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity)@endif</td>
                                     </tr>
                                 @endif
@@ -289,7 +289,7 @@
                 </td>
                 <td align = "center">
                     <h4><strong>DAILY SALES AND COLLECTION REPORT</strong></h4>
-                    <h4><strong>Jenny Grace Sta Maria {{ date('F j, Y', strtotime($date)) }}</strong> <small>Page 1 of 1 Printed {{ date('F j h:iA') }}</small></h4>
+                    <h4><strong>{{ $branch_name ?? '' }} {{ date('F j, Y', strtotime($date)) }}</strong> <small>Page 1 of 1 Printed {{ date('F j h:iA') }}</small></h4>
                 </td>
             </tr>
         </table>
@@ -352,7 +352,7 @@
                             <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $receiptType . $transaction->receipt_number : '' }}</td>
                             <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                             <td>{{ $item->quantity }}</td>
-                            <td>{{ $item->title }}</td>
+                            <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                             <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity) @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($discount) @endif</td>
@@ -370,7 +370,7 @@
                         @endphp
                         <tr>
                             <td>{{ $item->quantity }}</td>
-                            <td>{{ $item->title }}</td>
+                            <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                             <td>@money($item->original_price * $item->quantity)</td>
                         </tr>
                     @endif

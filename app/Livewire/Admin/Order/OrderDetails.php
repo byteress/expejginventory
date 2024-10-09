@@ -869,6 +869,14 @@ class OrderDetails extends Component
         return $result;
     }
 
+    public function getProductSupplierCode(string $productId): string
+    {
+        $product = Product::find($productId);
+        if(!$product) return '';
+
+        return $product->supplier->code;
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {

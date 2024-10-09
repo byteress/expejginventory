@@ -16,6 +16,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use ProductManagement\Models\Product;
 
 #[Title('Reports')]
 class Reports extends Component
@@ -230,6 +231,14 @@ class Reports extends Component
         return true;
     }
 
+    public function getProductSupplierCode(string $productId): string
+    {
+        $product = Product::find($productId);
+        if(!$product) return '';
+
+        return $product->supplier->code;
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {
@@ -238,6 +247,7 @@ class Reports extends Component
             'collections' => $this->getCollections(),
             'expenses' => $this->getExpenses(),
             'branches' => Branch::all(),
+            'branch_name' => $this->branch ? Branch::find($this->branch)?->name : null,
         ]);
     }
 }
