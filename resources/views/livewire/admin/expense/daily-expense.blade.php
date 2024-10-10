@@ -73,8 +73,8 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="pvc">PVC#</label>
-                                <input wire:model="pvc" type="text" class="form-control" id="pvc" placeholder="PVC#">
+                                <label for="pvc">PCV#</label>
+                                <input wire:model="pvc" type="text" class="form-control" id="pvc" placeholder="PCV#">
                                 @error('pvc')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -117,7 +117,7 @@
                             <table class="table table-bordered">
                                 <thead class="thead-light">
                                   <tr>
-                                    <th scope="col">PVC#</th>
+                                    <th scope="col">PCV#</th>
                                     <th scope="col">Expense</th>
                                     <th scope="col">Amount</th>
                                     <th scope="col">Description</th>
