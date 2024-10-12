@@ -228,7 +228,7 @@
             </tbody>
         </table>
 
-        <table class="table table-bordered receipt-table" style = "margin-top:100px;">
+        <table class="table table-bordered receipt-table" style = "margin-top:50px;">
             <thead>
                 <tr>
                     <th colspan = "6"><center>SIGNATURE OVER PRINTED NAME</center></th>
