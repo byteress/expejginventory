@@ -32,6 +32,7 @@ class DailyExpense extends Component
 
     #[Validate('required|numeric|min:0.01')]
     public float $amount;
+    #[Validate('required')]
     public ?string $description = null;
 
     #[Validate('required')]

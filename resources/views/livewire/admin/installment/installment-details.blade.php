@@ -41,9 +41,6 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="order-history-tab" data-toggle="tab" data-target="#order-history" type="button" role="tab" aria-controls="order-history" aria-selected="false">Order History</button>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="cod-balances-tab" data-toggle="tab" data-target="#cod-balances" type="button" role="tab" aria-controls="cod-balances" aria-selected="false">COD Balance</button>
-                            </li>
                           </ul>
                           <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
@@ -207,6 +204,7 @@
                                                 <th>Receipt #</th>
                                                 <th>Type</th>
                                                 <th>Amount</th>
+                                                <th>Status</th>
                                                 <th>Cashier</th>
                                                 <th>Payment Date</th>
                                             </tr>
@@ -225,6 +223,9 @@
                                                 </td>
                                                 <td>
                                                     <h6 class ="mt-2"><b>@money($history->amount)</b></h6>
+                                                </td>
+                                                <td>
+                                                    <h6 class ="mt-2"><b>{{ $this->statusDisplay($history->order_status)  }}</b></h6>
                                                 </td>
                                                 <td>
                                                     <h6 class ="mt-2"><b>{{ $history->first_name  }}</b></h6>
@@ -274,56 +275,7 @@
                                       </table>
                                   </div>
                               </div>
-                              <div class="tab-pane fade" id="cod-balances" role="tabpanel" aria-labelledby="cod-balances-tab">
-
-                                  <div class="table-responsive mt-4">
-                                      <table class="table table-bordered" width="100%" cellspacing="0">
-                                          <thead>
-                                          <tr>
-                                              <th>Order #</th>
-                                              <th>Total</th>
-                                              <th>Processed At</th>
-                                              <th>Balance</th>
-                                              <th>Reference Number</th>
-                                              <th>Amount</th>
-                                          </tr>
-                                          @forelse ($codBalance as $order)
-                                              <tr wire:key="cod_balance_{{ $order->order_id }}">
-                                                  <td><a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" target="_blank">#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</a></td>
-                                                  <td>@money($order->total)</td>
-                                                  <td>{{ isset($order->completed_at) ? date('M j, Y', strtotime($order->completed_at)) : 'N/A' }}</td>
-                                                  <td>@money($order->balance)</td>
-                                                  <td>
-                                                      <div class="input-group">
-                                                          <div class="input-group-prepend">
-                                                              <span class="input-group-text">#</span>
-                                                          </div>
-                                                          <input type="text" class="form-control"
-                                                                 wire:model="codReferenceNumbers.{{ $order->order_id }}">
-                                                      </div>
-                                  @error('codReferenceNumbers.' . $order->order_id)
-                                  <span class="text-danger">{{ $message }}</span>
-                                  @enderror
-                                                  </td>
-                                                  <td>
-                                                      <div class="input-group mb-3">
-                                                              <input type="text" class="form-control" wire:model="codAmounts.{{ $order->order_id }}">
-                                                          <div class="input-group-append">
-                                                              <button wire:click="collectCod('{{ $order->order_id }}')" wire:loading.attr="disabled" wire:target="collectCod" class="btn btn-primary">Collect</button>
-                                                          </div>
-                                                      </div>
-                                                      @error("codAmounts.$order->order_id") <span class="text-danger">{{ $message }}</span> @enderror
-                                                  </td>
-                                              </tr>
-                                          @empty
-                                              <tr>
-                                                  <td colspan="10" align="center">No orders found</td>
-                                              </tr>
-                                          @endforelse
-                                          </thead>
-                                      </table>
-                                  </div>
-                              </div>
+                              
                           </div>
                     </div>
                 </div>
