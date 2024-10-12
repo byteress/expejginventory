@@ -179,7 +179,7 @@
                     <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style = "width:350px">
                 </td>
                 <td align = "center">
-                    <h5><strong>{{ $delivery->branch_name }}</strong></h5>
+                    <h2><strong>{{ $delivery->branch_name }}</strong></h2>
                     <h6><strong>DAILY MONITORING DELIVERY REPORT</strong></h6>
                     <h6><strong>Date: {{ date('F j h:iA') }}</strong></h6>
                 </td>
@@ -338,6 +338,12 @@
                 display: block;
             }
 
+            .receipt-table{
+                font-size: 10px;
+            }
+            .receipt-table th,td{
+                padding:1px;
+            }
             /* Apply a scaling factor to fit the table within the page */
             body {
                 transform: scale(0.99); /* Scale down the entire content */

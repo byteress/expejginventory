@@ -294,7 +294,7 @@
             </tr>
         </table>
         <table class="table table-bordered receipt-table">
-            <tbody>
+            <thead>
 
             <tr>
                 <th rowspan="2">ID</th>
@@ -319,6 +319,9 @@
                 <th>Cash</th>
                 <th>Gcash</th>
             </tr>
+            </thead>
+            <tbody>
+
             @php
                 $totalGrossPrice = 0;
                 $totalAmount = 0;
@@ -558,9 +561,17 @@
                 display: block;
             }
 
+            .receipt-table{
+                font-size: 12px;
+            }
+            .receipt-table th,td{
+                padding:1px;
+                vertical-align: middle;
+            }
+
             /* Apply a scaling factor to fit the table within the page */
             body {
-                transform: scale(0.85); /* Scale down the entire content */
+                transform: scale(0.81); /* Scale down the entire content */
                 transform-origin: top left; /* Ensure scaling starts from top-left corner */
             }
 
