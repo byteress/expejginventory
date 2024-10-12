@@ -75,9 +75,9 @@
                     <h3>Sales</h3>
                     <!-- Sales table content -->
                     <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-hover">
                         <thead>
-                            <tr>
+                            <tr class="bg-secondary font-w">
                                 <th rowspan="2">ID</th>
                                 <th rowspan="2">SI</th>
                                 <th rowspan="2">DR</th>
@@ -93,7 +93,7 @@
                                 <th colspan="5" class="text-center">Mode of Payment</th>
                                 <th rowspan="2">Financing</th>
                             </tr>
-                            <tr>
+                            <tr class="bg-secondary font-w">
                                 <th>Check</th>
                                 <th>Bank</th>
                                 <th>Card</th>
@@ -294,34 +294,31 @@
             </tr>
         </table>
         <table class="table table-bordered receipt-table">
-            <thead>
-
-            <tr>
-                <th rowspan="2">ID</th>
-                <th rowspan="2">SI</th>
-                <th rowspan="2">DR</th>
-                <th rowspan="2">CI</th>
-                <th rowspan="2">CR</th>
-                <th rowspan="2">Customer</th>
-                <th rowspan="2">Unit</th>
-                <th rowspan="2">Particulars</th>
-                <th rowspan="2">Gross Price</th>
-                <th rowspan="2">Total Amount</th>
-                <th rowspan="2">Discount</th>
-                <th rowspan="2">COD</th>
-                <th colspan="5" class="text-center">Mode of Payment</th>
-                <th rowspan="2">Financing</th>
-            </tr>
-            <tr>
-                <th>Check</th>
-                <th>Bank</th>
-                <th>Card</th>
-                <th>Cash</th>
-                <th>Gcash</th>
-            </tr>
-            </thead>
             <tbody>
 
+                <tr>
+                    <th rowspan="2">ID</th>
+                    <th rowspan="2">SI</th>
+                    <th rowspan="2">DR</th>
+                    <th rowspan="2">CI</th>
+                    <th rowspan="2">CR</th>
+                    <th rowspan="2">Customer</th>
+                    <th rowspan="2">Unit</th>
+                    <th rowspan="2">Particulars</th>
+                    <th rowspan="2">Gross Price</th>
+                    <th rowspan="2">Total Amount</th>
+                    <th rowspan="2">Discount</th>
+                    <th rowspan="2">COD</th>
+                    <th colspan="5" class="text-center">Mode of Payment</th>
+                    <th rowspan="2">Financing</th>
+                </tr>
+                <tr>
+                    <th>Check</th>
+                    <th>Bank</th>
+                    <th>Card</th>
+                    <th>Cash</th>
+                    <th>Gcash</th>
+                </tr>
             @php
                 $totalGrossPrice = 0;
                 $totalAmount = 0;
@@ -485,7 +482,16 @@
         body {
             font-family: Arial, sans-serif;
         }
-
+        .table-responsive {
+            height: 100vh; /* Define a height */
+            overflow-y: auto;
+        }
+        .table-responsive thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1; /* Ensure the sticky header stays above other content */
+            vertical-align: middle !important;
+        }
         .receipt-container {
             width: 600px;
             margin: 0;
@@ -547,9 +553,17 @@
         .printable {
             display: none;
         }
+        @media screen {
+            .receipt-table thead th {
+                position: sticky;
+                top: 0;
+                background-color: white; /* Ensure the background of the header is visible */
+                z-index: 1; /* Make sure the header stays on top */
+                box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for better visual separation */
+            }
+        }
         @media print {
             @page {
-                size: landscape; /* Ensures the page is printed in landscape */
                 margin: 1cm; /* Set margins to ensure no content is cut off */
             }
 
@@ -571,7 +585,7 @@
 
             /* Apply a scaling factor to fit the table within the page */
             body {
-                transform: scale(0.81); /* Scale down the entire content */
+                transform: scale(0.85); /* Scale down the entire content */
                 transform-origin: top left; /* Ensure scaling starts from top-left corner */
             }
 
