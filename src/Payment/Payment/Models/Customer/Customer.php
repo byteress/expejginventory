@@ -312,6 +312,7 @@ class Customer extends Aggregate
      * @param string $orNumber
      * @param string $orderId
      * @return $this
+     * @throws InvalidDomainException
      */
     public function payCod(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId): self
     {
@@ -319,6 +320,8 @@ class Customer extends Aggregate
         foreach($paymentMethods as $dp){
             $total += $dp['amount'];
         }
+
+        if($total > $this->codBalances[$orderId]['balance']) throw new InvalidDomainException('Amount should not be greater than the total balance.', ['total' => 'Amount should not be greater than the total balance.']);
 
         $event = new CodPaymentCollected(
             $transactionId,
@@ -332,7 +335,7 @@ class Customer extends Aggregate
 
         $this->recordThat($event);
 
-        if($this->codBalances[$event->orderId]['type'] != 'installment') return $this;
+        if($this->codBalances[$orderId]['type'] != 'installment') return $this;
 
         $this->startInstallment($orderId, $this->codBalances[$event->orderId]['balance']);
 

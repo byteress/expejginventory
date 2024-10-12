@@ -33,7 +33,7 @@
                     <div class="card-body">
                         <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                              <button class="nav-link active" id="upcoming-tab" data-toggle="tab" data-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Upcoming Balance</button>
+                              <button class="nav-link active" id="upcoming-tab" data-toggle="tab" data-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Collect</button>
                             </li>
                             <li class="nav-item" role="presentation">
                               <button class="nav-link" id="payment-history-tab" data-toggle="tab" data-target="#payment-history" type="button" role="tab" aria-controls="payment-history" aria-selected="false">Payment History</button>
@@ -137,9 +137,8 @@
                                                               <option disabled selected>Select Payment Method</option>
                                                               <option value="Cash">Cash</option>
                                                               <option value="Gcash">Gcash</option>
-                                                              <option value="Paymaya">Paymaya</option>
                                                               <option value="Bank Transfer">Bank Transfer</option>
-                                                              <option value="COD">COD</option>
+{{--                                                              <option value="COD">COD</option>--}}
                                                               <option value="Check">Check</option>
                                                               <option value="Card">Card</option>
                                                               <option value="Financing">Financing</option>
@@ -400,25 +399,25 @@
                     </div>
                 </div>
 
-                <div class="card shadow mb-4">
+                <div x-data="{ collectionType: $wire.entangle('collectionType') }" class="card shadow mb-4">
                     <div class="card-body upcoming-section">
+                            <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <button x-on:click="collectionType = 'installment'" class="nav-link @if($collectionType == 'installment') active @endif" id="upcoming-tab" data-toggle="tab" data-target="#installment" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Installment</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <button x-on:click="collectionType = 'cod'" class="nav-link @if($collectionType == 'cod') active @endif" id="payment-history-tab" data-toggle="tab" data-target="#cod" type="button" role="tab" aria-controls="payment-history" aria-selected="false">COD</button>
+                            </li>
+                          </ul>
 
-{{--                            <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">--}}
-{{--                            <li class="nav-item" role="presentation">--}}
-{{--                              <button class="nav-link active" id="upcoming-tab" data-toggle="tab" data-target="#installment" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Installment</button>--}}
-{{--                            </li>--}}
-{{--                            <li class="nav-item" role="presentation">--}}
-{{--                              <button class="nav-link" id="payment-history-tab" data-toggle="tab" data-target="#cod" type="button" role="tab" aria-controls="payment-history" aria-selected="false">COD</button>--}}
-{{--                            </li>--}}
-{{--                          </ul>--}}
-                        @error('installmentIds')
-                          <div class="alert alert-danger" role="alert">
-                           {{ $message }}
-                          </div>
-                        @enderror
                           <div class="tab-content" id="paymentContent">
+                            <div class="tab-pane fade show @if($collectionType == 'installment') active @endif" id="installment" role="tabpanel" aria-labelledby="installment-tab">
+                                @error('installmentIds')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                                @enderror
 
-                            <div class="tab-pane fade show active" id="installment" role="tabpanel" aria-labelledby="installment-tab">
                                 @forelse($installment_bills as $bills)
                                 <div wire:key="{{ $bills->installment_id }}-{{ $bills->index }}" class="card shadow mb-4" x-data="{ balance: {{ $bills->balance / 100 }}, rate: 0 }">
                                     <div class="card-body">
@@ -510,13 +509,19 @@
                                 @endforelse
 
                             </div>
-                            <div class="tab-pane fade show" id="cod" role="tabpanel" aria-labelledby="cod-tab">
-                                @forelse($codOrders as $codOrder)
-                                    <div wire:key="{{ $codOrder->order_id }}" class="card shadow mb-4">
+                            <div class="tab-pane fade show @if($collectionType == 'cod') active @endif" id="cod" role="tabpanel" aria-labelledby="cod-tab">
+                                @error('codOrder')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                                @forelse($codBalance as $order)
+                                    <div wire:key="{{ $order->order_id }}" class="card shadow mb-4">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
-                                                <a href="{{ route('admin.order.details', ['order_id' => $codOrder->order_id]) }}"><h5 class="mt-3 ml-1"><strong>Order #{{ str_pad((string) $codOrder->id, 12, '0', STR_PAD_LEFT) }}</strong> - COD </h5></a>
-                                                <h5 class="mt-3 ml-1">Balance : <strong>@money($codOrder->total - $this->getOrderDownPayment($codOrder->order_id))</strong></h5>
+                                                <input wire:model="codOrder" type="radio" value="{{ $order->order_id }}" style = "margin-top:9px;margin-right:5px">
+                                                <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}"><h5 class="mt-3 ml-1"><strong>Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</strong> - COD </h5></a>
+                                                <h5 class="mt-3 ml-1">Balance : <strong>@money($order->balance)</strong></h5>
                                             </div>
 
                                         </div>
@@ -525,7 +530,7 @@
                                     <div class="card shadow mb-4">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
-                                                <span>No orders found.</span>
+                                                <span>No COD balance found.</span>
                                             </div>
                                         </div>
                                     </div>

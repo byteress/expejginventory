@@ -145,7 +145,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" align="center">No orders found</td>
+                                    <td colspan="10" style="text-align: center;">No orders found</td>
                                 </tr>
                             @endforelse
 
@@ -188,7 +188,8 @@
         <table class="table table-bordered receipt-table">
             <thead>
             <tr>
-                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Invoice#</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Date Purchased</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Invoice/Sales</th>
                 <th rowspan="2" style = "vertical-align:middle;text-align:center ">Customer</th>
                 <th colspan="3" style = "text-align:center ">Items</th>
                 <th colspan="2" style = "text-align:center ">Time</th>
@@ -207,18 +208,19 @@
             <tbody>
             @foreach ($orders as $order)
                 <tr>
-                    <td>{{ $order->receipt_number }}</td>
+                    <td style="text-align: center;">{{ date('m/d/y', strtotime($order->completed_at)) }}</td>
+                    <td style="text-align: center;">{{ $order->receipt_number }}<br>{{ $order->assistant_first_name }}</td>
                     <td>
                         <strong>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</strong><br>
                         {{ $order->delivery_address }}<br>
                         {{ $order->customer_phone }}
                     </td>
-                    <td>@foreach($this->getItems($order->order_id) as $item) {{ $item->quantity }}<br> @endforeach</td>
+                    <td style="text-align: center;">@foreach($this->getItems($order->order_id) as $item) {{ $item->quantity }}<br> @endforeach</td>
                     <td>@foreach($this->getItems($order->order_id) as $item) {{ $this->getProductTitle($order->order_id, $item->product_id) }}<br> @endforeach</td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{{ $this->getCodAmount($order->order_id) }}</td>
+                    <td style="text-align: center;">{{ $this->getCodAmount($order->order_id) }}</td>
                     <td></td>
                     <td></td>
                 </tr>

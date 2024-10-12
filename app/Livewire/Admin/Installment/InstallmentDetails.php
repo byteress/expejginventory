@@ -27,15 +27,35 @@ class InstallmentDetails extends Component
     public array $rate;
     public array $penalty;
     public array $installmentIds;
+    public $codOrder;
+    public string $collectionType = '';
     public function mount(Customer $customer): void
     {
         $this->customer = $customer;
+
+        if($this->collectionType == ''){
+            $installmentBills = $this->getInstallmentBills();
+            $this->collectionType = 'installment';
+            if($installmentBills->isEmpty()) $this->collectionType = 'cod';
+        }
     }
 
     /**
      * @throws \Throwable
      */
     public function submitPayment(IPaymentService $paymentService): void
+    {
+        if($this->collectionType == 'installment'){
+            $this->submitInstallmentPayment($paymentService);
+        }else if($this->collectionType = 'cod'){
+            $this->collectCod($paymentService);
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function submitInstallmentPayment(IPaymentService $paymentService): void
     {
         $this->validate([
             'receiptNumber' => 'required',
@@ -323,22 +343,29 @@ class InstallmentDetails extends Component
     /**
      * @throws \Throwable
      */
-    public function collectCod(IPaymentService $paymentService, string $orderId): void
+    public function collectCod(IPaymentService $paymentService): void
     {
         $this->validate([
-            'codReferenceNumbers.' . $orderId => 'required',
-            'codAmounts.' . $orderId => 'required',
+            'receiptNumber' => 'required',
+            'amounts.*' => 'required|numeric',
+            'referenceNumbers.*' => 'required',
+            'codOrder' => 'required',
         ], [
-            'codReferenceNumbers.' . $orderId => 'Reference number is required.',
-            'codAmounts.' . $orderId => 'Amount is required.',
+            'amounts.*' => 'Amount is required',
+            'referenceNumbers.*' => 'Reference Number is required',
+            'codOrder' => 'Please select COD balance to pay.',
         ]);
 
         $payment = [];
-        $payment[] = [
-            'amount' => $this->codAmounts[$orderId] * 100,
-            'reference' => $this->codReferenceNumbers[$orderId],
-            'method' => 'Cash',
-        ];
+        for($i = 0; $i < count($this->amounts); $i++){
+            if($this->amounts[$i] > 0) {
+                $payment[] = [
+                    'amount' => $this->amounts[$i] * 100,
+                    'reference' => $this->referenceNumbers[$i],
+                    'method' => $this->paymentMethods[$i],
+                ];
+            }
+        }
 
         DB::beginTransaction();
 
@@ -347,8 +374,8 @@ class InstallmentDetails extends Component
             $payment,
             auth()->user()?->id,
             Str::uuid()->toString(),
-            $this->codReferenceNumbers[$orderId],
-            $orderId
+            $this->receiptNumber,
+            $this->codOrder
         );
 
         if($result->isFailure()){
