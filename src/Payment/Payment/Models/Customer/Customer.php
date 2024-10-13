@@ -456,19 +456,9 @@ class Customer extends Aggregate
      * @throws InvalidDomainException
      */
     private function validatePaymentMethods(array $payments): void {
-        $hasCOD = false;
-        $hasCredit = false;
-
         foreach ($payments as $payment) {
-            if (strtoupper($payment['method']) === 'COD') {
-                $hasCOD = true;
-            }
 
-            if ($payment['credit'] === true) {
-                $hasCredit = true;
-            }
-
-            if ($hasCOD && $hasCredit) {
+            if (strtoupper($payment['method']) === 'COD' && $payment['credit'] === true) {
                 throw new InvalidDomainException(
                     'Credited COD is not allowed.',
                     ['methods' => 'Credited COD is not allowed.']
