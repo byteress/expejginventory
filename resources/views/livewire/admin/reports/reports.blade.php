@@ -77,28 +77,28 @@
                     <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead>
-                            <tr class="bg-secondary font-w">
-                                <th rowspan="2">ID</th>
-                                <th rowspan="2">SI</th>
-                                <th rowspan="2">DR</th>
-                                <th rowspan="2">CI</th>
-                                <th rowspan="2">CR</th>
-                                <th rowspan="2">Customer</th>
-                                <th rowspan="2">Unit</th>
-                                <th rowspan="2">Particulars</th>
-                                <th rowspan="2">Gross Price</th>
-                                <th rowspan="2">Total Amount</th>
-                                <th rowspan="2">Discount</th>
-                                <th rowspan="2">COD</th>
-                                <th colspan="5" class="text-center">Mode of Payment</th>
-                                <th rowspan="2">Financing</th>
+                            <tr class="font-w">
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">ID</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">SI</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">DR</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">CI</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">CR</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Customer</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Unit</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Particulars</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Gross Price</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Total Amount</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Discount</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">COD</th>
+                                <th colspan="5" class="text-center" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Mode of Payment</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Financing</th>
                             </tr>
-                            <tr class="bg-secondary font-w">
-                                <th>Check</th>
-                                <th>Bank</th>
-                                <th>Card</th>
-                                <th>Cash</th>
-                                <th>Gcash</th>
+                            <tr class="font-w">
+                                <th style="position: sticky; top: 40px; z-index: 10; background-color: #6c757d;">Check</th>
+                                <th style="position: sticky; top: 40px; z-index: 10; background-color: #6c757d;">Bank</th>
+                                <th style="position: sticky; top: 40px; z-index: 10; background-color: #6c757d;">Card</th>
+                                <th style="position: sticky; top: 40px; z-index: 10; background-color: #6c757d;">Cash</th>
+                                <th style="position: sticky; top: 40px; z-index: 10; background-color: #6c757d;">Gcash</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -491,6 +491,13 @@
             top: 0;
             z-index: 1; /* Ensure the sticky header stays above other content */
             vertical-align: middle !important;
+        }
+        .table-responsive thead th[rowspan="2"] {
+            top: 0; /* Sticky header starts at the top */
+        }
+
+        .table-responsive thead th:not([rowspan="2"]) {
+            top: 40px; /* Second row headers start 40px below the top */
         }
         .receipt-container {
             width: 600px;
