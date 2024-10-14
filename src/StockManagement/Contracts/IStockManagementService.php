@@ -46,4 +46,5 @@ interface IStockManagementService
     public function fulfillReservation(string $productId, string $reservationId): Result;
     public function release(string $productId, int $quantity, string $branchId, string $actor): Result;
     public function return(string $productId, int $quantity, string $branchId, string $actor): Result;
+    public function adjust(string $productId, ?int $available, ?int $damaged, string $branchId, string $actor): Result;
 }

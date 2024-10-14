@@ -14,7 +14,6 @@ use Illuminate\View\View as ViewAlias;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 use StockManagementContracts\IStockManagementService;
@@ -28,11 +27,10 @@ class StockManagement extends Component
     #[Url(nullable:true)]
     public ?string $search = null;
 
-    #[Validate('required')]
     public ?string $branch = null;
-
-    #[Validate('required')]
     public int $quantity;
+    public ?int $available;
+    public ?int $damaged;
 
     public function mount(): void
     {
@@ -42,19 +40,50 @@ class StockManagement extends Component
     /**
      * @throws Throwable
      */
+    public function adjust(IStockManagementService $stockManagementService, string $productId): void
+    {
+        if(!$this->branch) return;
+        if(!auth()->user()) return;
+
+        if(!$this->available && !$this->damaged){
+            session()->flash('alert_adjust', 'Quantity is required.');
+        }
+
+        DB::beginTransaction();
+
+        $result = $stockManagementService->adjust($productId, $this->available, $this->damaged, $this->branch, auth()->user()->id);
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        $this->reset('available', 'damaged');
+
+        DB::commit();
+        session()->flash('success', 'Product adjusted successfully');
+        $this->dispatch('close-modal');
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function receive(IStockManagementService $stockManagementService, string $productId): void
     {
-            DB::beginTransaction();
-
-            $this->validate();
+            $this->validate([
+                'quantity' => 'required',
+                'branch'=> 'required'
+            ]);
 
             if(!$this->branch) return;
             if(!auth()->user()) return;
 
+            DB::beginTransaction();
+
             $result = $stockManagementService->receive($productId, $this->quantity, $this->branch, auth()->user()->id);
             if($result->isFailure()){
                 DB::rollBack();
-                session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
+                session()->flash('alert_adjust', ErrorHandler::getErrorMessage($result->getError()));
                 return;
             }
 
@@ -69,13 +98,15 @@ class StockManagement extends Component
      * @throws Throwable
      */
     public function receiveDamaged(IStockManagementService $stockManagementService, string $productId): void
-    {
-        DB::beginTransaction();
-
-        $this->validate();
+    {   $this->validate([
+            'quantity' => 'required',
+            'branch'=> 'required'
+        ]);
 
         if(!$this->branch) return;
         if(!auth()->user()) return;
+
+        DB::beginTransaction();
 
         $result = $stockManagementService->receiveDamaged($productId, $this->quantity, $this->branch, auth()->user()->id);
         if($result->isFailure()){
@@ -95,13 +126,15 @@ class StockManagement extends Component
      * @throws Throwable
      */
     public function setDamaged(IStockManagementService $stockManagementService, string $productId): void
-    {
-        DB::beginTransaction();
-
-        $this->validate();
+    {   $this->validate([
+            'quantity' => 'required',
+            'branch'=> 'required'
+        ]);
 
         if(!$this->branch) return;
         if(!auth()->user()) return;
+
+        DB::beginTransaction();
 
         $result = $stockManagementService->setDamaged($productId, $this->quantity, $this->branch, auth()->user()->id);
         if($result->isFailure()){
@@ -119,7 +152,7 @@ class StockManagement extends Component
 
     public function cancel(): void
     {
-        $this->reset('quantity');
+        $this->reset('quantity', 'available', 'damaged');
     }
 
     /**

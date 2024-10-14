@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\EventSourcing\Enums\MetaData;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 use StockManagementContracts\Events\DamagedProductReceived;
+use StockManagementContracts\Events\ProductAdjusted;
 use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReserved;
 use StockManagementContracts\Events\ProductReturned;
@@ -162,6 +163,26 @@ class ReceiveHistoryProjector extends Projector
                 'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'] - $event->quantity,
+                'version' => $event->aggregateRootVersion() ?? 0,
+                'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
+            ]);
+    }
+
+    public function onProductAdjusted(ProductAdjusted $event): void
+    {
+        $latest = $this->getLastQuantities($event->productId, $event->branchId);
+
+        DB::table('stock_history')
+            ->insert([
+                'product_id' => $event->productId,
+                'branch_id' => $event->branchId,
+                'quantity' => $event->available + $event->damaged,
+                'user_id' => $event->actor,
+                'action' => 'Adjusted',
+                'running_available' => $event->available ?? $latest['available'],
+                'running_reserved' => $latest['reserved'],
+                'running_damaged' => $event->damaged ?? $latest['damaged'],
+                'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
                 'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
             ]);

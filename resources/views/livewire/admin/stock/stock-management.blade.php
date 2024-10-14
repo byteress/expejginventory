@@ -68,6 +68,7 @@
                                                 <div class="dropdown-menu">
                                                     <a data-toggle="modal" data-target="#receive-damaged-modal-{{ $product->id  }}" class="dropdown-item" href="#">Receive Damaged</a>
                                                     <a data-toggle="modal" data-target="#set-damaged-modal-{{ $product->id  }}" class="dropdown-item" href="#">Set as Damaged</a>
+                                                    <a data-toggle="modal" data-target="#adjust-modal-{{ $product->id  }}" class="dropdown-item" href="#">Adjust</a>
                                                 </div>
                                                 <!-- Receive Modal -->
                                                 <div wire:ignore.self class="modal fade" id="receive-modal-{{ $product->id  }}" tabindex="-1"
@@ -97,7 +98,7 @@
                                                                         @enderror
                                                                             <div class="form-group" @unlessrole('admin') style="display:none;" @endunlessrole>
                                                                                 <label for="supplier">Branch</label>
-                                                                                <select class="form-control" id="supplier" wire:model.live="branch">
+                                                                                <select class="form-control" id="supplier" wire:model="branch">
                                                                                     <option selected value="">Select Branch</option>
                                                                                     @foreach ($branches as $branch)
                                                                                         <option value="{{ $branch->id }}"
@@ -151,7 +152,7 @@
                                                                         @enderror
                                                                         <div class="form-group" @unlessrole('admin') style="display:none;" @endunlessrole>
                                                                             <label for="supplier">Branch</label>
-                                                                            <select class="form-control" id="supplier" wire:model.live="branch">
+                                                                            <select class="form-control" id="supplier" wire:model="branch">
                                                                                 <option selected value="">Select Branch</option>
                                                                                 @foreach ($branches as $branch)
                                                                                     <option value="{{ $branch->id }}"
@@ -205,7 +206,7 @@
                                                                         @enderror
                                                                         <div class="form-group" @unlessrole('admin') style="display:none;" @endunlessrole>
                                                                             <label for="supplier">Branch</label>
-                                                                            <select class="form-control" id="supplier" wire:model.live="branch">
+                                                                            <select class="form-control" id="supplier" wire:model="branch">
                                                                                 <option selected value="">Select Branch</option>
                                                                                 @foreach ($branches as $branch)
                                                                                     <option value="{{ $branch->id }}"
@@ -230,6 +231,66 @@
                                                     </div>
                                                 </div>
                                                 <!-- End Set Damaged Modal -->
+
+                                                <!-- Set Adjust Modal -->
+                                                <div wire:ignore.self class="modal fade" id="adjust-modal-{{ $product->id  }}" tabindex="-1"
+                                                     role="dialog" aria-labelledby="deleteModal1Label" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <form wire:submit="adjust('{{ $product->id  }}')">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="deleteModal1Label">Adjust Product</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal"
+                                                                            aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    @if (session('alert_adjust'))
+                                                                        <div class="alert alert-danger" role="alert">
+                                                                            {{ session('alert_adjust') }}
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <div class="form-group">
+                                                                        <label for="receive_quantity">Quantity</label>
+                                                                        <input required type="number" class="form-control" id="receive_quantity" wire:model="available" placeholder="Available">
+                                                                        @error('available')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+                                                                        <div class="form-group">
+                                                                            <input required type="number" class="form-control" wire:model="damaged" placeholder="Damaged">
+                                                                            @error('damaged')
+                                                                            <span class="text-danger">{{ $message }}</span>
+                                                                            @enderror
+                                                                        </div>
+                                                                        <div class="form-group" @unlessrole('admin') style="display:none;" @endunlessrole>
+                                                                            <label for="supplier">Branch</label>
+                                                                            <select class="form-control" id="supplier" wire:model="branch">
+                                                                                <option selected value="">Select Branch</option>
+                                                                                @foreach ($branches as $branch)
+                                                                                    <option value="{{ $branch->id }}"
+                                                                                            @if (auth()->user()->branch_id == $branch->id) selected @endif>
+                                                                                        {{ $branch->name }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            @error('branch')
+                                                                            <span class="text-danger">{{ $message }}</span>
+                                                                            @enderror
+                                                                        </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button wire:click="cancel" type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">Cancel</button>
+                                                                    <button type="submit"
+                                                                            class="btn btn-primary">Submit</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- End Set Adjust Modal -->
                                             </div>
                                         </td>
                                     </tr>

@@ -176,4 +176,18 @@ class StockManagementService implements IStockManagementService
             return Result::failure($e);
         }
     }
+
+    public function adjust(string $productId, ?int $available, ?int $damaged, string $branchId, string $actor): Result
+    {
+        try{
+            $product = Product::retrieve($productId);
+            $product->adjust($branchId, $available, $damaged, $actor);
+            $product->persist();
+
+            return Result::success(null);
+        }catch(Exception $e){
+            report($e);
+            return Result::failure($e);
+        }
+    }
 }

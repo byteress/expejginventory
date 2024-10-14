@@ -4,6 +4,7 @@ namespace StockManagement\Models\Product;
 
 use StockManagement\Models\Aggregate;
 use StockManagementContracts\Events\DamagedProductReceived;
+use StockManagementContracts\Events\ProductAdjusted;
 use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
@@ -257,6 +258,25 @@ class Product extends Aggregate
         return $this;
     }
 
+    public function adjust(
+        string $branchId,
+        ?int    $available,
+        ?int $damaged,
+        string $actor
+    ): self
+    {
+        $event = new ProductAdjusted(
+            $this->uuid(),
+            $branchId,
+            $available,
+            $damaged,
+            $actor
+        );
+
+        $this->recordThat($event);
+        return $this;
+    }
+
     public function applyProductReceived(ProductReceived $event): void
     {
         $oldQuantity = $this->available[$event->branchId] ?? 0;
@@ -332,5 +352,11 @@ class Product extends Aggregate
     {
         $oldQuantity = $this->available[$event->branchId] ?? 0;
         $this->available[$event->branchId] = $oldQuantity + $event->quantity;
+    }
+
+    public function applyProductAdjusted(ProductAdjusted $event): void
+    {
+        if($event->available) $this->available[$event->branchId] = $event->available;
+        if($event->damaged) $this->damaged[$event->branchId] = $event->damaged;
     }
 }

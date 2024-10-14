@@ -5,6 +5,7 @@ namespace StockManagement\Projectors;
 use Illuminate\Support\Facades\DB;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 use StockManagementContracts\Events\DamagedProductReceived;
+use StockManagementContracts\Events\ProductAdjusted;
 use StockManagementContracts\Events\ProductReceived;
 use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
@@ -144,5 +145,36 @@ class StockProjector extends Projector
             ->where('product_id', $event->productId)
             ->where('branch_id', $event->branchId)
             ->increment('available', $event->quantity);
+    }
+
+    public function onProductAdjusted(ProductAdjusted $event): void
+    {
+        $row = DB::table('stocks')
+            ->where('product_id', $event->productId)
+            ->where('branch_id', $event->branchId)
+            ->first();
+
+        if ($row) {
+            $data = [];
+
+            if($event->available) $data['available'] = $event->available;
+            if($event->damaged) $data['damaged'] = $event->damaged;
+
+            DB::table('stocks')
+                ->where('product_id', $event->productId)
+                ->where('branch_id', $event->branchId)
+                ->update($data);
+
+            return;
+        }
+
+        DB::table('stocks')
+            ->insert([
+                'product_id' => $event->productId,
+                'branch_id' => $event->branchId,
+                'available' => $event->available ?? 0,
+                'reserved' => 0,
+                'damaged' => $event->damaged ?? 0,
+            ]);
     }
 }
