@@ -62,49 +62,7 @@
                                         <div class="card shadow">
                                             {{ $product->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'card-img-top']) }}
                                             <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <h5 class="card-title"><b>{{ $product['model'] }}</b></h5>
-                                                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#stockModal">
-                                                        In Stock <span class="badge badge-light">9</span>
-                                                    </button>
-                                                    <!-- Modal -->
-                                                    <div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                            <h5 class="modal-title" id="stockModalLabel">Product Stocks</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                            </div>
-                                                            <div class="modal-body p-0 px-1">
-                                                                <table class="table">
-                                                                    <thead class="thead-light">
-                                                                      <tr>
-                                                                        <th scope="col">Branch</th>
-                                                                        <th scope="col"><center>Stocks</center></th>
-                                                                      </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                      <tr>
-                                                                        <td>Laoag Branch</td>
-                                                                        <td align = "center">99</td>
-                                                                      </tr>
-                                                                      <tr>
-                                                                        <td>Laoag Branch</td>
-                                                                        <td align = "center">99</td>
-                                                                      </tr>
-                                                                      <tr>
-                                                                        <td>Laoag Branch</td>
-                                                                        <td align = "center">99</td>
-                                                                      </tr>
-                                                                    </tbody>
-                                                                  </table>
-                                                            </div>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <h5 class="card-title"><b>{{ $product['model'] }}</b></h5>
                                                 <p class="card-text">{{ $product['description'] }}</p>
                                                 <div class="row">
                                                     <div class="col-5">
