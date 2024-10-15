@@ -45,7 +45,7 @@ class StockManagement extends Component
         if(!$this->branch) return;
         if(!auth()->user()) return;
 
-        if(!$this->available && !$this->damaged){
+        if(is_null($this->available) && is_null($this->damaged)){
             session()->flash('alert_adjust', 'Quantity is required.');
         }
 

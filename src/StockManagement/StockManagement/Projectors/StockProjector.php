@@ -157,8 +157,8 @@ class StockProjector extends Projector
         if ($row) {
             $data = [];
 
-            if($event->available) $data['available'] = $event->available;
-            if($event->damaged) $data['damaged'] = $event->damaged;
+            if(!is_null($event->available)) $data['available'] = $event->available;
+            if(!is_null($event->damaged)) $data['damaged'] = $event->damaged;
 
             DB::table('stocks')
                 ->where('product_id', $event->productId)
