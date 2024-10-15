@@ -64,7 +64,7 @@ class BrowseProducts extends Component
             })->select('products.*', 'suppliers.code', 'product_requests.quantity as requested_quantity', DB::raw('COALESCE(stocks.available, 0) as quantity'))
             ->whereNull('products.deleted_at')
             // ->where('product_requests.receiver', $branchId)
-            ->orderBy('quantity');
+            ->orderBy('quantity', 'desc');
 
         return $query->paginate(9);
     }
