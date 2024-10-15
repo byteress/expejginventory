@@ -33,12 +33,15 @@ class BrowseProducts extends Component
      * @var array<string, string>
      */
     public array $priceType = [];
+    public $branches;
 
     public function mount(): void
     {
         if(auth()->user()->branch_id){
             $this->branch = auth()->user()->branch_id;
         }
+
+        $this->branches = Branch::all();
 
         session()->put('branch', $this->branch);
     }
@@ -141,12 +144,48 @@ class BrowseProducts extends Component
         }
     }
 
+    public function getProductStock(string $productId): int
+    {
+        $query = DB::table('stocks')
+            ->where('product_id', $productId)
+            ->orderBy('available', 'desc');
+
+        if($this->branch){
+            $query->where('branch_id', $this->branch);
+        }
+
+        $stock = $query->first();
+
+        if(!$stock) return 0;
+
+        return $stock->available;
+    }
+
+    public function getBranchStocks(string $productId): array
+    {
+        $stocks = [];
+        foreach ($this->branches as $branch) {
+
+            $stock = DB::table('stocks')
+                ->where('product_id', $productId)
+                ->where('branch_id', $branch->id)
+                ->first();
+
+            $stocks[] = [
+                'branch_id' => $branch->id,
+                'name' => $branch->name,
+                'stock' => $stock->available ?? 0,
+            ];
+        }
+
+        return $stocks;
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
         return view('livewire.admin.order.browse-products', [
-            'products' => $this->getProducts(),
-            'branches' => Branch::all()
+            'products' => $this->getProducts()
         ]);
     }
 }

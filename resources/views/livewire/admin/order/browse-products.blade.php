@@ -73,11 +73,11 @@
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <h5 class="card-title"><b>{{ $product['model'] }}</b></h5>
-                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#stockModal">
-                                                    In Stock <span class="badge badge-light">9</span>
+                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#stockModal-{{ $product['id'] }}">
+                                                    In Stock <span class="badge badge-light">{{ $this->getProductStock($product['id']) }}</span>
                                                 </button>
                                                 <!-- Modal -->
-                                                <div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="stockModal-{{ $product['id'] }}" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -95,18 +95,12 @@
                                                                   </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                @foreach($this->getBranchStocks($product['id']) as $branch)
                                                                   <tr>
-                                                                    <td>Laoag Branch</td>
-                                                                    <td align = "center">99</td>
+                                                                    <td>{{ $branch['name'] }}</td>
+                                                                    <td align = "center">{{ $branch['stock'] }}</td>
                                                                   </tr>
-                                                                  <tr>
-                                                                    <td>Laoag Branch</td>
-                                                                    <td align = "center">99</td>
-                                                                  </tr>
-                                                                  <tr>
-                                                                    <td>Laoag Branch</td>
-                                                                    <td align = "center">99</td>
-                                                                  </tr>
+                                                                @endforeach
                                                                 </tbody>
                                                               </table>
                                                         </div>
