@@ -713,7 +713,7 @@
                                         Authorization Required
                                     </button>
                                 @elseif(!$completed)
-                                    <button wire:click="submitPayment" wire:loading.attr="disabled" wire:target="submitPayment" class="btn btn-primary btn-block">
+                                    <button wire:click="submitPayment" wire:confirm="Are you sure you want to submit your payment details?" wire:loading.attr="disabled" wire:target="submitPayment" class="btn btn-primary btn-block">
                                         Process Order
                                     </button>
                                 @else

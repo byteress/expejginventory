@@ -190,7 +190,7 @@
                                   </div>
                               </div>
                                 <div class="d-flex justify-content-end mt-1">
-                                    <button wire:click="submitPayment" wire:loading.attr="disabled" wire:target="submitPayment" class="btn btn-primary btn-icon-split">
+                                    <button wire:click="submitPayment" wire:confirm="Are you sure you want to submit your payment details?" wire:loading.attr="disabled" wire:target="submitPayment" class="btn btn-primary btn-icon-split">
                                         <span class="text">Submit Payment</span>
                                     </button>
                                 </div>
@@ -437,7 +437,7 @@
                                             @if($bills->due <= date('Y-m-d'))
                                             <div class="d-flex justify-content-end mt-1">
                                                 @if($bills->penalty == 0)
-                                                <button wire:click="submitPenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}', {{ $bills->balance }})" wire:loading.attr="disabled" wire:target="submitPenalty" class="btn btn-primary btn-icon-split">
+                                                <button wire:click="submitPenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}', {{ $bills->balance }})" wire:confirm="Are you sure you want to add penalty?" wire:loading.attr="disabled" wire:target="submitPenalty" class="btn btn-primary btn-icon-split">
                                                     <span class="text">Add Penalty</span>
                                                 </button>
                                                 @else

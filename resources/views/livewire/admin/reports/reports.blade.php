@@ -106,6 +106,7 @@
                         $totalGrossPrice = 0;
                         $totalAmount = 0;
                         $totalDiscount = 0;
+                        $totalCod = 0;
                         @endphp
                         @forelse($transactions as $transaction)
                             @php
@@ -125,6 +126,7 @@
                                             $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
                                             $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
                                             $totalDiscount = $totalDiscount + $discount;
+                                            $totalCod = $totalCod + $this->getPaymentAmount($transaction->transaction_id, 'COD');
                                         }
                                     @endphp
                                 <tr>
@@ -221,7 +223,7 @@
                             <td>@money($totalGrossPrice)</td>
                             <td>@money($totalAmount)</td>
                             <td>@money($totalDiscount)</td>
-                            <td><strong>@money($this->getPaymentAmountTotal('COD'))</strong></td>
+                            <td><strong>@money($totalCod)</strong></td>
                             <td><strong>@money($this->getPaymentAmountTotal('Check'))</strong></td>
                             <td><strong>@money($this->getPaymentAmountTotal('Bank Transfer'))</strong></td>
                             <td><strong>@money($this->getPaymentAmountTotal('Card'))</strong></td>
@@ -323,6 +325,7 @@
                 $totalGrossPrice = 0;
                 $totalAmount = 0;
                 $totalDiscount = 0;
+                $totalCod = 0;
             @endphp
             @forelse($transactions as $transaction)
                 @php
@@ -342,6 +345,7 @@
                                 $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
                                 $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
                                 $totalDiscount = $totalDiscount + $discount;
+                                $totalCod = $totalCod + $this->getPaymentAmount($transaction->transaction_id, 'COD');
                             }
                         @endphp
                         <tr>
@@ -356,7 +360,7 @@
                             <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity) @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($discount) @endif</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'COD'))</td>
+                            <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($this->getPaymentAmount($transaction->transaction_id, 'COD'))@endif</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
                             <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Card'))</td>
@@ -436,7 +440,7 @@
                 <td>@money($totalGrossPrice)</td>
                 <td>@money($totalAmount)</td>
                 <td>@money($totalDiscount)</td>
-                <td><strong>@money($this->getPaymentAmountTotal('COD'))</strong></td>
+                <td><strong>@money($totalCod)</strong></td>
                 <td><strong>@money($this->getPaymentAmountTotal('Check'))</strong></td>
                 <td><strong>@money($this->getPaymentAmountTotal('Bank Transfer'))</strong></td>
                 <td><strong>@money($this->getPaymentAmountTotal('Card'))</strong></td>

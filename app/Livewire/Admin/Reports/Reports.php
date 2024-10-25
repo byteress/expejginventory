@@ -30,6 +30,7 @@ class Reports extends Component
     public function mount(): void
     {
         $this->date = $this->date ?? now()->format('Y-m-d');
+        $this->branch = $this->branch ?: auth()->user()->branch_id;
     }
 
     public function updatedBranch(string $branch): void
@@ -142,23 +143,31 @@ class Reports extends Component
 
     public function getPaymentAmount(string $transactionId, string $type): int
     {
-        return DB::table('payment_methods')
-            ->where('transaction_id', $transactionId)
-            ->where('method', $type)
-            ->where('credit', 0)
-            ->sum('amount');
+        $query = DB::table('payment_methods')
+            ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
+            ->where('payment_methods.transaction_id', $transactionId)
+            ->where('payment_methods.method', $type)
+            ->where('payment_methods.credit', 0);
+
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
+        return $query->sum('payment_methods.amount');
     }
 
     public function getPaymentAmountTotal(string $type): int
     {
         $date = $this->date ?? now()->format('Y-m-d');
 
-        return DB::table('payment_methods')
+        $query = DB::table('payment_methods')
             ->join('transactions', 'payment_methods.transaction_id', '=', 'transactions.id')
+            ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
             ->whereDate('transactions.created_at', $date)
             ->where('payment_methods.method', $type)
-            ->where('payment_methods.credit', 0)
-            ->sum('payment_methods.amount');
+            ->where('payment_methods.credit', 0);
+
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
+        return $query->sum('payment_methods.amount');
     }
 
     /**
@@ -181,9 +190,12 @@ class Reports extends Component
     {
         $date = $this->date ?? now()->format('Y-m-d');
 
-        return DB::table('expenses')
-            ->whereDate('date', $date)
-            ->sum('amount');
+        $query = DB::table('expenses')
+            ->whereDate('date', $date);
+
+        if($this->branch) $query->where('branch_id', $this->branch);
+
+        return $query->sum('amount');
     }
 
     public function isSameDayCancelled(string $orderId): bool
