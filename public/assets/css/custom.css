@@ -192,3 +192,29 @@ body {
 .font-w{
     color:#FFF !important;
 }
+
+.dashboard-table-section{
+    height: 380px;
+    overflow-y: auto;
+}
+
+
+/* For Webkit browsers (e.g., Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent; /* Make the track transparent */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #4c7dcb; /* Color of the scrollbar thumb */
+    border-radius: 25px; /* Rounds the scrollbar thumb on both ends */
+    height: 50px; /* Ensures the scrollbar thumb is at least 50px high */
+  }
+
+  /* Hide scrollbar buttons (top and bottom) */
+  .custom-scrollbar::-webkit-scrollbar-button {
+    display: none; /* Remove the arrow buttons */
+  }
