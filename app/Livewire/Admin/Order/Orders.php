@@ -96,7 +96,10 @@ class Orders extends Component
         $items = [];
         foreach ($lineItems as $item){
             $reservationId = Str::uuid()->toString();
-            $reservationResult = $stockManagementService->reserve($item->product_id, $reservationId, $item->quantity, $order->branch_id, auth()->user()->id);
+            $stocks = DB::table('stocks')->where('product_id', $item->product_id)->where('branch_id', $order->branch_id)->first();
+            $advancedOrder = false;
+            if(!$stocks || $stocks->available == 0) $advancedOrder = true;
+            $reservationResult = $stockManagementService->reserve($item->product_id, $reservationId, $item->quantity, $order->branch_id, auth()->user()->id, $advancedOrder);
             if($reservationResult->isFailure()){
                 DB::rollBack();
                 session()->flash('alert-auth', ErrorHandler::getErrorMessage($reservationResult->getError()));

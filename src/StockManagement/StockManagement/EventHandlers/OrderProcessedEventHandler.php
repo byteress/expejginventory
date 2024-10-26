@@ -27,7 +27,10 @@ class OrderProcessedEventHandler extends Reactor
             ->where('order_id', $orderId)
             ->first();
 
-        if(!$order || $order->order_type != 'regular') return;
+        if(!$order || $order->order_type != 'regular') {
+            ProcessOrderJob::dispatch($orderId)->delay(now()->addseconds(5));
+            return;
+        }
 
         ProcessOrderJob::dispatch($orderId);
     }

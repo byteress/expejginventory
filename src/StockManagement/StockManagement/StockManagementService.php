@@ -149,11 +149,11 @@ class StockManagementService implements IStockManagementService
         }
     }
 
-    public function return(string $productId, int $quantity, string $branchId, string $actor): Result
+    public function return(string $productId, int $quantity, string $branchId, string $actor, string $reservationId): Result
     {
         try{
             $product = Product::retrieve($productId);
-            $product->return($branchId, $quantity, $actor);
+            $product->return($branchId, $quantity, $actor, $reservationId);
             $product->persist();
 
             return Result::success(null);

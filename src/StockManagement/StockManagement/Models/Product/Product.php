@@ -244,9 +244,23 @@ class Product extends Aggregate
     public function return(
         string $branchId,
         int    $quantity,
-        string $actor
+        string $actor,
+        string $reservationId
     ): self
     {
+        if(array_key_exists($reservationId, $this->reservations)){
+            $this->recordThat(new ReservationCancelled(
+                $this->uuid(),
+                $reservationId,
+                $branchId,
+                $quantity,
+                $actor,
+                $this->reservations[$reservationId]->advancedOrder
+            ));
+
+            return $this;
+        }
+
         $event = new ProductReturned(
             $this->uuid(),
             $branchId,

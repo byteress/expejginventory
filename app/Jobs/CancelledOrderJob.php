@@ -34,7 +34,7 @@ class CancelledOrderJob
             ->get();
 
         foreach ($items as $item){
-            $result = $stockManagementService->return($item->product_id, $item->quantity, $order->branch_id, $this->actor);
+            $result = $stockManagementService->return($item->product_id, $item->quantity, $order->branch_id, $this->actor, $item->reservation_id);
 
             if($result->isFailure()) throw $result->getError();
         }
