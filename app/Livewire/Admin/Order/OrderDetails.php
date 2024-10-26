@@ -553,10 +553,10 @@ class OrderDetails extends Component
         $order = $this->getOrder();
         $cancelledOrder = $this->getCancelledOrder();
 
-        if($cancelledOrder && $order->total < $cancelledOrder->total){
-            $this->addError('total', 'Order total should be equal or greater than the previous amount of ' . Money::PHP($cancelledOrder->total));
-            return;
-        }
+//        if($cancelledOrder && $order->total < $cancelledOrder->total){
+//            $this->addError('total', 'Order total should be equal or greater than the previous amount of ' . Money::PHP($cancelledOrder->total));
+//            return;
+//        }
 
         if($this->deliveryType == 'previous'){
             $orderService->setPreviousOrder($order->order_id, new DateTime($this->installmentStartDate));
