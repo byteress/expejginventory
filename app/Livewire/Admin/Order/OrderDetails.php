@@ -550,6 +550,11 @@ class OrderDetails extends Component
             ]
         ]);
 
+        if($this->getItems()->isEmpty()){
+            session()->flash('alert', 'No items added to order.');
+            return;
+        }
+
         $order = $this->getOrder();
         $cancelledOrder = $this->getCancelledOrder();
 
@@ -745,6 +750,8 @@ class OrderDetails extends Component
         }
 
         DB::commit();
+
+        session()->flash('success', 'Order successfully processed.');
         $this->redirect(route('admin.order.details', ['order_id' => $this->orderId]), true);
     }
 
