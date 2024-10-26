@@ -221,7 +221,7 @@
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'pending']) }}">Pending</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'processed']) }}">Processed</a>
                 <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'cancelled']) }}">Cancelled</a>
-                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'Refunded']) }}">Refunded</a>
+                <a wire:navigate class="collapse-item" href="{{ route('admin.orders', ['type' => 'purchase', 'status' => 'refunded']) }}">Refunded</a>
             </div>
         </div>
     </li>
