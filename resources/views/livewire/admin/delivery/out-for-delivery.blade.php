@@ -27,6 +27,25 @@
                             {{ session('success') }}
                         </div>
                     @endif
+
+                        <div class="row">
+                            <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
+                                <div class="form-group">
+                                    <label for="supplier">Branch</label>
+                                    <select class="form-control" id="supplier" wire:model.live="branch">
+                                        <option selected value="">Select Branch</option>
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}"
+                                                    @if (auth()->user()->branch_id == $branch->id) selected @endif>
+                                                {{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('branch')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                             <thead>

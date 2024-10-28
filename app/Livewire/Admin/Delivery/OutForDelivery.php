@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Delivery;
 
+use BranchManagement\Models\Branch;
 use Delivery\Models\Delivery\Enums\DeliveryStatus;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -44,7 +45,8 @@ class OutForDelivery extends Component
     public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {
         return view('livewire.admin.delivery.out-for-delivery', [
-            'deliveries' => $this->getDeliveries()
+            'deliveries' => $this->getDeliveries(),
+            'branches' => Branch::all(),
         ]);
     }
 }
