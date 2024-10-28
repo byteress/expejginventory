@@ -15,17 +15,29 @@ use Livewire\Component;
 #[Title('Out for Delivery')]
 class OutForDelivery extends Component
 {
+    public ?string $branch = null;
+
+    public function mount(): void
+    {
+        $this->branch = auth()->user()?->branch_id;
+    }
+
     /**
      * @return Collection<int, object>
      */
     public function getDeliveries(): Collection
     {
-        return DB::table('deliveries')
+        $query = DB::table('deliveries')
             ->join('branches', 'deliveries.branch_id', '=', 'branches.id')
             ->join('users', 'deliveries.driver', '=', 'users.id')
             ->select(['deliveries.*', 'branches.name as branch_name', 'users.first_name as driver_first_name', 'users.last_name as driver_last_name'])
-            ->where('status', DeliveryStatus::OUT_FOR_DELIVERY->value)
-            ->get();
+            ->where('status', DeliveryStatus::OUT_FOR_DELIVERY->value);
+
+        if($this->branch){
+            $query = $query->where('deliveries.branch_id', $this->branch);
+        }
+
+        return $query->get();
     }
 
     #[Layout('livewire.admin.base_layout')]
