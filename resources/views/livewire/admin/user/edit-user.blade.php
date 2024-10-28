@@ -98,6 +98,25 @@
                                 @error('branch') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
+                        <!-- Other Fields -->
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input type="password" class="form-control" id="password" wire:model="password" placeholder="Password">
+                                        @error('password') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password_confirmation">Confirm Password</label>
+                                        <input type="password" class="form-control" id="password_confirmation" wire:model="password_confirmation" placeholder="Confirm Password">
+                                        @error('password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-12 mb-4">
                             <button type="submit" class="btn btn-primary btn-icon-split">
                                 <span class="icon text-white-50">
