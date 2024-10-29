@@ -47,7 +47,7 @@
                                 <td>{{ $transfer->transfer_number }}</td>
                                 <td>{{ $transfer->source->name }}</td>
                                 <td>{{ $transfer->receiving->name }}</td>
-                                <td>{{ $transfer->truckDriver->first_name . ' '. $transfer->truckDriver->last_name }}</td>
+                                <td>{{ $transfer->truckDriver ? $transfer->truckDriver->first_name . ' '. $transfer->truckDriver->last_name : '' }}</td>
                                 <td>{{ $transfer->truck }}</td>
                                 <td>{{ $transfer->requestedBy->first_name . ' '. $transfer->requestedBy->last_name }}</td>
                                 <td>{{ $transfer->notes }}</td>
