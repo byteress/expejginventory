@@ -31,7 +31,7 @@ class ReceiveProducts extends Component
 
     #[Validate('required')]
     public string $requestedBy = '';
-    public string $notes;
+    public string $notes = '';
 
     public function mount()
     {
