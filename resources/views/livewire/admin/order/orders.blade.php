@@ -81,17 +81,18 @@
                                         <div class="btn-group">
                                             <a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}" type="button"
                                                 class="btn btn-primary">@if($displayStatus != 'pending') View @else Checkout @endif</a>
-                                            @if($displayStatus == 'processed')
                                             <button type="button"
                                                 class="btn btn-primary dropdown-toggle dropdown-toggle-split"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <div class="dropdown-menu">
+                                                @if($displayStatus == 'processed')
                                                 <a data-toggle="modal" data-target="#cancelModal{{ $order->order_id }}" class="dropdown-item"
                                                     href="#">Cancel</a>
                                                 <a data-toggle="modal" data-target="#refundModal{{ $order->order_id }}" class="dropdown-item"
                                                    href="#">Refund</a>
+                                                @endif
                                                 <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"
                                                    href="#">Delete</a>
                                             </div>
@@ -266,7 +267,6 @@
                                                     </div>
                                                 </div>
                                                 <!-- End Refund Modal -->
-                                            @endif
                                         </div>
                                     </td>
                                 </tr>
