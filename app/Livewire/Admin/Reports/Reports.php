@@ -163,7 +163,8 @@ class Reports extends Component
             ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
             ->whereDate('transactions.created_at', $date)
             ->where('payment_methods.method', $type)
-            ->where('payment_methods.credit', 0);
+            ->where('payment_methods.credit', 0)
+            ->where('transactions.type', '!=', 'void');
 
         if($this->branch) $query->where('orders.branch_id', $this->branch);
 

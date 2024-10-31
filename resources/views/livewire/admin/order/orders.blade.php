@@ -88,19 +88,21 @@
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"
+                                                <a data-toggle="modal" data-target="#cancelModal{{ $order->order_id }}" class="dropdown-item"
                                                     href="#">Cancel</a>
                                                 <a data-toggle="modal" data-target="#refundModal{{ $order->order_id }}" class="dropdown-item"
                                                    href="#">Refund</a>
+                                                <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"
+                                                   href="#">Delete</a>
                                             </div>
-                                            <!-- Delete Modal -->
-                                            <div wire:ignore.self class="modal fade" id="deleteModal{{ $order->order_id }}" tabindex="-1"
-                                                role="dialog" aria-labelledby="deleteModal{{ $order->order_id }}Label" aria-hidden="true">
+                                            <!-- Cancel Modal -->
+                                            <div wire:ignore.self class="modal fade" id="cancelModal{{ $order->order_id }}" tabindex="-1"
+                                                role="dialog" aria-labelledby="cancelModal{{ $order->order_id }}Label" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <form class="user" wire:submit="cancelOrder('{{ $order->order_id }}')">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="deleteModal{{ $order->order_id }}Label">Cancel Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}
+                                                            <h5 class="modal-title" id="cancelModal{{ $order->order_id }}Label">Cancel Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}
                                                             </h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
@@ -146,7 +148,63 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- End Delete Modal -->
+                                            <!-- End Cancel Modal -->
+
+                                                <!-- Delete Modal -->
+                                                <div wire:ignore.self class="modal fade" id="deleteModal{{ $order->order_id }}" tabindex="-1"
+                                                     role="dialog" aria-labelledby="deleteModal{{ $order->order_id }}Label" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <form class="user" wire:submit="deleteOrder('{{ $order->order_id }}')">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="deleteModal{{ $order->order_id }}Label">Delete Order #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}
+                                                                    </h5>
+                                                                    <button type="button" class="close" data-dismiss="modal"
+                                                                            aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    @if (session('alert-auth'))
+                                                                        <div class="alert alert-danger" role="alert">
+                                                                            {{ session('alert-auth') }}
+                                                                        </div>
+                                                                    @endif
+                                                                    <div class="form-group">
+                                                                        <input autocomplete="false" wire:model="email" type="email" class="form-control"
+                                                                               aria-describedby="emailHelp"
+                                                                               placeholder="Enter Email Address...">
+                                                                        @error('email')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input wire:model="password" type="password" class="form-control"
+                                                                               placeholder="Password">
+                                                                        @error('password')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <textarea wire:model="notes" class="form-control" placeholder="Notes"></textarea>
+                                                                        @error('notes')
+                                                                        <span class="text-danger">{{ $message }}</span>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">No</button>
+                                                                    <button type="submit"
+                                                                            class="btn btn-danger">Yes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- End Delete Modal -->
+
                                                 <!-- Refund Modal -->
                                                 <div wire:ignore.self class="modal fade" id="refundModal{{ $order->order_id }}" tabindex="-1"
                                                      role="dialog" aria-labelledby="refundModal{{ $order->order_id }}Label" aria-hidden="true">

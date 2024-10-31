@@ -20,6 +20,7 @@ class CustomerList extends Component
     {
         $query = DB::table('customers')
             ->leftJoin('customer_balances', 'customers.id', '=', 'customer_balances.customer_id')
+            ->whereNull('customers.deleted_at')
             ->where(function($q){
                 $q->orWhere('customers.first_name', 'LIKE', '%'.$this->search.'%')
                     ->orWhere('customers.last_name', 'LIKE', '%'.$this->search.'%');

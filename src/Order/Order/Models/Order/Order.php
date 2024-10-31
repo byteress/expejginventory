@@ -10,6 +10,7 @@ use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
 use OrderContracts\Events\OrderCancelled;
+use OrderContracts\Events\OrderDeleted;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderRefunded;
@@ -175,6 +176,25 @@ class Order extends Aggregate
     /**
      * @throws InvalidDomainException
      */
+    public function delete(string $actor, ?string $notes): self
+    {
+        if($this->status == 5) throw new InvalidDomainException('Order already deleted', [
+            'order' => 'Order already deleted.'
+        ]);
+
+        if($this->status == 4 || $this->status == 3) throw new InvalidDomainException('Order already canceled', [
+            'order' => 'Cannot cancel order.'
+        ]);
+
+        $event = new OrderDeleted($this->uuid(), $actor, $notes);
+
+        $this->recordThat($event);
+        return $this;
+    }
+
+    /**
+     * @throws InvalidDomainException
+     */
     public function refund(string $actor, ?string $notes): self
     {
         if($this->status == 4) throw new InvalidDomainException('Order already canceled', [
@@ -241,6 +261,11 @@ class Order extends Aggregate
     public function applyOrderRefunded(OrderRefunded $event): void
     {
         $this->status = 4;
+    }
+
+    public function applyOrderDeleted(OrderDeleted $event): void
+    {
+        $this->status = 5;
     }
 
     public function applyOrderSetAsPrevious(OrderSetAsPrevious $event): void

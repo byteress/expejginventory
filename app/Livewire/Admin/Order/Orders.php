@@ -151,6 +151,40 @@ class Orders extends Component
     /**
      * @throws Throwable
      */
+    public function deleteOrder(
+        IOrderService $orderService,
+        IIdentityAndAccessService $identityAndAccessService,
+        string $orderId
+    ): void
+    {
+        $this->validate();
+
+        DB::beginTransaction();
+
+        $authorization = $identityAndAccessService->authorize($this->email, $this->password, "delete-$orderId");
+        if($authorization->isFailure()){
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($authorization->getError()));
+            return;
+        }
+
+        $result = $orderService->delete($orderId, auth()->user()->id, $authorization->getValue(), $this->notes);
+
+        if($result->isFailure()){
+            DB::rollBack();
+            session()->flash('alert-auth', ErrorHandler::getErrorMessage($result->getError()));
+            return;
+        }
+
+        DB::commit();
+
+        $this->dispatch('close-modal');
+        session()->flash('success', 'Order deleted successfully.');
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function refundOrder(
         IOrderService $orderService,
         IIdentityAndAccessService $identityAndAccessService,

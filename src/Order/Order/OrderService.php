@@ -164,6 +164,22 @@ class OrderService implements IOrderService
         }
     }
 
+    public function delete(string $orderId, string $actor, string $authorization, ?string $notes): Result
+    {
+        try {
+            $this->validateAuthorization($authorization, "delete-$orderId");
+
+            $order = Order::retrieve($orderId);
+            $order->delete($actor, $notes);
+            $order->persist();
+
+            return Result::success(null);
+        } catch (Exception $e) {
+            report($e);
+            return Result::failure($e);
+        }
+    }
+
     public function refund(string $orderId, string $actor, string $authorization, ?string $notes): Result
     {
         try {

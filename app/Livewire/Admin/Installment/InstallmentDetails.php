@@ -219,6 +219,7 @@ class InstallmentDetails extends Component
             ->join('orders', 'transactions.order_id', '=', 'orders.order_id')
             ->select('transactions.*', 'users.first_name', 'orders.status as order_status')
             ->where('transactions.customer_id', $this->customer->id)
+            ->where('transactions.type', '!=', 'void')
             ->orderBy('transactions.created_at', 'desc')
             ->get();
     }
@@ -249,6 +250,7 @@ class InstallmentDetails extends Component
             ->join('users', 'orders.assistant_id', '=', 'users.id')
             ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
             ->where('orders.customer_id', $this->customer->id)
+            ->where('orders.status', '<=', 4)
             ->orderByDesc('orders.placed_at');
 
         return $query->get();

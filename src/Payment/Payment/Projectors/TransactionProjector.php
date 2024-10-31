@@ -3,6 +3,7 @@
 namespace Payment\Projectors;
 
 use Illuminate\Support\Facades\DB;
+use OrderContracts\Events\OrderDeleted;
 use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\DownPaymentReceived;
 use PaymentContracts\Events\FullPaymentReceived;
@@ -135,6 +136,15 @@ class TransactionProjector extends Projector
                     'credit' => $event->paymentMethods[$i]['credit'],
                 ]);
         }
+    }
+
+    public function onOrderDeleted(OrderDeleted $event): void
+    {
+        DB::table('transactions')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'type' => 'void',
+            ]);
     }
 
     public function onStartingEventReplay(): void

@@ -42,6 +42,7 @@ interface IOrderService
     public function removeItem(string $orderId, string $productId): Result;
     public function confirmOrder(string $orderId, string $actor, string $authorization): Result;
     public function cancel(string $orderId, string $actor, string $authorization, ?string $notes): Result;
+    public function delete(string $orderId, string $actor, string $authorization, ?string $notes): Result;
     public function refund(string $orderId, string $actor, string $authorization, ?string $notes): Result;
     public function setPreviousOrder(string $orderId, ?DateTime $installmentStartDate): Result;
 }

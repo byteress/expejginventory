@@ -9,6 +9,7 @@ use OrderContracts\Events\ItemQuantityUpdated;
 use OrderContracts\Events\ItemRemoved;
 use OrderContracts\Events\OrderAuthorized;
 use OrderContracts\Events\OrderCancelled;
+use OrderContracts\Events\OrderDeleted;
 use OrderContracts\Events\OrderDelivered;
 use OrderContracts\Events\OrderPlaced;
 use OrderContracts\Events\OrderRefunded;
@@ -148,6 +149,16 @@ class OrderProjector extends Projector
             ->where('order_id', $event->orderId)
             ->update([
                 'status' => 3,
+                'notes' => $event->notes
+            ]);
+    }
+
+    public function onOrderDeleted(OrderDeleted $event): void
+    {
+        DB::table('orders')
+            ->where('order_id', $event->orderId)
+            ->update([
+                'status' => 5,
                 'notes' => $event->notes
             ]);
     }
