@@ -792,7 +792,7 @@
 <div class="printable">
     <div class="receipt-container no-bootstrap-center">
         <div class="receipt-header">
-            <p>TR# {{ ($transaction) ? str_pad((string) $transaction->transaction_number, 5, '0', STR_PAD_LEFT) : '' }} {{ $this->getReceiptType() }}# {{ $order->receipt_number }}</p>
+            <p>TR# {{ ($transaction) ? str_pad((string) $transaction->transaction_number, 5, '0', STR_PAD_LEFT) : '' }} {{ $order->receipt_number }}</p>
             <p>{{ is_null($order->completed_at) ? '' : date('F j, Y', strtotime($order->completed_at)) }}</p>
         </div>
         <div class="receipt-details">
