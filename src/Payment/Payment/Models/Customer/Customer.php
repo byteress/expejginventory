@@ -575,6 +575,7 @@ class Customer extends Aggregate
         foreach ($this->installments as $key => $installment){
             if($installment['installmentId'] === $event->installmentId && $installment['index'] === $event->index){
                 $this->installments[$key]['penalty'] = $event->amount;
+                $this->installments[$key]['balance'] = $this->installments[$key]['balance'] + $event->amount;
                 break;
             }
         }
