@@ -462,7 +462,7 @@ class OrderDetails extends Component
 
     public function getProduct($productId)
     {
-        return Product::find($productId);
+        return Product::whereId($productId)->withTrashed()->first();
     }
 
     private function getProducts()
