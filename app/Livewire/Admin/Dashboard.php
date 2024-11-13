@@ -22,7 +22,7 @@ class Dashboard extends Component
             }
         }
 
-        return $totalAmount;
+        return $totalAmount - $this->getExpensesTotal($branchId);
     }
 
     /**
@@ -42,6 +42,17 @@ class Dashboard extends Component
             ->where('orders.branch_id', $branchId);
 
         return $query->get();
+    }
+
+    public function getExpensesTotal(string $branchId): int
+    {
+        $date = now()->format('Y-m-d');
+
+        $query = DB::table('expenses')
+            ->whereDate('date', $date)
+            ->where('branch_id', $branchId);
+
+        return $query->sum('amount');
     }
 
     public function isSameDayCancelled(string $orderId): bool
