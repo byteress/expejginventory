@@ -54,6 +54,7 @@
                             <th>Transferred</th>
                             <th>Received</th>
                             <th>Damaged</th>
+                            <th>Lacking</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -94,9 +95,25 @@
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </td>
+                                    <td><div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"
+                                                                      id="basic-addon3">Qty.</span>
+                                            </div>
+                                            <input
+                                                wire:model="quantities.{{ $item->product_id }}.lacking"
+                                                type="number" class="form-control" id="basic-url"
+                                                min="0" required aria-describedby="basic-addon3"
+                                                style = "width:50px;">
+                                        </div>
+                                        @error("quantities.$item->product_id.lacking")
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </td>
                                 @else
                                     <td>{{ $item->received  }}</td>
                                     <td>{{ $item->damaged  }}</td>
+                                    <td>{{ $item->lacking  }}</td>
                                 @endif
                             </tr>
                         @empty

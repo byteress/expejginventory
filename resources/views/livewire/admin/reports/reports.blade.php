@@ -337,7 +337,7 @@
 
                 @endphp
                 @foreach($items as $item)
-                    @if($loop->index == 0)
+                        @if($loop->index == 0)
                         @php
                             $discount = $this->getDiscount($transaction->order_id);
 

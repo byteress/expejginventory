@@ -82,6 +82,7 @@ class Product extends Aggregate
         string $transferId,
         int $received,
         int $damaged,
+        int $lacking,
         string $actor
     ): self
     {
@@ -90,7 +91,7 @@ class Product extends Aggregate
             ['transfer' => 'Transfer already completed.']
         );
 
-        if($this->transferred[$transferId] != ($received + $damaged)) throw new InvalidDomainException(
+        if($this->transferred[$transferId] != ($received + $damaged + $lacking)) throw new InvalidDomainException(
             'Received and damaged should be equal to the transferred quantity.',
             ['transfer' => 'Received and damaged should be equal to the transferred quantity.'],
             ErrorCode::EXCEEDED_TRANSFERRED_QUANTITY->value,
@@ -102,7 +103,8 @@ class Product extends Aggregate
             $this->uuid(),
             $received,
             $damaged,
-            $actor
+            $actor,
+            $lacking
         );
 
         $this->recordThat($event);

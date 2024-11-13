@@ -11,7 +11,8 @@ class ProductReceived extends ShouldBeStored
         public string $productId,
         public int $received,
         public int $damaged,
-        public string $actor
+        public string $actor,
+        public int $lacking = 0
     )
     {
 

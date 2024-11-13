@@ -20,7 +20,7 @@ interface ITransferService
 
     /**
      * @param string $transferId
-     * @param array<string, array{'received': int, 'damaged': int}> $products
+     * @param array<string, array{'received': int, 'damaged': int, 'lacking': int}> $products
      * @param string $actor
      * @return Result
      */

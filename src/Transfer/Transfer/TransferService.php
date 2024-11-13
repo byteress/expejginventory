@@ -25,12 +25,7 @@ class TransferService implements ITransferService
     }
 
     /**
-     * @param string $transferId
-     * @param array<string, int> $products
-     * @param string $receiver
-     * @param string $sender
-     * @param string $actor
-     * @return Result
+     * @inheritDoc
      */
     public function transfer(string $transferId, array $products, string $receiver, string $sender, string $driver, string $truck, string $actor, ?string $notes = null): Result
     {
@@ -61,10 +56,7 @@ class TransferService implements ITransferService
     }
 
     /**
-     * @param string $transferId
-     * @param array<string, array{'received': int, 'damaged': int}> $products
-     * @param string $actor
-     * @return Result
+     * @inheritDoc
      */
     public function receive(string $transferId, array $products, string $actor): Result
     {
@@ -77,7 +69,7 @@ class TransferService implements ITransferService
 
             foreach ($products as $id => $quantities) {
                 $product = Product::retrieve($id);
-                $product->receive($transferId, $quantities['received'], $quantities['damaged'], $actor);
+                $product->receive($transferId, $quantities['received'], $quantities['damaged'], $quantities['lacking'], $actor);
                 $product->persist();
             }
 

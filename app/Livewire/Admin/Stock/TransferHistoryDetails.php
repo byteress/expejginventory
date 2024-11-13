@@ -19,7 +19,7 @@ class TransferHistoryDetails extends Component
     public Transfer $transfer;
 
     /**
-     * @var array<string, array{'received': int, 'damaged': int}>
+     * @var array<string, array{'received': int, 'damaged': int, 'lacking': int}>
      */
     public array $quantities;
 
