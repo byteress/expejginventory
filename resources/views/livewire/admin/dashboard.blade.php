@@ -71,7 +71,20 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">List of Customers</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Due Today</h6>
+                    <div class="form-group">
+                        <select class="form-control" id="supplier" wire:model.live="customerBranch">
+                            <option selected value="">All Branches</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                        @if (auth()->user()->branch_id == $branch->id) selected @endif>
+                                    {{ $branch->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('branch')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     {{-- <div class="dropdown no-arrow">
                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -93,19 +106,23 @@
                     <table class="table table-striped table-bordered">
                         <thead class="thead-light">
                           <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Contact</th>
-                            <th scope="col">Total Purchase</th>
+                            <th scope="col">Balance</th>
                           </tr>
                         </thead>
                         <tbody>
+                        @forelse($customers as $customer)
                           <tr>
-                            <th scope="row">1</th>
-                            <td>John Doe</td>
-                            <td>+39393848</td>
-                            <td>Php 4500</td>
+                            <td><a href="{{ route('admin.customer.details', ['customer' => $customer->id]) }}">{{ $customer->first_name }} {{ $customer->last_name }}</a></td>
+                            <td>{{ $customer->phone }}</td>
+                            <td>@money($customer->balance)</td>
                           </tr>
+                        @empty
+                            <tr>
+                                <td colspan="10">No customers found.</td>
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                     </div>
@@ -119,6 +136,19 @@
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">List of Sold Items</h6>
+                    <div class="form-group">
+                        <select class="form-control" id="supplier" wire:model.live="itemBranch">
+                            <option selected value="">All Branches</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                        @if (auth()->user()->branch_id == $branch->id) selected @endif>
+                                    {{ $branch->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('branch')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     {{-- <div class="dropdown no-arrow">
                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -146,11 +176,17 @@
                           </tr>
                         </thead>
                         <tbody>
+                        @forelse($items as $item)
                           <tr>
-                            <td>SKU-2939933</td>
-                            <td>Light Bed</td>
-                            <td>Php 8200</td>
+                            <td>{{ $item->sku_code }}-{{ $item->sku_number }}</td>
+                            <td>{{ $item->model }} {{ $item->description }}</td>
+                            <td>@money($item->regular_price)</td>
                           </tr>
+                        @empty
+                            <tr>
+                                <td colspan="10">No items found.</td>
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                     </div>

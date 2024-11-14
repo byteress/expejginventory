@@ -12,6 +12,49 @@ use Livewire\Component;
 #[Title('Dashboard')]
 class Dashboard extends Component
 {
+    public ?string $customerBranch = null;
+    public ?string $itemBranch = null;
+
+    /**
+     * @return Collection<int, object>
+     */
+    public function getItems(): Collection
+    {
+        $date = now()->format('Y-m-d');
+        $query = DB::table('stock_history')
+            ->join('products', 'products.id', '=', 'stock_history.product_id')
+            ->whereDate('stock_history.date', $date)
+            ->where('stock_history.action', 'Sold')
+            ->groupBy('stock_history.product_id')
+            ->orderBy('products.model', 'asc')
+            ->orderBy('products.description', 'asc');
+
+        if($this->itemBranch) $query->where('stock_history.branch_id', $this->itemBranch);
+
+        return $query->get();
+    }
+
+    /**
+     * @return Collection<int, object>
+     */
+    public function getCustomers(): Collection
+    {
+        $query = DB::table('customers')
+            ->join('customer_balances', 'customers.id', '=', 'customer_balances.customer_id')
+            ->whereExists(function ($query) {
+                $date = now()->format('Y-m-d');
+
+                $query->select(DB::raw(1))
+                    ->from('installment_bills')
+                    ->whereColumn('installment_bills.customer_id', 'customers.id')
+                    ->where('installment_bills.balance', '>', 0)
+                    ->whereDate('installment_bills.due', $date);
+            });
+
+        if($this->customerBranch) $query->where('branch_id', $this->customerBranch);
+
+        return $query->get();
+    }
 
     public function getIncome(string $branchId): int
     {
@@ -105,6 +148,8 @@ class Dashboard extends Component
     {
         return view('livewire.admin.dashboard', [
             'branches' => Branch::all(),
+            'customers' => $this->getCustomers(),
+            'items' => $this->getItems(),
         ]);
     }
 }
