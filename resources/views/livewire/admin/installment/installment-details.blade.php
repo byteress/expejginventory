@@ -395,7 +395,7 @@
                                                     <tr>
                                                         <th>Amount</th>
                                                         <th>Due Date</th>
-                                                        @if($bills->due <= date('Y-m-d'))
+                                                        @if($bills->due && $bills->due <= date('Y-m-d'))
                                                         <th>Penalty Rate</th>
                                                         @endif
                                                         <th>Penalty</th>
@@ -405,9 +405,9 @@
                                                             <h6 class ="mt-2"><b>@money($bills->balance)</b></h6>
                                                         </td>
                                                         <td>
-                                                            <h6 class ="mt-2"><b><u>{{ date('F j, Y', strtotime($bills->due)) }}</u></b></h6>
+                                                            <h6 class ="mt-2"><b><u>{{ $bills->due ? date('F j, Y', strtotime($bills->due)) : 'TBD' }}</u></b></h6>
                                                         </td>
-                                                        @if($bills->due <= date('Y-m-d'))
+                                                        @if($bills->due && $bills->due <= date('Y-m-d'))
                                                             <td>
                                                                 @if($bills->penalty == 0)
                                                                 <div class="input-group" style="width: 100px;">
@@ -434,7 +434,7 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            @if($bills->due <= date('Y-m-d'))
+                                            @if($bills->due && $bills->due <= date('Y-m-d'))
                                             <div class="d-flex justify-content-end mt-1">
                                                 @if($bills->penalty == 0)
                                                 <button wire:click="submitPenalty('{{ $bills->installment_id }}', {{ $bills->index }}, '{{ $bills->order_id }}', {{ $bills->balance }})" wire:confirm="Are you sure you want to add penalty?" wire:loading.attr="disabled" wire:target="submitPenalty" class="btn btn-primary btn-icon-split">
