@@ -40,6 +40,7 @@ use App\Livewire\Admin\Order\OrderDetails;
 use App\Livewire\Admin\Installment\InstallmentDetails;
 use App\Livewire\Admin\Expense\DailyExpense;
 use App\Livewire\Admin\Reports\Reports;
+use App\Livewire\Admin\Reports\DailyItemReport;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
@@ -102,4 +103,5 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
 
 Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
+    Route::get('/reports/daily-items', DailyItemReport::class)->name('reports.daily.items');
 });
