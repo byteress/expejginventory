@@ -278,10 +278,7 @@
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a href="{{ route('admin.reports.daily') }}" wire:navigate class="collapse-item" href="#">Daily Report</a>
-<<<<<<< HEAD
                 <a href="{{ route('admin.reports.monthly') }}" wire:navigate class="collapse-item" href="#">Monthly Report</a>
-=======
->>>>>>> f1a1ca737a057eb5cc50bc9125ed241192911a2e
             </div>
         </div>
     </li>
