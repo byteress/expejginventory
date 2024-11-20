@@ -5,6 +5,10 @@ use App\Livewire\Admin\Delivery\DeliveryDetails;
 use App\Livewire\Admin\Delivery\OutForDelivery;
 use App\Livewire\Admin\Delivery\ToShip;
 use App\Livewire\Admin\Payment\CustomerList;
+<<<<<<< HEAD
+use App\Livewire\Admin\Reports\Monthly;
+=======
+>>>>>>> f1a1ca737a057eb5cc50bc9125ed241192911a2e
 use App\Livewire\Admin\Stock\BatchDetails;
 use App\Livewire\Admin\Stock\BatchHistory;
 use App\Livewire\Admin\Stock\StockManagement;
@@ -102,4 +106,8 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
 
 Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
+<<<<<<< HEAD
+    Route::get('/reports/monthly', Monthly::class)->name('reports.monthly');
+=======
+>>>>>>> f1a1ca737a057eb5cc50bc9125ed241192911a2e
 });
