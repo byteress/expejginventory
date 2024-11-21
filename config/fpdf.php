@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'orientation' => 'P',
+    'orientation' => 'L',
     'unit' => 'mm',
     'size' => 'A4',
     'font_path' => env('FPDF_FONTPATH'),
