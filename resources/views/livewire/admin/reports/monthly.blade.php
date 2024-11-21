@@ -75,7 +75,7 @@
             <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="sales-tab">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <h3>Monthly Expenses</h3>
+                        <h3>Monthly Income</h3>
                         <!-- Monthly Expenses table content -->
                         <div class="table-responsive">
                             <table class="table table-bordered">
