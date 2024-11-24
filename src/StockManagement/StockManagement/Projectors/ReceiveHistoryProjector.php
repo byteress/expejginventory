@@ -8,6 +8,7 @@ use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 use StockManagementContracts\Events\DamagedProductReceived;
 use StockManagementContracts\Events\ProductAdjusted;
 use StockManagementContracts\Events\ProductReceived;
+use StockManagementContracts\Events\ProductReleased;
 use StockManagementContracts\Events\ProductReserved;
 use StockManagementContracts\Events\ProductReturned;
 use StockManagementContracts\Events\ProductSetAsDamaged;
@@ -27,7 +28,7 @@ class ReceiveHistoryProjector extends Projector
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
                 'action' => 'Received',
-                'running_available' => $latest['available'] + $event->quantity,
+                'running_available' => $latest['available'],
                 'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'],
@@ -49,8 +50,8 @@ class ReceiveHistoryProjector extends Projector
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
                 'action' => 'Reserved',
-                'running_available' => $latest['available'] - $event->quantity,
-                'running_reserved' => $latest['reserved'] + $event->quantity,
+                'running_available' => $latest['available'],
+                'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
@@ -71,8 +72,8 @@ class ReceiveHistoryProjector extends Projector
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
                 'action' => 'Reservation Cancelled',
-                'running_available' => $latest['available'] + $event->quantity,
-                'running_reserved' => $latest['reserved'] - $event->quantity,
+                'running_available' => $latest['available'],
+                'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
@@ -93,7 +94,7 @@ class ReceiveHistoryProjector extends Projector
                 'action' => 'Damaged Received',
                 'running_available' => $latest['available'],
                 'running_reserved' => $latest['reserved'],
-                'running_damaged' => $latest['damaged'] + $event->quantity,
+                'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
                 'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
@@ -111,9 +112,9 @@ class ReceiveHistoryProjector extends Projector
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
                 'action' => 'Set as Damaged',
-                'running_available' => $latest['available'] - $event->quantity,
+                'running_available' => $latest['available'],
                 'running_reserved' => $latest['reserved'],
-                'running_damaged' => $latest['damaged'] + $event->quantity,
+                'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
                 'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
@@ -139,10 +140,10 @@ class ReceiveHistoryProjector extends Projector
                 'branch_id' => $event->branchId,
                 'quantity' => $event->quantity,
                 'action' => 'Sold',
-                'running_available' => $available,
-                'running_reserved' => $reserved,
+                'running_available' => $latest['available'],
+                'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
-                'running_sold' => $latest['sold'] + $event->quantity,
+                'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
                 'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
             ]);
@@ -159,10 +160,10 @@ class ReceiveHistoryProjector extends Projector
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
                 'action' => 'Returned',
-                'running_available' => $latest['available'] + $event->quantity,
+                'running_available' => $latest['available'],
                 'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
-                'running_sold' => $latest['sold'] - $event->quantity,
+                'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
                 'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
             ]);
@@ -179,9 +180,29 @@ class ReceiveHistoryProjector extends Projector
                 'quantity' => $event->available + $event->damaged,
                 'user_id' => $event->actor,
                 'action' => 'Adjusted',
-                'running_available' => $event->available ?? $latest['available'],
+                'running_available' => $latest['available'],
                 'running_reserved' => $latest['reserved'],
-                'running_damaged' => $event->damaged ?? $latest['damaged'],
+                'running_damaged' => $latest['damaged'],
+                'running_sold' => $latest['sold'],
+                'version' => $event->aggregateRootVersion() ?? 0,
+                'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
+            ]);
+    }
+
+    public function onProductReleased(ProductReleased $event): void
+    {
+        $latest = $this->getLastQuantities($event->productId, $event->branchId);
+
+        DB::table('stock_history')
+            ->insert([
+                'product_id' => $event->productId,
+                'branch_id' => $event->branchId,
+                'quantity' => $event->quantity,
+                'user_id' => $event->actor,
+                'action' => 'Adjusted',
+                'running_available' => $latest['available'],
+                'running_reserved' => $latest['reserved'],
+                'running_damaged' => $latest['damaged'],
                 'running_sold' => $latest['sold'],
                 'version' => $event->aggregateRootVersion() ?? 0,
                 'date' => date('Y-m-d H:i:s', strtotime($event->metaData()[MetaData::CREATED_AT]))
@@ -195,18 +216,16 @@ class ReceiveHistoryProjector extends Projector
      */
     private function getLastQuantities(string $productId, string $branchId): array
     {
-        $latest = DB::table('stock_history')
+        $latest = DB::table('stocks')
             ->where('product_id', $productId)
             ->where('branch_id', $branchId)
-            ->orderByDesc('date')
-            ->orderByDesc('version')
             ->first();
 
         return [
-            'available' => $latest?->running_available ?? 0,
-            'reserved' => $latest?->running_reserved ?? 0,
-            'damaged' => $latest?->running_damaged ?? 0,
-            'sold' => $latest?->running_sold ?? 0
+            'available' => $latest?->available ?? 0,
+            'reserved' => $latest?->reserved ?? 0,
+            'damaged' => $latest?->damaged ?? 0,
+            'sold' => $latest?->sold ?? 0
         ];
     }
 }
