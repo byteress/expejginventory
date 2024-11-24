@@ -1,3 +1,4 @@
+@php use Carbon\Carbon; @endphp
 <div>
     <div class="container-fluid no-print">
 
@@ -24,264 +25,322 @@
                     <div class="col-md-8">
 
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Date</div>
+                            Date
+                        </div>
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                             <button wire:click="changeDate('decrement')" type="button" class="btn btn-primary">
                                 <i class="fas fa-chevron-left"></i></button>
 
                             <input class="form-control" value="{{ $date ?? date('Y-m') }}" id="monthpicker"
-                                style="border-radius: 0;">
+                                   style="border-radius: 0;">
 
                             <button wire:click="changeDate('increment')" type="button" class="btn btn-primary">
                                 <i class="fas fa-chevron-right"></i></button>
                         </div>
                     </div>
                     <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
-                        <div class="form-group">
-                            <label for="supplier">Branch</label>
-                            <select class="form-control" id="supplier" wire:model.live="branch">
-                                <option selected value="">Select Branch</option>
-                                @foreach ($branches as $branch)
+                    <div class="form-group">
+                        <label for="supplier">Branch</label>
+                        <select class="form-control" id="supplier" wire:model.live="branch">
+                            <option selected value="">Select Branch</option>
+                            @foreach ($branches as $branch)
                                 <option value="{{ $branch->id }}" @if (auth()->user()->branch_id == $branch->id)
                                     selected @endif>
                                     {{ $branch->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('branch')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                            @endforeach
+                        </select>
+                        @error('branch')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="expenses-tab" data-toggle="tab" href="#expenses" role="tab"
+               aria-controls="sales" aria-selected="true">Expenses</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
+               aria-controls="payments" aria-selected="false">Payments</a>
+        </li>
+    </ul>
 
-        <!-- Tabs Navigation -->
-        <ul class="nav nav-tabs" id="reportTabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="expenses-tab" data-toggle="tab" href="#expenses" role="tab"
-                    aria-controls="sales" aria-selected="true">Expenses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
-                    aria-controls="payments" aria-selected="false">Payments</a>
-            </li>
-        </ul>
+    <div class="tab-content" id="reportTabsContent">
+        <!-- Expenses Tab -->
+        <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="sales-tab">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3>Monthly Income</h3>
+                    <!-- Monthly Expenses table content -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <th>Day</th>
+                                <th>Total Payment</th>
+                                <th>Expenses</th>
+                                <th>Total</th>
+                            </tr>
+                            @php
 
-        <div class="tab-content" id="reportTabsContent">
-            <!-- Expenses Tab -->
-            <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="sales-tab">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h3>Monthly Income</h3>
-                        <!-- Monthly Expenses table content -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <th>Day</th>
-                                        <th>Total Payment</th>
-                                        <th>Expenses</th>
-                                        <th>Total</th>
-                                    </tr>
-                                    @php
-                                    use Carbon\Carbon;
+                                $dailyPayments = $this->getDailyPaymentAmountTotal();
+                                $dailyExpenses = $this->getDailyExpenses();
+                                $total = 0;
 
-                                    $dailyPayments = $this->getDailyPaymentAmountTotal();
-                                    $dailyExpenses = $this->getDailyExpenses();
-                                    $total = 0;
+                                $currentMonth = $this->date ?? now()->format('Y-m');
+                                $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
+                            @endphp
 
-                                    $currentMonth = $this->date ?? now()->format('Y-m');
-                                    $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
-                                    @endphp
-
-                                    @foreach(range(1, $daysInMonth) as $day)
-                                    @php
+                            @foreach(range(1, $daysInMonth) as $day)
+                                @php
                                     $fullDate = Carbon::createFromFormat('Y-m-d',
                                     "{$currentMonth}-{$day}")->format('m/d/Y');
                                     $payment = $dailyPayments->firstWhere('day', $day)->total ?? 0;
                                     $expense = $dailyExpenses->firstWhere('day', $day)->total_expenses ?? 0;
                                     $subtotal = $payment - $expense;
                                     $total += $subtotal;
-                                    @endphp
-                                    <tr>
-                                        <td>{{ $fullDate }}</td>
-                                        <td>@money($payment)</td>
-                                        <td>@money($expense)</td>
-                                        <td>@money($subtotal)</td>
-                                    </tr>
-                                    @endforeach
-                                    <tr>
-                                        <td colspan="3"><strong>Total</strong></td>
-                                        <td>@money($total)</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
+                                @endphp
+                                <tr>
+                                    <td>{{ $fullDate }}</td>
+                                    <td>@money($payment)</td>
+                                    <td>@money($expense)</td>
+                                    <td>@money($subtotal)</td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <td colspan="3"><strong>Total</strong></td>
+                                <td>@money($total)</td>
+                            </tr>
+                            </tbody>
+                        </table>
 
                     </div>
+
                 </div>
             </div>
+        </div>
 
-            <!-- Payments Tab -->
-            <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
+        <!-- Payments Tab -->
+        <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+            <div class="card shadow mb-4">
+                <div class="card-body">
 
-                        <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="check-tab" data-toggle="tab" href="#check" role="tab"
-                                    aria-controls="check" aria-selected="true">Check</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="bank-tab" data-toggle="tab" href="#bank" role="tab"
-                                    aria-controls="bank" aria-selected="true">Bank</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="card-tab" data-toggle="tab" href="#card" role="tab"
-                                    aria-controls="card" aria-selected="true">Card</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="cash-tab" data-toggle="tab" href="#cash" role="tab"
-                                    aria-controls="cash" aria-selected="true">Cash</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="gcash-tab" data-toggle="tab" href="#gcash" role="tab"
-                                    aria-controls="gcash" aria-selected="true">GCash</a>
-                            </li>
-                        </ul>
+                    <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="check-tab" data-toggle="tab" href="#check" role="tab"
+                               aria-controls="check" aria-selected="true">Check</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="bank-tab" data-toggle="tab" href="#bank" role="tab"
+                               aria-controls="bank" aria-selected="true">Bank</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="card-tab" data-toggle="tab" href="#card" role="tab"
+                               aria-controls="card" aria-selected="true">Card</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="cash-tab" data-toggle="tab" href="#cash" role="tab"
+                               aria-controls="cash" aria-selected="true">Cash</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="gcash-tab" data-toggle="tab" href="#gcash" role="tab"
+                               aria-controls="gcash" aria-selected="true">GCash</a>
+                        </li>
+                    </ul>
 
-                        <div class="tab-content" id="paymentTabsContent">
-                            <!-- Check Payments -->
-                            <div class="tab-pane fade show active" id="check" role="tabpanel"
-                                aria-labelledby="check-tab">
-                                <h3>Check Payments</h3>
-                                <table class="table table-bordered">
-                                    <thead>
+                    <div class="tab-content" id="paymentTabsContent">
+                        <!-- Check Payments -->
+                        <div class="tab-pane fade show active" id="check" role="tabpanel"
+                             aria-labelledby="check-tab">
+                            <h3>Check Payments</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Customer Name</th>
+                                    <th>Reference Number</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @php
+                                    $total_check_payment = 0;
+                                @endphp
+                                @foreach($checkPayments as $payment)
+                                    @php
+                                        $total_check_payment += $payment->amount
+                                    @endphp
+                                    <tr>
+                                        <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                                        <td>{{ $payment->customer_name }}</td>
+                                        <td>{{ $payment->reference }}</td>
+                                        <td>@money($payment->amount)</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>@money($total_check_payment)</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Repeat similar structure for other payment types -->
+                        <div class="tab-pane fade" id="bank" role="tabpanel" aria-labelledby="bank-tab">
+                            <h3>Bank Payments</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Customer Name</th>
+                                    <th>Reference Number</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @php
+                                    $total_bank_payment = 0;
+                                @endphp
+                                @foreach($bankPayments as $payment)
+                                    @php
+                                        $total_bank_payment += $payment->amount
+                                    @endphp
+                                    <tr>
+                                        <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                                        <td>{{ $payment->customer_name }}</td>
+                                        <td>{{ $payment->reference }}</td>
+                                        <td>@money($payment->amount)</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>@money($total_bank_payment)</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Card Payments -->
+                        <div class="tab-pane fade" id="card" role="tabpanel" aria-labelledby="card-tab">
+                            <h3>Card Payments</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Customer Name</th>
+                                    <th>Reference Number</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @php
+                                    $total_card_payment = 0;
+                                @endphp
+                                @foreach($cardPayments as $payment)
+                                    @php
+                                        $total_card_payment += $payment->amount;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                                        <td>{{ $payment->customer_name }}</td>
+                                        <td>{{ $payment->reference }}</td>
+                                        <td>@money($payment->amount)</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>@money($total_card_payment)</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Cash Payments -->
+                        <div class="tab-pane fade" id="cash" role="tabpanel" aria-labelledby="cash-tab">
+                            <h3>Cash Payments</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Customer Name</th>
+                                    <th>Reference Number</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @php
+                                    $total_cash_payment = 0;
+                                @endphp
+                                @foreach($cashPayments as $payment)
+                                    @php
+                                        $total_cash_payment += $payment->amount;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                                        <td>{{ $payment->customer_name }}</td>
+                                        <td>{{ $payment->reference }}</td>
+                                        <td>@money($payment->amount)</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>@money($total_cash_payment)</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- GCash Payments -->
+                        <div class="tab-pane fade" id="gcash" role="tabpanel" aria-labelledby="gcash-tab">
+                            <h3>GCash Payments</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Customer Name</th>
+                                    <th>Reference Number</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @php
+                                    $total_gcash_payment = 0;
+                                @endphp
+                                @foreach($gcashPayments as $payment)
+                                    @php
+                                        $total_gcash_payment += $payment->amount;
+                                        @endphp
                                         <tr>
-                                            <th>Day</th>
-                                            <th>Customer Name</th>
-                                            <th>Reference Number</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($checkPayments as $payment)
-                                        <tr>
-                                            <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                                            <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
                                             <td>{{ $payment->customer_name }}</td>
                                             <td>{{ $payment->reference }}</td>
                                             <td>@money($payment->amount)</td>
                                         </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Repeat similar structure for other payment types -->
-                            <div class="tab-pane fade" id="bank" role="tabpanel" aria-labelledby="bank-tab">
-                                <h3>Bank Payments</h3>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Day</th>
-                                            <th>Customer Name</th>
-                                            <th>Reference Number</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($bankPayments as $payment)
-                                        <tr>
-                                            <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                                            <td>{{ $payment->customer_name }}</td>
-                                            <td>{{ $payment->reference }}</td>
-                                            <td>@money($payment->amount)</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Card Payments -->
-                            <div class="tab-pane fade" id="card" role="tabpanel" aria-labelledby="card-tab">
-                                <h3>Card Payments</h3>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Day</th>
-                                            <th>Customer Name</th>
-                                            <th>Reference Number</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($cardPayments as $payment)
-                                        <tr>
-                                            <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                                            <td>{{ $payment->customer_name }}</td>
-                                            <td>{{ $payment->reference }}</td>
-                                            <td>@money($payment->amount)</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Cash Payments -->
-                            <div class="tab-pane fade" id="cash" role="tabpanel" aria-labelledby="cash-tab">
-                                <h3>Cash Payments</h3>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Day</th>
-                                            <th>Customer Name</th>
-                                            <th>Reference Number</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($cashPayments as $payment)
-                                        <tr>
-                                            <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                                            <td>{{ $payment->customer_name }}</td>
-                                            <td>{{ $payment->reference }}</td>
-                                            <td>@money($payment->amount)</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- GCash Payments -->
-                            <div class="tab-pane fade" id="gcash" role="tabpanel" aria-labelledby="gcash-tab">
-                                <h3>GCash Payments</h3>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Day</th>
-                                            <th>Customer Name</th>
-                                            <th>Reference Number</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($gcashPayments as $payment)
-                                        <tr>
-                                            <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                                            <td>{{ $payment->customer_name }}</td>
-                                            <td>{{ $payment->reference }}</td>
-                                            <td>@money($payment->amount)</td>
-                                        </tr>
-                                        @endforeach
+                                    @endforeach
+                                    <tr>
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><strong>@money($total_gcash_payment)</strong></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-
 
 
                     </div>
@@ -290,193 +349,191 @@
         </div>
 
 
-
-
     </div>
-</div>
+    </div>
 
-<x-slot:print>
-<div class="printable">
-    <table>
-        <tr>
-            <td style="width: 38%">
-                <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style="width:350px">
-            </td>
-            <td align="center">
-                <h4><strong>MONTHLY SALES AND PAYMENT METHOD REPORT</strong></h4>
-                <h4><strong>{{ $branch_name ?? '' }} {{ date('F j, Y', strtotime($date)) }}</strong> <small>Page 1
-                        of 1 Printed {{ date('F j h:iA') }}</small></h4>
-            </td>
-        </tr>
-    </table>
+    <x-slot:print>
+        <div class="printable">
+            <table>
+                <tr>
+                    <td style="width: 38%">
+                        <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style="width:350px">
+                    </td>
+                    <td align="center">
+                        <h4><strong>MONTHLY SALES AND PAYMENT METHOD REPORT</strong></h4>
+                        <h4><strong>{{ $branch_name ?? '' }} {{ date('F j, Y', strtotime($date)) }}</strong> <small>Page 1
+                                of 1 Printed {{ date('F j h:iA') }}</small></h4>
+                    </td>
+                </tr>
+            </table>
 
-    <!-- Expenses Table -->
-    <h3>Monthly Expenses</h3>
-    <table class="table table-bordered receipt-table">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Total Payment</th>
-                <th>Expenses</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-            $dailyPayments = $this->getDailyPaymentAmountTotal();
-            $dailyExpenses = $this->getDailyExpenses();
-            $total = 0;
+            <!-- Expenses Table -->
+            <h3>Monthly Expenses</h3>
+            <table class="table table-bordered receipt-table">
+                <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Total Payment</th>
+                    <th>Expenses</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                @php
+                    $dailyPayments = $this->getDailyPaymentAmountTotal();
+                    $dailyExpenses = $this->getDailyExpenses();
+                    $total = 0;
 
-            $currentMonth = $this->date ?? now()->format('Y-m');
-            $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
+                    $currentMonth = $this->date ?? now()->format('Y-m');
+                    $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
             @endphp
 
             @foreach(range(1, $daysInMonth) as $day)
-            @php
-            $fullDate = Carbon::createFromFormat('Y-m-d',
-            "{$currentMonth}-{$day}")->format('m/d/Y');
-            $payment = $dailyPayments->firstWhere('day', $day)->total ?? 0;
-            $expense = $dailyExpenses->firstWhere('day', $day)->total_expenses ?? 0;
-            $subtotal = $payment - $expense;
-            $total += $subtotal;
-            @endphp
-            <tr>
-                <td>{{ $fullDate }}</td>
-                <td>@money($payment)</td>
-                <td>@money($expense)</td>
-                <td>@money($subtotal)</td>
-            </tr>
+                @php
+                    $fullDate = Carbon::createFromFormat('Y-m-d',
+                    "{$currentMonth}-{$day}")->format('m/d/Y');
+                    $payment = $dailyPayments->firstWhere('day', $day)->total ?? 0;
+                    $expense = $dailyExpenses->firstWhere('day', $day)->total_expenses ?? 0;
+                    $subtotal = $payment - $expense;
+                    $total += $subtotal;
+                @endphp
+                <tr>
+                    <td>{{ $fullDate }}</td>
+                    <td>@money($payment)</td>
+                    <td>@money($expense)</td>
+                    <td>@money($subtotal)</td>
+                </tr>
             @endforeach
             <tr>
                 <td colspan="3"><strong>Total</strong></td>
                 <td>@money($total)</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <!-- Payments Section -->
-    <h3>Payments</h3>
+        <!-- Payments Section -->
+        <h3>Payments</h3>
 
-    <!-- Check Payments -->
-    <h4>Check Payments</h4>
-    <table class="table table-bordered receipt-table">
-        <thead>
+        <!-- Check Payments -->
+        <h4>Check Payments</h4>
+        <table class="table table-bordered receipt-table">
+            <thead>
             <tr>
                 <th>Day</th>
                 <th>Customer Name</th>
                 <th>Reference Number</th>
                 <th>Amount</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach($checkPayments as $payment)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                <td>{{ $payment->customer_name }}</td>
-                <td>{{ $payment->reference }}</td>
-                <td>@money($payment->amount)</td>
-            </tr>
+                <tr>
+                    <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                    <td>{{ $payment->customer_name }}</td>
+                    <td>{{ $payment->reference }}</td>
+                    <td>@money($payment->amount)</td>
+                </tr>
             @endforeach
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <!-- Bank Payments -->
-    <h4>Bank Payments</h4>
-    <table class="table table-bordered receipt-table">
-        <thead>
+        <!-- Bank Payments -->
+        <h4>Bank Payments</h4>
+        <table class="table table-bordered receipt-table">
+            <thead>
             <tr>
                 <th>Day</th>
                 <th>Customer Name</th>
                 <th>Reference Number</th>
                 <th>Amount</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach($bankPayments as $payment)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                <td>{{ $payment->customer_name }}</td>
-                <td>{{ $payment->reference }}</td>
-                <td>@money($payment->amount)</td>
-            </tr>
+                <tr>
+                    <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                    <td>{{ $payment->customer_name }}</td>
+                    <td>{{ $payment->reference }}</td>
+                    <td>@money($payment->amount)</td>
+                </tr>
             @endforeach
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <!-- Card Payments -->
-    <h4>Card Payments</h4>
-    <table class="table table-bordered receipt-table">
-        <thead>
+        <!-- Card Payments -->
+        <h4>Card Payments</h4>
+        <table class="table table-bordered receipt-table">
+            <thead>
             <tr>
                 <th>Day</th>
                 <th>Customer Name</th>
                 <th>Reference Number</th>
                 <th>Amount</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach($cardPayments as $payment)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                <td>{{ $payment->customer_name }}</td>
-                <td>{{ $payment->reference }}</td>
-                <td>@money($payment->amount)</td>
-            </tr>
+                <tr>
+                    <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                    <td>{{ $payment->customer_name }}</td>
+                    <td>{{ $payment->reference }}</td>
+                    <td>@money($payment->amount)</td>
+                </tr>
             @endforeach
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <!-- Cash Payments -->
-    <h4>Cash Payments</h4>
-    <table class="table table-bordered receipt-table">
-        <thead>
+        <!-- Cash Payments -->
+        <h4>Cash Payments</h4>
+        <table class="table table-bordered receipt-table">
+            <thead>
             <tr>
                 <th>Day</th>
                 <th>Customer Name</th>
                 <th>Reference Number</th>
                 <th>Amount</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach($cashPayments as $payment)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                <td>{{ $payment->customer_name }}</td>
-                <td>{{ $payment->reference }}</td>
-                <td>@money($payment->amount)</td>
-            </tr>
+                <tr>
+                    <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                    <td>{{ $payment->customer_name }}</td>
+                    <td>{{ $payment->reference }}</td>
+                    <td>@money($payment->amount)</td>
+                </tr>
             @endforeach
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <!-- GCash Payments -->
-    <h4>GCash Payments</h4>
-    <table class="table table-bordered receipt-table">
-        <thead>
+        <!-- GCash Payments -->
+        <h4>GCash Payments</h4>
+        <table class="table table-bordered receipt-table">
+            <thead>
             <tr>
                 <th>Day</th>
                 <th>Customer Name</th>
                 <th>Reference Number</th>
                 <th>Amount</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach($gcashPayments as $payment)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($payment->date)->format('m/d/Y') }}</td>
-                <td>{{ $payment->customer_name }}</td>
-                <td>{{ $payment->reference }}</td>
-                <td>@money($payment->amount)</td>
-            </tr>
+                <tr>
+                    <td>{{ Carbon::parse($payment->date)->format('m/d/Y') }}</td>
+                    <td>{{ $payment->customer_name }}</td>
+                    <td>{{ $payment->reference }}</td>
+                    <td>@money($payment->amount)</td>
+                </tr>
             @endforeach
-        </tbody>
-    </table>
-</div>
-    </x-slot>
+            </tbody>
+        </table>
+    </div>
+</x-slot>
 
 
-    @assets
-    <style>
+@assets
+<style>
     body {
         font-family: Arial, sans-serif;
     }
@@ -615,17 +672,17 @@
         }
 
     }
-    </style>
-    @endassets
+</style>
+@endassets
 
-    @script
-    <script>
+@script
+<script>
     $('#monthpicker').datepicker({
         format: 'yyyy-mm',
         minViewMode: 1,
         autoclose: true,
         todayHighlight: true,
-    }).on('change', function() {
+    }).on('change', function () {
         var date = $(this).val();
         if (date) {
             $wire.dispatch('date-set', {
@@ -642,5 +699,5 @@
             $('#monthpicker').datepicker('clearDates');
         }
     });
-    </script>
-    @endscript
+</script>
+@endscript

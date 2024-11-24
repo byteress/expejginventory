@@ -42,6 +42,7 @@ use App\Livewire\Admin\Installment\InstallmentDetails;
 use App\Livewire\Admin\Expense\DailyExpense;
 use App\Livewire\Admin\Reports\Reports;
 use App\Livewire\Admin\Reports\DailyItemReport;
+use App\Livewire\Admin\Reports\DailyItemPrint;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
@@ -106,14 +107,7 @@ Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
     Route::get('/reports/monthly', Monthly::class)->name('reports.monthly');
     Route::get('/reports/daily-items', DailyItemReport::class)->name('reports.daily.items');
-    Route::get('/reports/print', function (Codedge\Fpdf\Fpdf\Fpdf $fpdf) {
-
-        $fpdf->AddPage();
-        $fpdf->SetFont('Courier', 'B', 18);
-        $fpdf->Cell(50, 25, 'Hello World!');
-        $fpdf->Output();
-        exit;
-
-    });
+    Route::get('/reports/daily-items/{branch}/{item_id}', DailyItemPrint::class)
+        ->name('reports.print.daily.items');
 
 });
