@@ -18,6 +18,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use StockManagementContracts\IStockManagementService;
 use Throwable;
+use SupplierManagement\Models\Supplier;
 
 #[Title('Stock Management')]
 class StockManagement extends Component
@@ -169,10 +170,12 @@ class StockManagement extends Component
             })->where(function($q){
                 $q->where('model', 'LIKE', '%'.$this->search.'%')
                     ->orWhere('sku_number', 'LIKE', '%'.$this->search.'%')
-                    ->orWhere('description', 'LIKE', '%'.$this->search.'%');
+                    ->orWhere('description', 'LIKE', '%'.$this->search.'%')
+                    ->orWhere('suppliers.code', 'LIKE', '%'.$this->search.'%');
             })->select('products.*', 'suppliers.code', DB::raw('COALESCE(stocks.available, 0) as quantity'))
             ->whereNull('products.deleted_at')
             ->orderByDesc('quantity');
+
 
         return $query->paginate(10);
     }
@@ -182,7 +185,9 @@ class StockManagement extends Component
     {
         return view('livewire.admin.stock.stock-management', [
             'products' => $this->getProducts(),
-            'branches' => Branch::all()
+            'branches' => Branch::all(),
+            'suppliers' => Supplier::all()
+
         ]);
     }
 }

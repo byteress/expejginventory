@@ -78,7 +78,8 @@ class Reports extends Component
         $query = DB::table('transactions')
             ->join('orders', 'transactions.order_id', '=', 'orders.order_id')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
-            ->select(['transactions.id as transaction_id', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*'])
+            ->join('users', 'orders.assistant_id', '=', 'users.id')
+            ->select(['transactions.id as transaction_id', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*', 'users.first_name as fname', 'users.last_name as lname'])
             ->whereDate('transactions.created_at', $date)
             ->whereIn('transactions.type', ['full', 'down'])
             ->where('orders.previous', 0);
