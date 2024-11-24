@@ -79,7 +79,7 @@ class DailyItemReport extends Component
 
         if(!$result) return 0;
 
-        return $result->running_available;
+        return $result->running_available + $result->running_reserved;
     }
 
     public function getClosingQuantity(): int|null

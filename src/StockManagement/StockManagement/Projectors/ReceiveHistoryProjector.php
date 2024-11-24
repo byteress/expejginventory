@@ -199,7 +199,7 @@ class ReceiveHistoryProjector extends Projector
                 'branch_id' => $event->branchId,
                 'quantity' => $event->quantity,
                 'user_id' => $event->actor,
-                'action' => 'Adjusted',
+                'action' => 'Transferred',
                 'running_available' => $latest['available'],
                 'running_reserved' => $latest['reserved'],
                 'running_damaged' => $latest['damaged'],
