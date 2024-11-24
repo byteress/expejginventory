@@ -93,7 +93,7 @@ class DailyItemReport extends Component
 
         if(!$result) return null;
 
-        return $result->running_available;
+        return $result->running_available + $result->running_reserved;
     }
 
     public function getOrderHistory()
