@@ -101,7 +101,8 @@ class ReceiveProducts extends Component
             })->where(function($q){
                 $q->where('model', 'LIKE', '%'.$this->search.'%')
                     ->orWhere('sku_number', 'LIKE', '%'.$this->search.'%')
-                    ->orWhere('description', 'LIKE', '%'.$this->search.'%');
+                    ->orWhere('description', 'LIKE', '%'.$this->search.'%')
+                    ->orWhere('suppliers.code', 'LIKE', '%'.$this->search.'%');
             })->select('products.*', 'suppliers.code', DB::raw('COALESCE(stocks.available, 0) as quantity'))
             ->whereNotIn('products.id', $this->selected)
             ->whereNull('products.deleted_at')
