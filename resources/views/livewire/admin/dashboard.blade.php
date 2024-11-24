@@ -121,7 +121,7 @@
                         @empty
                             <tr>
                                 <td colspan="10">No customers found.</td>
-                            </tr>
+                              </tr>
                         @endforelse
                         </tbody>
                     </table>
