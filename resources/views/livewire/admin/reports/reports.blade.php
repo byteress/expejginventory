@@ -83,6 +83,7 @@
                                 <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">DR</th>
                                 <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">CI</th>
                                 <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">CR</th>
+                                <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Representative</th>
                                 <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Customer</th>
                                 <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Unit</th>
                                 <th rowspan="2" style="position: sticky; top: 0; z-index: 10; background-color: #6c757d;">Particulars</th>
@@ -131,10 +132,12 @@
                                     @endphp
                                 <tr>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
-                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'SI' ? $receiptType . $transaction->receipt_number : '' }}</td>
-                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'DR' ? $receiptType . $transaction->receipt_number : '' }}</td>
-                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CI' ? $receiptType . $transaction->receipt_number : '' }}</td>
-                                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $receiptType . $transaction->receipt_number : '' }}</td>
+
+                                    <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'SI' ?  $transaction->receipt_number : '' }}</a></td>
+                                    <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'DR' ?  $transaction->receipt_number : '' }}</a></td>
+                                    <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CI' ?  $transaction->receipt_number : '' }}</a></td>
+                                    <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CR' ?  $transaction->receipt_number : '' }}</a></td>
+                                    <td rowspan="{{ $rowspan }}">{{ $transaction->fname }} {{ $transaction->lname }}</td>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
@@ -187,10 +190,11 @@
                             @endphp
                         <tr>
                             <td></td>
-                            <td>{{ $receiptType == 'SI' ? $receiptType . $collection->receipt_number : '' }}</td>
-                            <td>{{ $receiptType == 'DR' ? $receiptType . $collection->receipt_number : '' }}</td>
-                            <td>{{ $receiptType == 'CI' ? $receiptType . $collection->receipt_number : '' }}</td>
+                            <td>{{ $receiptType == 'SI' ?  $collection->receipt_number : '' }}</td>
+                            <td>{{ $receiptType == 'DR' ?  $collection->receipt_number : '' }}</td>
+                            <td>{{ $receiptType == 'CI' ?  $collection->receipt_number : '' }}</td>
                             <td>{{ $collection->or_number }}</td>
+                            <td></td>
                             <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
                             <td></td>
                             <td>AR#{{ $collection->or_number }}</td>
