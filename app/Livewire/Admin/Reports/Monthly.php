@@ -18,7 +18,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use ProductManagement\Models\Product;
 
-#[Title('Monthly Expenses')]
+#[Title('Monthly Report')]
 class Monthly extends Component
 {
     #[Url]

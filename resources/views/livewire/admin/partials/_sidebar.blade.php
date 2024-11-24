@@ -15,7 +15,7 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <a wire:navigate class="nav-link" href="{{ route('admin.dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
@@ -31,16 +31,16 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseZero"
+    <li class="nav-item {{ request()->routeIs('admin.product', 'admin.create.product') ? 'active' : '' }}">
+        <a class="nav-link {{ request()->routeIs('admin.product', 'admin.create.product') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapseZero"
             aria-expanded="true" aria-controls="collapseZero">
             <i class="fas fa-fw fa-chair"></i>
             <span>Products</span>
         </a>
-        <div id="collapseZero" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseZero" class="collapse {{ request()->routeIs('admin.product', 'admin.create.product') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a wire:navigate class="collapse-item" href="{{ route('admin.product') }}">List</a>
-                <a wire:navigate class="collapse-item" href="{{ route('admin.create.product') }}">New Product</a>
+                <a wire:navigate class="collapse-item {{ request()->routeIs('admin.product') ? 'active' : '' }}" href="{{ route('admin.product') }}">List</a>
+                <a wire:navigate class="collapse-item {{ request()->routeIs('admin.create.product') ? 'active' : '' }}" href="{{ route('admin.create.product') }}">New Product</a>
             </div>
         </div>
     </li>
@@ -278,6 +278,7 @@
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a href="{{ route('admin.reports.daily') }}" wire:navigate class="collapse-item" href="#">Daily Report</a>
+                <a href="{{ route('admin.reports.daily.items') }}" wire:navigate class="collapse-item" href="#">Daily Item Report</a>
                 <a href="{{ route('admin.reports.monthly') }}" wire:navigate class="collapse-item" href="#">Monthly Report</a>
             </div>
         </div>
