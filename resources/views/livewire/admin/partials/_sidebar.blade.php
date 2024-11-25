@@ -61,7 +61,36 @@
         </div>
     </li>
 
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item {{ isActiveRoute(['admin.supplier', 'admin.create.supplier']) }}">
+        <a class="nav-link {{ isActiveCollapse(['admin.supplier', 'admin.create.supplier']) }}" href="#" data-toggle="collapse" data-target="#collapseTwo"
+           aria-expanded="{{ isActiveRoute(['admin.supplier', 'admin.create.supplier']) ? 'true' : 'false' }}" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-box-open"></i>
+            <span>Supplier</span>
+        </a>
+        <div id="collapseTwo" class="collapse {{ isActiveRoute(['admin.supplier', 'admin.create.supplier']) ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.supplier') }}" href="{{ route('admin.supplier') }}">List</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.supplier') }}" href="{{ route('admin.create.supplier') }}">New Supplier</a>
+            </div>
+        </div>
+    </li>
     <!-- Repeat similar structure for Suppliers, Users, etc. -->
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item {{ isActiveRoute(['admin.users', 'admin.create.user']) }}">
+        <a class="nav-link {{ isActiveCollapse(['admin.users', 'admin.create.user']) }}" href="#" data-toggle="collapse" data-target="#collapseThree"
+           aria-expanded="{{ isActiveRoute(['admin.users', 'admin.create.user']) ? 'true' : 'false' }}" aria-controls="collapseThree">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Users</span>
+        </a>
+        <div id="collapseThree" class="collapse {{ isActiveRoute(['admin.users', 'admin.create.user']) ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.users') }}" href="{{ route('admin.users') }}">List</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.user') }}" href="{{ route('admin.create.user') }}">New User</a>
+            </div>
+        </div>
+    </li>
 
     @endhasrole
 
