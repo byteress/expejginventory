@@ -179,7 +179,7 @@
                         @forelse($items as $item)
                           <tr>
                             <td>{{ $item->sku_code }}-{{ $item->sku_number }}</td>
-                            <td>{{ $item->model }} {{ $item->description }}</td>
+                            <td><a href="{{ route('admin.reports.daily.items', ['product' => $item->id]) }}">{{ $item->model }} {{ $item->description }}</a></td>
                             <td>@money($item->regular_price)</td>
                           </tr>
                         @empty
