@@ -61,7 +61,35 @@
         </div>
     </li>
 
-    <!-- Repeat similar structure for Suppliers, Users, etc. -->
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item {{ isActiveRoute(['admin.supplier', 'admin.create.supplier']) }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-box-open"></i>
+            <span>Supplier</span>
+        </a>
+        <div id="collapseTwo" class="collapse {{ isActiveRoute(['admin.supplier', 'admin.create.supplier']) ? 'show' : ''  }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.supplier') }}" href="{{ route('admin.supplier') }}">List</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.supplier') }}" href="{{ route('admin.create.supplier') }}">New Supplier</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item {{ isActiveRoute(['admin.users', 'admin.create.user']) }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+           aria-expanded="true" aria-controls="collapseThree">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Users</span>
+        </a>
+        <div id="collapseThree" class="collapse {{ isActiveRoute(['admin.users', 'admin.create.user']) ? 'show' : ''  }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.users') }}" href="{{ route('admin.users') }}">List</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.user') }}" href="{{ route('admin.create.user') }}">New User</a>
+            </div>
+        </div>
+    </li>
+
 
     @endhasrole
 
@@ -73,6 +101,21 @@
     <div class="sidebar-heading">
         Stocks
     </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    {{--    <li class="nav-item">--}}
+    {{--        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"--}}
+    {{--            aria-expanded="true" aria-controls="collapseFour">--}}
+    {{--            <i class="fas fa-fw fa-users"></i>--}}
+    {{--            <span>Receive Product</span>--}}
+    {{--        </a>--}}
+    {{--        <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">--}}
+    {{--            <div class="bg-white py-2 collapse-inner rounded">--}}
+    {{--                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product') }}">Receive</a>--}}
+    {{--                <a wire:navigate class="collapse-item" href="{{ route('admin.receive.product.history') }}">History</a>--}}
+    {{--            </div>--}}
+    {{--        </div>--}}
+    {{--    </li>--}}
 
     <!-- Manage Stocks Collapse Menu -->
     <li class="nav-item {{ isActiveRoute(['admin.manage.stock', 'admin.receive.product.history']) }}">
