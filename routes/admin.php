@@ -102,4 +102,5 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
 
 Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
+    Route::get('/reports/monthly', Reports::class)->name('reports.monthly');
 });

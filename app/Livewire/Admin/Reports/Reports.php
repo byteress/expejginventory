@@ -263,4 +263,6 @@ class Reports extends Component
             'branch_name' => $this->branch ? Branch::find($this->branch)?->name : null,
         ]);
     }
+
+    
 }
