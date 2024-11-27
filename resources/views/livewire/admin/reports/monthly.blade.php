@@ -368,7 +368,7 @@
             </table>
 
             <!-- Expenses Table -->
-            <h3>Monthly Expenses</h3>
+            <h3>Monthly Income</h3>
             <table class="table table-bordered receipt-table">
                 <thead>
                 <tr>
