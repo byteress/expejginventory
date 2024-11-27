@@ -72,7 +72,7 @@
                                         {{ $product->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'card-img-top']) }}
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
-                                                <h5 class="card-title"><b>{{ $product['model'] }}</b></h5>
+                                                <h5 class="card-title"><b>{{ $product['model'] }}</b><br><span class="text-sm">{{ $product['supplier_name']  }}</span></h5>
                                                 <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#stockModal-{{ $product['id'] }}">
                                                     In Stock <span class="badge badge-light">{{ $this->getProductStock($product['id']) }}</span>
                                                 </button>

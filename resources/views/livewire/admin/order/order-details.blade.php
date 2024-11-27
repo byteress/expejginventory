@@ -62,7 +62,7 @@
                                         <div class="card shadow">
                                             {{ $product->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'card-img-top']) }}
                                             <div class="card-body">
-                                                <h5 class="card-title"><b>{{ $product['model'] }}</b></h5>
+                                                <h5 class="card-title"><b>{{ $product['supplier_name'] }} {{ $product['model'] }}</b></h5>
                                                 <p class="card-text">{{ $product['description'] }}</p>
                                                 <div class="row">
                                                     <div class="col-5">
@@ -163,7 +163,7 @@
                                     {{ $this->getProduct($item->product_id)->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'img-fluid']) }}
                                 </div>
                                 <div class="col-md-2">
-                                    <h5 class="card-title mt-5 text-primary"><strong>{{ $item->title }}</strong></h5>
+                                    <h5 class="card-title mt-5 text-primary"><strong>{{ $this->getProductSupplierCode($item->product_id ) }} - {{ $item->title }}</strong></h5>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="d-flex justify-content-center">

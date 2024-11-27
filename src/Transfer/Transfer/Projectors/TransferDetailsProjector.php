@@ -28,7 +28,8 @@ class TransferDetailsProjector extends Projector
             ->where('product_id', $event->productId)
             ->update([
                 'received' => $event->received,
-                'damaged' => $event->damaged
+                'damaged' => $event->damaged,
+                'lacking' => $event->lacking
             ]);
     }
 }

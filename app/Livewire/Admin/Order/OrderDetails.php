@@ -462,7 +462,7 @@ class OrderDetails extends Component
 
     public function getProduct($productId)
     {
-        return Product::find($productId);
+        return Product::whereId($productId)->withTrashed()->first();
     }
 
     private function getProducts()
@@ -487,7 +487,7 @@ class OrderDetails extends Component
                 $q->where('model', 'LIKE', '%' . $this->search . '%')
                     ->orWhere('sku_number', 'LIKE', '%' . $this->search . '%')
                     ->orWhere('description', 'LIKE', '%' . $this->search . '%');
-            })->select('products.*', 'suppliers.code', 'product_requests.quantity as requested_quantity', DB::raw('COALESCE(stocks.available, 0) as quantity'))
+            })->select('products.*', 'suppliers.name as supplier_name', 'suppliers.code', 'product_requests.quantity as requested_quantity', DB::raw('COALESCE(stocks.available, 0) as quantity'))
             ->whereNull('products.deleted_at')
             ->whereNotIn('products.id', $ids)
             ->orderBy('quantity');

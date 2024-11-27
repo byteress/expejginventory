@@ -15,7 +15,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        {!! DNS1D::getBarcodeHTML($sku, 'EAN13', 2, 100, 'black', 15); !!}
+                        {!! DNS1D::getBarcodeHTML($sku, 'EAN13', 2, 100, 'black', 15) !!}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -5,6 +5,7 @@ use App\Livewire\Admin\Delivery\DeliveryDetails;
 use App\Livewire\Admin\Delivery\OutForDelivery;
 use App\Livewire\Admin\Delivery\ToShip;
 use App\Livewire\Admin\Payment\CustomerList;
+use App\Livewire\Admin\Reports\Monthly;
 use App\Livewire\Admin\Stock\BatchDetails;
 use App\Livewire\Admin\Stock\BatchHistory;
 use App\Livewire\Admin\Stock\StockManagement;
@@ -40,6 +41,8 @@ use App\Livewire\Admin\Order\OrderDetails;
 use App\Livewire\Admin\Installment\InstallmentDetails;
 use App\Livewire\Admin\Expense\DailyExpense;
 use App\Livewire\Admin\Reports\Reports;
+use App\Livewire\Admin\Reports\DailyItemReport;
+use App\Livewire\Admin\Reports\DailyItemPrint;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
@@ -102,5 +105,8 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
 
 Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
-    Route::get('/reports/monthly', Reports::class)->name('reports.monthly');
+    Route::get('/reports/monthly', Monthly::class)->name('reports.monthly');
+    Route::get('/reports/daily-items/{product}', DailyItemReport::class)->name('reports.daily.items');
+//    Route::get('/reports/daily-items/{branch}/{item_id}', DailyItemPrint::class)
+//        ->name('reports.print.daily.items');
 });

@@ -101,6 +101,7 @@
                                             <span class="sr-only">Toggle Dropdown</span>
                                         </button>
                                         <div class="dropdown-menu">
+                                            <a wire:navigate class="dropdown-item" href="{{ route('admin.reports.daily.items', ['product' => $product->id]) }}">Daily Report</a>
                                             <a data-toggle="modal" data-target="#deleteModal{{ $product->id }}}}" class="dropdown-item"
                                                 href="#">Delete</a>
                                         </div>
