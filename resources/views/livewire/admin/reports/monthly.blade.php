@@ -373,7 +373,7 @@
                 <thead>
                 <tr>
                     <th>Day</th>
-                    <th>Total Payment</th>
+                    <th>Total Payment</th>  
                     <th>Expenses</th>
                     <th>Total</th>
                 </tr>
