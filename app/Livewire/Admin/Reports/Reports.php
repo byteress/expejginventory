@@ -121,13 +121,9 @@ class Reports extends Component
 
     public function getReceiptType($order): string
     {
-        if($order->payment_type == 'installment') return 'CI';
-        if($order->order_type != 'regular') return 'CI';
+        $explode = explode('#', $order->receipt_number);
 
-        $orderTotal = $order->total + $order->delivery_fee;
-        if($orderTotal >= 1000000) return 'DR';
-
-        return 'SI';
+        return $explode[0] ?? '';
     }
 
     public function getDiscount($orderId)

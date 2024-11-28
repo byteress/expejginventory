@@ -542,6 +542,7 @@ class OrderDetails extends Component
     {
         $this->resetErrorBag();
         $this->validate([
+            'receiptNumber' => 'required',
             'deliveryAddress' => [
                 Rule::requiredIf($this->deliveryType == 'deliver' && !$this->sameAddress)
             ],
@@ -695,7 +696,6 @@ class OrderDetails extends Component
     public function fullPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
     {
         $this->validate([
-            'receiptNumber' => 'required',
             'amounts.*' => 'required|numeric',
             'referenceNumbers.*' => 'required',
         ], [
