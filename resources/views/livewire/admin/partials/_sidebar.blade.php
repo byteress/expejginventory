@@ -22,7 +22,7 @@
         </a>
     </li>
 
-    @hasrole('admin')
+    @hasanyrole('admin|inventory_head')
     <!-- Divider -->
     <hr class="sidebar-divider">
 
@@ -45,7 +45,7 @@
             </div>
         </div>
     </li>
-
+    @hasrole('admin')
     <!-- Branches Collapse Menu -->
     <li class="nav-item {{ isActiveRoute(['admin.branch', 'admin.create.branch']) }}">
         <a class="nav-link {{ isActiveCollapse(['admin.branch', 'admin.create.branch']) }}" href="#" data-toggle="collapse" data-target="#collapseBranches"
@@ -91,8 +91,9 @@
             </div>
         </div>
     </li>
-
     @endhasrole
+
+    @endhasanyrole
 
     @hasanyrole('admin|inventory_head')
     <!-- Divider -->

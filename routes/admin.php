@@ -47,10 +47,6 @@ use App\Livewire\Admin\Reports\DailyItemPrint;
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
 Route::group(['middleware' => ['role:admin']], function () {
-    Route::get('/product', Products::class)->name('product');
-    Route::get('/product/new', CreateProduct::class)->name('create.product');
-    Route::get('/product/edit/{product}', EditProduct::class)->name('edit.product');
-
     Route::get('/branch', Branches::class)->name('branch');
     Route::get('/branch/new', CreateBranch::class)->name('create.branch');
     Route::get('/branch/edit/{branch}', EditBranch::class)->name('edit.branch');
@@ -65,6 +61,10 @@ Route::group(['middleware' => ['role:admin']], function () {
 
 });
 Route::group(['middleware' => ['role:admin|inventory_head']], function () {
+    Route::get('/product', Products::class)->name('product');
+    Route::get('/product/new', CreateProduct::class)->name('create.product');
+    Route::get('/product/edit/{product}', EditProduct::class)->name('edit.product');
+
     Route::get('/manage-stock', StockManagement::class)->name('manage.stock');
 
     Route::get('/receive-product', ReceiveProducts::class)->name('receive.product');
