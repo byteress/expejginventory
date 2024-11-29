@@ -224,6 +224,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                             <td>@money($totalGrossPrice)</td>
                             <td>@money($totalAmount)</td>
                             <td>@money($totalDiscount)</td>

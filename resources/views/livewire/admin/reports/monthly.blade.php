@@ -368,12 +368,12 @@
             </table>
 
             <!-- Expenses Table -->
-            <h3>Monthly Expenses</h3>
+            <h3>Monthly Income</h3>
             <table class="table table-bordered receipt-table">
                 <thead>
                 <tr>
                     <th>Day</th>
-                    <th>Total Payment</th>
+                    <th>Total Payment</th>  
                     <th>Expenses</th>
                     <th>Total</th>
                 </tr>
