@@ -151,6 +151,26 @@ class Reports extends Component
         return $query->sum('payment_methods.amount');
     }
 
+    public function getCancelledPaymentAmount(string $orderId, string $type): array
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        $query = DB::table('payment_methods')
+            ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
+            ->where('orders.order_id', $orderId)
+            ->where('payment_methods.method', $type)
+            ->where('payment_methods.credit', 0);
+
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
+        return [
+            'amount' => $query->sum('payment_methods.amount'),
+            'receipt' => $order->receipt_number
+        ];
+    }
+
     public function getPaymentAmountTotal(string $type): int
     {
         $date = $this->date ?? now()->format('Y-m-d');

@@ -129,7 +129,7 @@
                                     <td>
                                         @foreach($this->getItems($order->order_id) as $item)
                                             <div wire:key="{{ $item->order_id }}.{{ $item->product_id }}" class="form-group row">
-                                                <label for="colFormLabel" class="col-sm-5 col-form-label">{{ $item->delivered }}/{{ $item->quantity }} {{ $this->getProductTitle($order->order_id, $item->product_id) }}</label>
+                                                <label for="colFormLabel" class="col-sm-5 col-form-label">{{ $item->delivered }}/{{ $item->quantity }} {{ $this->getProductSupplierCode($item->product_id) }} {{ $this->getProductTitle($order->order_id, $item->product_id) }}</label>
                                                 @if($delivery->status == 0)
                                                 <div class="col-sm-5">
                                                     <input wire:model="quantities.{{ $order->order_id }}.{{ $item->product_id }}" type="number" min="0" max="{{ $item->quantity }}" class="form-control" id="colFormLabel" placeholder="Enter quantity">
@@ -216,7 +216,7 @@
                         {{ $order->customer_phone }}
                     </td>
                     <td style="text-align: center;">@foreach($this->getItems($order->order_id) as $item) {{ $item->quantity }}<br> @endforeach</td>
-                    <td>@foreach($this->getItems($order->order_id) as $item) {{ $this->getProductTitle($order->order_id, $item->product_id) }}<br> @endforeach</td>
+                    <td>@foreach($this->getItems($order->order_id) as $item) {{ $this->getProductSupplierCode($item->product_id) }} {{ $this->getProductTitle($order->order_id, $item->product_id) }}<br> @endforeach</td>
                     <td></td>
                     <td></td>
                     <td></td>
