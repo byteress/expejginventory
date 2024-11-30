@@ -290,13 +290,16 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 12px;
+            border:1px solid #000 !important;
         }
 
         .receipt-table th,
         .receipt-table td {
-            border: none;
+            border:1px solid #000 !important;
             padding: 8px;
             text-align: left;
+            color:#000;
+            font-weight: 700;
         }
 
         .receipt-totals {
