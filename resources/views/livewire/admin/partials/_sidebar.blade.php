@@ -22,6 +22,26 @@
         </a>
     </li>
 
+    @hasanyrole('admin|cashier')
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Reports Collapse Menu -->
+    <li class="nav-item {{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) }}">
+        <a class="nav-link {{ isActiveCollapse(['admin.reports.daily', 'admin.reports.monthly']) }}" href="#" data-toggle="collapse" data-target="#collapseReports"
+           aria-expanded="{{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) ? 'true' : 'false' }}" aria-controls="collapseReports">
+            <i class="fas fa-fw fa-chart-line"></i>
+            <span>Reports</span>
+        </a>
+        <div id="collapseReports" class="collapse {{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) ? 'show' : '' }}" aria-labelledby="headingReports" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.reports.daily') }}" href="{{ route('admin.reports.daily') }}">Daily Report</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.reports.monthly') }}" href="{{ route('admin.reports.monthly') }}">Monthly Report</a>
+            </div>
+        </div>
+    </li>
+    @endhasanyrole
+
     @hasanyrole('admin|inventory_head')
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -265,26 +285,6 @@
             <i class="fas fa-fw fa-store"></i>
             <span>Manage Expenses</span>
         </a>
-    </li>
-    @endhasanyrole
-
-    @hasanyrole('admin|cashier')
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    <!-- Reports Collapse Menu -->
-    <li class="nav-item {{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) }}">
-        <a class="nav-link {{ isActiveCollapse(['admin.reports.daily', 'admin.reports.monthly']) }}" href="#" data-toggle="collapse" data-target="#collapseReports"
-           aria-expanded="{{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) ? 'true' : 'false' }}" aria-controls="collapseReports">
-            <i class="fas fa-fw fa-chart-line"></i>
-            <span>Reports</span>
-        </a>
-        <div id="collapseReports" class="collapse {{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) ? 'show' : '' }}" aria-labelledby="headingReports" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.reports.daily') }}" href="{{ route('admin.reports.daily') }}">Daily Report</a>
-                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.reports.monthly') }}" href="{{ route('admin.reports.monthly') }}">Monthly Report</a>
-            </div>
-        </div>
     </li>
     @endhasanyrole
 
