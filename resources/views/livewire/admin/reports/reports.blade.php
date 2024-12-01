@@ -265,9 +265,9 @@
                             @endphp
                         <tr>
                             <td></td>
-                            <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'SI' ?  $collection->or_number : '' }}</a></td>
-                            <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'DR' ?  $collection->or_number : '' }}</a></td>
-                            <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $collection->or_number : '' }}</a></td>
+                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'SI' ?  $collection->or_number : '' }}</a></td>
+                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'DR' ?  $collection->or_number : '' }}</a></td>
+                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $collection->or_number : '' }}</a></td>
                             <td>{{ $collection->or_number }}</td>
                             <td></td>
                             <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
@@ -559,9 +559,9 @@
                 @endphp
                 <tr>
                     <td></td>
-                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'SI' ?  $collection->receipt_number : '' }}</td>
-                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'DR' ?  $collection->receipt_number : '' }}</td>
-                    <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'SI' ?  $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'DR' ?  $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $collection->receipt_number : '' }}</td>
                     <td>{{ $collection->or_number }}</td>
                     <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
                     <td></td>

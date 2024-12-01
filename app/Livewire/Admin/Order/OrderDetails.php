@@ -564,6 +564,11 @@ class OrderDetails extends Component
 //            return;
 //        }
 
+        if($order->status != 0){
+            $this->addError('total', 'Order already processed.');
+            return;
+        }
+
         if($this->deliveryType == 'previous'){
             $orderService->setPreviousOrder($order->order_id, new DateTime($this->installmentStartDate));
         }
