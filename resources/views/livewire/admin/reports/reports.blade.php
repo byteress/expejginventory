@@ -148,17 +148,11 @@
                                     <td rowspan="{{ $rowspan }}">
                                         @if($transaction->cancelled_order_id)
                                             @php
-                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Check');
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Check');
                                             @endphp
-                                             @if($cancelledInfo['creditedAmount'] > 0)
-                                                @money($cancelledInfo['creditedAmount'])
-                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
-                                            @endif
+                                            @money($cancelledInfo['amount'])
                                             @if($cancelledInfo['amount'] > 0)
-                                                @money($cancelledInfo['amount'])
-                                            @endif
-                                            @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                                @money($cancelledInfo['amount'])
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
                                             @endif
                                         @else
                                             @money($this->getPaymentAmount($transaction->transaction_id, 'Check'))
@@ -167,18 +161,11 @@
                                     <td rowspan="{{ $rowspan }}">
                                         @if($transaction->cancelled_order_id)
                                             @php
-                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Bank Transfer');
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Bank Transfer');
                                             @endphp
-
-                                            @if($cancelledInfo['creditedAmount'] > 0)
-                                                @money($cancelledInfo['creditedAmount'])
-                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
-                                            @endif
+                                            @money($cancelledInfo['amount'])
                                             @if($cancelledInfo['amount'] > 0)
-                                                @money($cancelledInfo['amount'])
-                                            @endif
-                                            @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                                @money($cancelledInfo['amount'])
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
                                             @endif
                                         @else
                                             @money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))
@@ -187,17 +174,11 @@
                                     <td rowspan="{{ $rowspan }}">
                                         @if($transaction->cancelled_order_id)
                                             @php
-                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Card');
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Card');
                                             @endphp
-                                             @if($cancelledInfo['creditedAmount'] > 0)
-                                                @money($cancelledInfo['creditedAmount'])
-                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
-                                            @endif
+                                            @money($cancelledInfo['amount'])
                                             @if($cancelledInfo['amount'] > 0)
-                                                @money($cancelledInfo['amount'])
-                                            @endif
-                                            @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                                @money($cancelledInfo['amount'])
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
                                             @endif
                                         @else
                                             @money($this->getPaymentAmount($transaction->transaction_id, 'Card'))
@@ -205,51 +186,33 @@
                                     </td>
                                     <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
                                             @php
-                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Cash');
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Cash');
                                             @endphp
-                                             @if($cancelledInfo['creditedAmount'] > 0)
-                                                @money($cancelledInfo['creditedAmount'])
-                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
-                                            @endif
+                                            @money($cancelledInfo['amount'])
                                             @if($cancelledInfo['amount'] > 0)
-                                                @money($cancelledInfo['amount'])
-                                            @endif
-                                            @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                                @money($cancelledInfo['amount'])
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
                                             @endif
                                         @else
                                             @money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))
                                         @endif</td>
                                     <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
                                             @php
-                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Gcash');
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Gcash');
                                             @endphp
-                                             @if($cancelledInfo['creditedAmount'] > 0)
-                                                @money($cancelledInfo['creditedAmount'])
-                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
-                                            @endif
+                                            @money($cancelledInfo['amount'])
                                             @if($cancelledInfo['amount'] > 0)
-                                                @money($cancelledInfo['amount'])
-                                            @endif
-                                            @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                                @money($cancelledInfo['amount'])
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
                                             @endif
                                         @else
                                             @money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))
                                         @endif</td>
                                     <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
                                             @php
-                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Financing');
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Financing');
                                             @endphp
-                                             @if($cancelledInfo['creditedAmount'] > 0)
-                                                @money($cancelledInfo['creditedAmount'])
-                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
-                                            @endif
+                                            @money($cancelledInfo['amount'])
                                             @if($cancelledInfo['amount'] > 0)
-                                                @money($cancelledInfo['amount'])
-                                            @endif
-                                            @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                                @money($cancelledInfo['amount'])
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
                                             @endif
                                         @else
                                             @money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))
@@ -481,18 +444,11 @@
                             <td rowspan="{{ $rowspan }}">
                                 @if($transaction->cancelled_order_id)
                                     @php
-                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Check');
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Check');
                                     @endphp
-
-                                    @if($cancelledInfo['creditedAmount'] > 0)
-                                        @money($cancelledInfo['creditedAmount'])
-                                        {{ $cancelledInfo['receipt'] }}
-                                    @endif
+                                    @money($cancelledInfo['amount'])
                                     @if($cancelledInfo['amount'] > 0)
-                                        @money($cancelledInfo['amount'])
-                                    @endif
-                                    @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                        @money($cancelledInfo['amount'])
+                                        {{ $cancelledInfo['receipt'] }}
                                     @endif
                                 @else
                                     @money($this->getPaymentAmount($transaction->transaction_id, 'Check'))
@@ -501,17 +457,11 @@
                             <td rowspan="{{ $rowspan }}">
                                 @if($transaction->cancelled_order_id)
                                     @php
-                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Bank Transfer');
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Bank Transfer');
                                     @endphp
-                                     @if($cancelledInfo['creditedAmount'] > 0)
-                                        @money($cancelledInfo['creditedAmount'])
-                                        {{ $cancelledInfo['receipt'] }}
-                                    @endif
+                                    @money($cancelledInfo['amount'])
                                     @if($cancelledInfo['amount'] > 0)
-                                        @money($cancelledInfo['amount'])
-                                    @endif
-                                    @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                        @money($cancelledInfo['amount'])
+                                        {{ $cancelledInfo['receipt'] }}
                                     @endif
                                 @else
                                     @money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))
@@ -520,17 +470,11 @@
                             <td rowspan="{{ $rowspan }}">
                                 @if($transaction->cancelled_order_id)
                                     @php
-                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Card');
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Card');
                                     @endphp
-                                     @if($cancelledInfo['creditedAmount'] > 0)
-                                        @money($cancelledInfo['creditedAmount'])
-                                        {{ $cancelledInfo['receipt'] }}
-                                    @endif
+                                    @money($cancelledInfo['amount'])
                                     @if($cancelledInfo['amount'] > 0)
-                                        @money($cancelledInfo['amount'])
-                                    @endif
-                                    @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                        @money($cancelledInfo['amount'])
+                                        {{ $cancelledInfo['receipt'] }}
                                     @endif
                                 @else
                                     @money($this->getPaymentAmount($transaction->transaction_id, 'Card'))
@@ -538,51 +482,33 @@
                             </td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
                                     @php
-                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Cash');
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Cash');
                                     @endphp
-                                     @if($cancelledInfo['creditedAmount'] > 0)
-                                        @money($cancelledInfo['creditedAmount'])
-                                        {{ $cancelledInfo['receipt'] }}
-                                    @endif
+                                    @money($cancelledInfo['amount'])
                                     @if($cancelledInfo['amount'] > 0)
-                                        @money($cancelledInfo['amount'])
-                                    @endif
-                                    @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                        @money($cancelledInfo['amount'])
+                                        {{ $cancelledInfo['receipt'] }}
                                     @endif
                                 @else
                                     @money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))
                                 @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
                                     @php
-                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Gcash');
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Gcash');
                                     @endphp
-                                    @if($cancelledInfo['creditedAmount'] > 0)
-                                        @money($cancelledInfo['creditedAmount'])
-                                        {{ $cancelledInfo['receipt'] }}
-                                    @endif
+                                    @money($cancelledInfo['amount'])
                                     @if($cancelledInfo['amount'] > 0)
-                                        @money($cancelledInfo['amount'])
-                                    @endif
-                                    @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                        @money($cancelledInfo['amount'])
+                                        {{ $cancelledInfo['receipt'] }}
                                     @endif
                                 @else
                                     @money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))
                                 @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
                                     @php
-                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->order_id, $transaction->cancelled_order_id, 'Financing');
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Financing');
                                     @endphp
-                                     @if($cancelledInfo['creditedAmount'] > 0)
-                                        @money($cancelledInfo['creditedAmount'])
-                                        {{ $cancelledInfo['receipt'] }}
-                                    @endif
+                                    @money($cancelledInfo['amount'])
                                     @if($cancelledInfo['amount'] > 0)
-                                        @money($cancelledInfo['amount'])
-                                    @endif
-                                    @if($cancelledInfo['amount'] == 0 && $cancelledInfo['creditedAmount'] == 0)
-                                        @money($cancelledInfo['amount'])
+                                        {{ $cancelledInfo['receipt'] }}
                                     @endif
                                 @else
                                     @money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))

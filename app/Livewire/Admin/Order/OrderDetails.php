@@ -390,7 +390,11 @@ class OrderDetails extends Component
                 $this->referenceNumbers[] = $methods->reference;
                 $this->paymentMethods[] = $methods->method;
                 $this->amounts[] = $methods->amount / 100;
-                $this->credit[] = $methods->credit ? true : false;
+                if($fromCancelledOrder){
+                    $this->credit[] = true;
+                }else{
+                    $this->credit[] = $methods->credit;
+                }
             }
         }
     }

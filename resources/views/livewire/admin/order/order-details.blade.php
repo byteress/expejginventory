@@ -483,7 +483,7 @@
                                                     <div class="col-md-2">
                                                         <div class="d-flex justify-content-center">
                                                             <div class="form-check form-switch">
-                                                                <input wire:model="credit.{{ $loop->index }}" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked{{ $loop->index }}" @if($completed) disabled @endif>
+                                                                <input wire:model="credit.{{ $loop->index }}" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked{{ $loop->index }}">
                                                                 <label class="form-check-label" for="flexSwitchCheckChecked{{ $loop->index }}">Credit</label>
                                                             </div>
                                                             @if (!$loop->first)

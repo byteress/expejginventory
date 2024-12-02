@@ -151,28 +151,23 @@ class Reports extends Component
         return $query->sum('payment_methods.amount');
     }
 
-    public function getCancelledPaymentAmount(string $orderId, string $cancelledOrderId, string $type): array
+    public function getCancelledPaymentAmount(string $orderId, string $type): array
     {
-        $cancelledOrder = DB::table('orders')
-            ->where('order_id', $cancelledOrderId)
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
             ->first();
 
         $query = DB::table('payment_methods')
             ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
             ->where('orders.order_id', $orderId)
             ->where('payment_methods.method', $type)
-            ->where('payment_methods.credit', 1);
-
-        $query2 = DB::table('payment_methods')
-            ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
-            ->where('orders.order_id', $orderId)
-            ->where('payment_methods.method', $type)
             ->where('payment_methods.credit', 0);
 
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
         return [
-            'creditedAmount' => $query->sum('payment_methods.amount'),
-            'amount' => $query2->sum('payment_methods.amount'),
-            'receipt' => $cancelledOrder->receipt_number
+            'amount' => $query->sum('payment_methods.amount'),
+            'receipt' => $order->receipt_number
         ];
     }
 
