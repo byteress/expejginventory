@@ -125,8 +125,8 @@
 
                                         if($transaction->status == 1 || (!$this->isSameDayCancelled($transaction->order_id) && !$this->isSameDayRefunded($transaction->order_id))){
                                             $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
-                                            $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
-                                            $totalDiscount = $totalDiscount + $discount;
+                                            $totalAmount += $item->price * $item->quantity;
+                                            $totalDiscount += $item->original_price * $item->quantity - $item->price * $item->quantity;
                                             $totalCod = $totalCod + $this->getPaymentAmount($transaction->transaction_id, 'COD');
                                         }
                                     @endphp
@@ -135,42 +135,117 @@
 
                                     <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'SI' ?  $transaction->receipt_number : '' }}</a></td>
                                     <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'DR' ?  $transaction->receipt_number : '' }}</a></td>
-                                    <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CI' ?  $transaction->receipt_number : '' }}</a></td>
+                                    <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $transaction->receipt_number : '' }}</a></td>
                                     <td rowspan="{{ $rowspan }}"><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CR' ?  $transaction->receipt_number : '' }}</a></td>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->fname }} {{ $transaction->lname }}</td>
                                     <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                                     <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity) @endif</td>
-                                    <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
-                                    <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($discount) @endif</td>
+                                    <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->price * $item->quantity) @endif</td>
+                                    <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity - $item->price * $item->quantity) @endif</td>
                                     <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($this->getPaymentAmount($transaction->transaction_id, 'COD'))@endif</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Card'))</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))</td>
-                                    <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))</td>
+                                    <td rowspan="{{ $rowspan }}">
+                                        @if($transaction->cancelled_order_id)
+                                            @php
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Check');
+                                            @endphp
+                                            @money($cancelledInfo['amount'])
+                                            @if($cancelledInfo['amount'] > 0)
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
+                                            @endif
+                                        @else
+                                            @money($this->getPaymentAmount($transaction->transaction_id, 'Check'))
+                                        @endif
+                                    </td>
+                                    <td rowspan="{{ $rowspan }}">
+                                        @if($transaction->cancelled_order_id)
+                                            @php
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Bank Transfer');
+                                            @endphp
+                                            @money($cancelledInfo['amount'])
+                                            @if($cancelledInfo['amount'] > 0)
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
+                                            @endif
+                                        @else
+                                            @money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))
+                                        @endif
+                                    </td>
+                                    <td rowspan="{{ $rowspan }}">
+                                        @if($transaction->cancelled_order_id)
+                                            @php
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Card');
+                                            @endphp
+                                            @money($cancelledInfo['amount'])
+                                            @if($cancelledInfo['amount'] > 0)
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
+                                            @endif
+                                        @else
+                                            @money($this->getPaymentAmount($transaction->transaction_id, 'Card'))
+                                        @endif
+                                    </td>
+                                    <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
+                                            @php
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Cash');
+                                            @endphp
+                                            @money($cancelledInfo['amount'])
+                                            @if($cancelledInfo['amount'] > 0)
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
+                                            @endif
+                                        @else
+                                            @money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))
+                                        @endif</td>
+                                    <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
+                                            @php
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Gcash');
+                                            @endphp
+                                            @money($cancelledInfo['amount'])
+                                            @if($cancelledInfo['amount'] > 0)
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
+                                            @endif
+                                        @else
+                                            @money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))
+                                        @endif</td>
+                                    <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
+                                            @php
+                                                $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Financing');
+                                            @endphp
+                                            @money($cancelledInfo['amount'])
+                                            @if($cancelledInfo['amount'] > 0)
+                                                <a wire:navigate href="{{ route('admin.order.details', ['order_id' => $transaction->cancelled_order_id]) }}">{{ $cancelledInfo['receipt'] }}</a>
+                                            @endif
+                                        @else
+                                            @money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))
+                                        @endif</td>
                                 </tr>
                                 @else
                                     @php
                                         if($transaction->status == 1 || (!$this->isSameDayCancelled($transaction->order_id) && !$this->isSameDayRefunded($transaction->order_id))){
                                             $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                            $totalAmount += $item->price * $item->quantity;
+                                            $totalDiscount += $item->original_price * $item->quantity - $item->price * $item->quantity;
                                         }
                                     @endphp
                                     <tr>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                                         <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity)@endif</td>
+                                        <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->price * $item->quantity) @endif</td>
+                                        <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity - $item->price * $item->quantity) @endif</td>
                                     </tr>
                                 @endif
                                 @endforeach
 
                             @if($transaction->delivery_fee > 0)
+                                @php
+                                    $totalAmount += $transaction->delivery_fee
+                                @endphp
                                 <tr>
                                     <td>1</td>
                                     <td>Delivery Fee</td>
                                     <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->delivery_fee)@endif</td>
+                                    <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->delivery_fee)@endif</td>
+                                    <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money(0)@endif</td>
                                 </tr>
                             @endif
 
@@ -190,14 +265,14 @@
                             @endphp
                         <tr>
                             <td></td>
-                            <td>{{ $receiptType == 'SI' ?  $collection->receipt_number : '' }}</td>
-                            <td>{{ $receiptType == 'DR' ?  $collection->receipt_number : '' }}</td>
-                            <td>{{ $receiptType == 'CI' ?  $collection->receipt_number : '' }}</td>
+                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'SI' ?  $collection->or_number : '' }}</a></td>
+                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'DR' ?  $collection->or_number : '' }}</a></td>
+                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $collection->or_number : '' }}</a></td>
                             <td>{{ $collection->or_number }}</td>
                             <td></td>
                             <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
                             <td></td>
-                            <td>AR#{{ $collection->or_number }}</td>
+                            <td>{{ $collection->or_number }}</td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -348,44 +423,119 @@
 
                             if($transaction->status == 1 || (!$this->isSameDayCancelled($transaction->order_id) && !$this->isSameDayRefunded($transaction->order_id))){
                                 $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
-                                $totalAmount = $totalAmount + $transaction->total + $transaction->delivery_fee;
-                                $totalDiscount = $totalDiscount + $discount;
+                                $totalAmount += $item->price * $item->quantity;
+                                $totalDiscount += $item->original_price * $item->quantity - $item->price * $item->quantity;
                                 $totalCod = $totalCod + $this->getPaymentAmount($transaction->transaction_id, 'COD');
                             }
                         @endphp
                         <tr>
                             <td rowspan="{{ $rowspan }}">{{ $transaction->order_number  }}</td>
-                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'SI' ? $receiptType . $transaction->receipt_number : '' }}</td>
-                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'DR' ? $receiptType . $transaction->receipt_number : '' }}</td>
-                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CI' ? $receiptType . $transaction->receipt_number : '' }}</td>
-                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $receiptType . $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'SI' ? $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'DR' ? $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CI' ? $transaction->receipt_number : '' }}</td>
+                            <td rowspan="{{ $rowspan }}">{{ $receiptType == 'CR' ? $transaction->receipt_number : '' }}</td>
                             <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                             <td>{{ $item->quantity }}</td>
                             <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                             <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity) @endif</td>
-                            <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($transaction->total + $transaction->delivery_fee) @endif</td>
-                            <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($discount) @endif</td>
+                            <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->price * $item->quantity) @endif</td>
+                            <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity - $item->price * $item->quantity) @endif</td>
                             <td rowspan="{{ $rowspan }}">@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($this->getPaymentAmount($transaction->transaction_id, 'COD'))@endif</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Check'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Card'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))</td>
-                            <td rowspan="{{ $rowspan }}">@money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))</td>
+                            <td rowspan="{{ $rowspan }}">
+                                @if($transaction->cancelled_order_id)
+                                    @php
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Check');
+                                    @endphp
+                                    @money($cancelledInfo['amount'])
+                                    @if($cancelledInfo['amount'] > 0)
+                                        {{ $cancelledInfo['receipt'] }}
+                                    @endif
+                                @else
+                                    @money($this->getPaymentAmount($transaction->transaction_id, 'Check'))
+                                @endif
+                            </td>
+                            <td rowspan="{{ $rowspan }}">
+                                @if($transaction->cancelled_order_id)
+                                    @php
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Bank Transfer');
+                                    @endphp
+                                    @money($cancelledInfo['amount'])
+                                    @if($cancelledInfo['amount'] > 0)
+                                        {{ $cancelledInfo['receipt'] }}
+                                    @endif
+                                @else
+                                    @money($this->getPaymentAmount($transaction->transaction_id, 'Bank Transfer'))
+                                @endif
+                            </td>
+                            <td rowspan="{{ $rowspan }}">
+                                @if($transaction->cancelled_order_id)
+                                    @php
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Card');
+                                    @endphp
+                                    @money($cancelledInfo['amount'])
+                                    @if($cancelledInfo['amount'] > 0)
+                                        {{ $cancelledInfo['receipt'] }}
+                                    @endif
+                                @else
+                                    @money($this->getPaymentAmount($transaction->transaction_id, 'Card'))
+                                @endif
+                            </td>
+                            <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
+                                    @php
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Cash');
+                                    @endphp
+                                    @money($cancelledInfo['amount'])
+                                    @if($cancelledInfo['amount'] > 0)
+                                        {{ $cancelledInfo['receipt'] }}
+                                    @endif
+                                @else
+                                    @money($this->getPaymentAmount($transaction->transaction_id, 'Cash'))
+                                @endif</td>
+                            <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
+                                    @php
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Gcash');
+                                    @endphp
+                                    @money($cancelledInfo['amount'])
+                                    @if($cancelledInfo['amount'] > 0)
+                                        {{ $cancelledInfo['receipt'] }}
+                                    @endif
+                                @else
+                                    @money($this->getPaymentAmount($transaction->transaction_id, 'Gcash'))
+                                @endif</td>
+                            <td rowspan="{{ $rowspan }}">@if($transaction->cancelled_order_id)
+                                    @php
+                                        $cancelledInfo = $this->getCancelledPaymentAmount($transaction->cancelled_order_id, 'Financing');
+                                    @endphp
+                                    @money($cancelledInfo['amount'])
+                                    @if($cancelledInfo['amount'] > 0)
+                                        {{ $cancelledInfo['receipt'] }}
+                                    @endif
+                                @else
+                                    @money($this->getPaymentAmount($transaction->transaction_id, 'Financing'))
+                                @endif</td>
                         </tr>
                     @else
                         @php
-                            $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                            if($transaction->status == 1 || (!$this->isSameDayCancelled($transaction->order_id) && !$this->isSameDayRefunded($transaction->order_id))){
+                                $totalGrossPrice = $totalGrossPrice + $item->original_price * $item->quantity;
+                                $totalAmount += $item->price * $item->quantity;
+                                $totalDiscount += $item->original_price * $item->quantity - $item->price * $item->quantity;
+                            }
                         @endphp
                         <tr>
                             <td>{{ $item->quantity }}</td>
                             <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
                             <td>@money($item->original_price * $item->quantity)</td>
+                            <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->price * $item->quantity) @endif</td>
+                            <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity - $item->price * $item->quantity) @endif</td>
                         </tr>
                     @endif
                 @endforeach
 
                 @if($transaction->delivery_fee > 0)
+                    @php
+                        $totalAmount += $transaction->delivery_fee
+                    @endphp
                     <tr>
                         <td>1</td>
                         <td>Delivery Fee</td>
@@ -409,13 +559,13 @@
                 @endphp
                 <tr>
                     <td></td>
-                    <td>{{ $receiptType == 'SI' ? $receiptType . $collection->receipt_number : '' }}</td>
-                    <td>{{ $receiptType == 'DR' ? $receiptType . $collection->receipt_number : '' }}</td>
-                    <td>{{ $receiptType == 'CI' ? $receiptType . $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'SI' ?  $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'DR' ?  $collection->receipt_number : '' }}</td>
+                    <td>{{ $receiptType == 'CI' || $receiptType == 'CHG' ?  $collection->receipt_number : '' }}</td>
                     <td>{{ $collection->or_number }}</td>
                     <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
                     <td></td>
-                    <td>AR#{{ $collection->or_number }}</td>
+                    <td>{{ $collection->or_number }}</td>
                     <td></td>
                     <td></td>
                     <td></td>

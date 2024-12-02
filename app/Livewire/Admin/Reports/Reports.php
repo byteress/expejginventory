@@ -121,13 +121,9 @@ class Reports extends Component
 
     public function getReceiptType($order): string
     {
-        if($order->payment_type == 'installment') return 'CI';
-        if($order->order_type != 'regular') return 'CI';
+        $explode = explode('#', $order->receipt_number);
 
-        $orderTotal = $order->total + $order->delivery_fee;
-        if($orderTotal >= 1000000) return 'DR';
-
-        return 'SI';
+        return $explode[0] ?? '';
     }
 
     public function getDiscount($orderId)
@@ -153,6 +149,26 @@ class Reports extends Component
         if($this->branch) $query->where('orders.branch_id', $this->branch);
 
         return $query->sum('payment_methods.amount');
+    }
+
+    public function getCancelledPaymentAmount(string $orderId, string $type): array
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        $query = DB::table('payment_methods')
+            ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
+            ->where('orders.order_id', $orderId)
+            ->where('payment_methods.method', $type)
+            ->where('payment_methods.credit', 0);
+
+        if($this->branch) $query->where('orders.branch_id', $this->branch);
+
+        return [
+            'amount' => $query->sum('payment_methods.amount'),
+            'receipt' => $order->receipt_number
+        ];
     }
 
     public function getPaymentAmountTotal(string $type): int

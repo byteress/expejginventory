@@ -93,8 +93,8 @@
                                                 <a data-toggle="modal" data-target="#refundModal{{ $order->order_id }}" class="dropdown-item"
                                                    href="#">Refund</a>
                                                 @endif
-                                                <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"
-                                                   href="#">Delete</a>
+{{--                                                <a data-toggle="modal" data-target="#deleteModal{{ $order->order_id }}" class="dropdown-item"--}}
+{{--                                                   href="#">Delete</a>--}}
                                             </div>
                                             <!-- Cancel Modal -->
                                             <div wire:ignore.self class="modal fade" id="cancelModal{{ $order->order_id }}" tabindex="-1"

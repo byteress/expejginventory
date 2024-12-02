@@ -542,6 +542,7 @@ class OrderDetails extends Component
     {
         $this->resetErrorBag();
         $this->validate([
+            'receiptNumber' => 'required',
             'deliveryAddress' => [
                 Rule::requiredIf($this->deliveryType == 'deliver' && !$this->sameAddress)
             ],
@@ -562,6 +563,11 @@ class OrderDetails extends Component
 //            $this->addError('total', 'Order total should be equal or greater than the previous amount of ' . Money::PHP($cancelledOrder->total));
 //            return;
 //        }
+
+        if($order->status != 0){
+            $this->addError('total', 'Order already processed.');
+            return;
+        }
 
         if($this->deliveryType == 'previous'){
             $orderService->setPreviousOrder($order->order_id, new DateTime($this->installmentStartDate));
@@ -695,7 +701,6 @@ class OrderDetails extends Component
     public function fullPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
     {
         $this->validate([
-            'receiptNumber' => 'required',
             'amounts.*' => 'required|numeric',
             'referenceNumbers.*' => 'required',
         ], [
