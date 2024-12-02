@@ -48,6 +48,7 @@
                     <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                         <thead>
                         <tr class="bg-secondary font-w">
+                            <th>Supplier</th>
                             <th>SKU</th>
                             <th>Model</th>
                             <th>Description</th>
@@ -60,6 +61,7 @@
                         <tbody>
                         @forelse ($items as $item)
                             <tr>
+                                <td>{{ $this->getProductSupplierCode($item->product_id) }}</td>
                                 <td>{{ $item->sku_number }}</td>
                                 <td>{{ $item->model }}</td>
                                 <td>{{ $item->description }}</td>
@@ -155,8 +157,7 @@
             <div class="content">
                 <ul>
                     @foreach($items as $item)
-                        <li>{{ $item->transferred }}
-                            &nbsp;&nbsp;&nbsp;&nbsp; {{ $item->model }} {{ $item->description }}</li>
+                        <li>{{ $item->transferred }} {{ $this->getProductSupplierCode($item->product_id) }} {{ $item->model }} {{ $item->description }}</li>
                     @endforeach
                 </ul>
                 <p>----------------none-follows----------</p>
@@ -181,8 +182,7 @@
             <div class="content">
                 <ul>
                     @foreach($items as $item)
-                        <li>{{ $item->transferred }}
-                            &nbsp;&nbsp;&nbsp;&nbsp; {{ $item->model }} {{ $item->description }}</li>
+                        <li>{{ $item->transferred }} {{ $this->getProductSupplierCode($item->product_id) }} {{ $item->model }} {{ $item->description }}</li>
                     @endforeach
                 </ul>
                 <p>----------------none-follows----------</p>
@@ -207,8 +207,7 @@
             <div class="content">
                 <ul>
                     @foreach($items as $item)
-                        <li>{{ $item->transferred }}
-                            &nbsp;&nbsp;&nbsp;&nbsp; {{ $item->model }} {{ $item->description }}</li>
+                        <li>{{ $item->transferred }} {{ $this->getProductSupplierCode($item->product_id) }} {{ $item->model }} {{ $item->description }}</li>
                     @endforeach
                 </ul>
                 <p>----------------none-follows----------</p>

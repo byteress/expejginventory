@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use ProductManagement\Models\Product;
 use StockManagement\Models\Batch\Batch;
 
 #[Title('Batch Details')]
@@ -24,6 +25,14 @@ class BatchDetails extends Component
             ->join('products', 'products.id', '=', 'batch_items.product_id')
             ->where('batch_items.batch_id', $this->batch->id)
             ->get();
+    }
+
+    public function getProductSupplierCode(string $productId): string
+    {
+        $product = Product::find($productId);
+        if(!$product) return '';
+
+        return $product->supplier->code;
     }
 
     #[Layout('livewire.admin.base_layout')]
