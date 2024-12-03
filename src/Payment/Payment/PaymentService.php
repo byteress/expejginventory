@@ -46,7 +46,8 @@ class PaymentService implements IPaymentService
                 $transactionId,
                 $orNumber,
                 $order->delivery_type,
-                $orderAggregate->getInstallmentStartDate()
+                $orderAggregate->getInstallmentStartDate(),
+                $this->isSameDayCancelled($orderAggregate->cancelledOrder)
             );
 
             $customer->persist();
@@ -201,13 +202,16 @@ class PaymentService implements IPaymentService
     ): Result
     {
         try {
+            $order = Order::retrieve($orderId);
+
             $customer = Customer::retrieve($customerId);
             $customer->pay(
                 $paymentMethods,
                 $cashier,
                 $transactionId,
                 $orNumber,
-                $orderId
+                $orderId,
+                $this->isSameDayCancelled($order->cancelledOrder)
             );
 
             $customer->persist();
@@ -255,5 +259,13 @@ class PaymentService implements IPaymentService
             report($exception);
             return Result::failure($exception);
         }
+    }
+
+    private function isSameDayCancelled(?string $cancelledOrder): bool
+    {
+        if(!$cancelledOrder) return false;
+
+        $cancelled = Order::retrieve($cancelledOrder);
+        return $cancelled->cancellationDate?->format('Y-m-d') == date('Y-m-d');
     }
 }

@@ -29,6 +29,7 @@ class TransactionProjector extends Projector
                 'amount' => $total,
                 'created_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'or_number' => $event->orNumber,
+                'is_same_day_cancelled' => $event->isSameDayCancelled
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){
@@ -123,6 +124,7 @@ class TransactionProjector extends Projector
                 'amount' => $total,
                 'created_at' => $event->createdAt()?->tz(config('app.timezone')),
                 'or_number' => $event->orNumber,
+                'is_same_day_cancelled' => $event->isSameDayCancelled
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){

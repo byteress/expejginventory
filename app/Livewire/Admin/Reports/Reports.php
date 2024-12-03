@@ -17,6 +17,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use ProductManagement\Models\Product;
+use function Livewire\wrap;
 
 #[Title('Reports')]
 class Reports extends Component
@@ -186,7 +187,8 @@ class Reports extends Component
             ->whereDate('transactions.created_at', $date)
             ->where('payment_methods.method', $type)
             ->where('payment_methods.credit', 0)
-            ->where('transactions.type', '!=', 'void');
+            ->where('transactions.type', '!=', 'void')
+            ->where('transactions.is_same_day_cancelled', 0);
 
         if($this->branch) $query->where('orders.branch_id', $this->branch);
 
@@ -272,6 +274,11 @@ class Reports extends Component
         if(!$product) return '';
 
         return $product->supplier->code;
+    }
+
+    public function isVoid($transaction): bool
+    {
+        return ($transaction->status == 3 || $transaction->status == 4) && $this->isSameDayCancelled($transaction->order_id);
     }
 
     #[Layout('livewire.admin.base_layout')]
