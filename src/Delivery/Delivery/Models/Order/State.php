@@ -19,14 +19,9 @@ class State
     /**
      * @param Item[] $items
      * @return self
-     * @throws InvalidDomainException
      */
     public function setItems(array $items): self
     {
-        if(!empty($this->items)) throw new InvalidDomainException('Order already set for delivery', [
-            'delivery' => 'Order already set for delivery'
-        ]);
-
         $this->items = $items;
 
         return $this;

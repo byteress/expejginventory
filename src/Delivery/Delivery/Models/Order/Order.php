@@ -43,12 +43,18 @@ class Order extends Aggregate
      * @param string $address
      * @param string $branchId
      * @return self
+     * @throws InvalidDomainException
      */
     public function placeDeliveryOrder(array $items, int $deliveryFee, string $address, string $branchId): self
     {
         $itemsArray = array_map(function ($item) {
             return $item->toArray();
         }, $items);
+
+        if(!empty($this->state->getItems())) throw new InvalidDomainException('Order already set for delivery', [
+            'delivery' => 'Order already set for delivery'
+        ]);
+
 
         $event = new DeliveryOrderPlaced($this->uuid(), $itemsArray, $deliveryFee, $address, $branchId);
 
