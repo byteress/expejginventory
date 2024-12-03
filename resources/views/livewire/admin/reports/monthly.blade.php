@@ -87,38 +87,60 @@
                                 <th>Expenses</th>
                                 <th>Total</th>
                             </tr>
+
                             @php
-
-                                $dailyPayments = $this->getDailyPaymentAmountTotal();
+                                $totalAmount = 0;
                                 $dailyExpenses = $this->getDailyExpenses();
-                                $total = 0;
-
                                 $currentMonth = $this->date ?? now()->format('Y-m');
                                 $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
                             @endphp
 
                             @foreach(range(1, $daysInMonth) as $day)
                                 @php
-                                    $fullDate = Carbon::createFromFormat('Y-m-d',
-                                    "{$currentMonth}-{$day}")->format('m/d/Y');
-                                    $payment = $dailyPayments->firstWhere('day', $day)->total ?? 0;
-                                    $expense = $dailyExpenses->firstWhere('day', $day)->total_expenses ?? 0;
-                                    $subtotal = $payment - $expense;
-                                    $total += $subtotal;
+                                    $dailyTotalAmount = 0;
+                                    $dailyExpensesAmount = 0;
+                                    // Iterate through all transactions
+                                    foreach ($transactions as $transaction) {
+                                        $createdAt = Carbon::parse($transaction->created_at);
+
+                                        if ($createdAt->day == $day) {
+                                            $items = $this->getItems($transaction->order_id);
+
+                                            foreach ($items as $item) {
+                                                $dailyTotalAmount += $item->price * $item->quantity;
+                                            }
+
+                                        }
+                                         if ($transaction->delivery_fee > 0) {
+                                                $dailyTotalAmount += $transaction->delivery_fee;
+                                        }
+                                    }
+
+                                    $expenseData = $dailyExpenses->firstWhere('day', $day);
+                                    $dailyExpensesAmount = $expenseData ? $expenseData->total_expenses : 0;
                                 @endphp
-                                <tr>
-                                    <td>{{ $fullDate }}</td>
-                                    <td>@money($payment)</td>
-                                    <td>@money($expense)</td>
-                                    <td>@money($subtotal)</td>
-                                </tr>
+
+                                @if($dailyTotalAmount > 0 || $dailyExpensesAmount > 0)
+                                    <tr>
+                                        <td>{{ Carbon::now()->setDay($day)->format('m/d/Y') }}</td>
+                                        <td>{{ money($dailyTotalAmount) }}</td>
+                                        <td>{{ money($dailyExpensesAmount) }}</td>
+                                        <td>{{ money($dailyTotalAmount - $dailyExpensesAmount) }}</td>
+                                    </tr>
+
+                                    @php
+                                        $totalAmount += ($dailyTotalAmount - $dailyExpensesAmount);
+                                    @endphp
+                                @endif
                             @endforeach
-                            <tr>
+
+                            <tr class="font-weight-bold">
                                 <td colspan="3"><strong>Total</strong></td>
-                                <td>@money($total)</td>
+                                <td>{{ money($totalAmount) }}</td>
                             </tr>
                             </tbody>
                         </table>
+
 
                     </div>
 
@@ -373,7 +395,7 @@
                 <thead>
                 <tr>
                     <th>Day</th>
-                    <th>Total Payment</th>  
+                    <th>Total Payment</th>
                     <th>Expenses</th>
                     <th>Total</th>
                 </tr>
