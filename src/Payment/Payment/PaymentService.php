@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Order\Models\Order\Order;
 use Payment\Models\Customer\Customer;
+use PaymentContracts\Exceptions\InvalidDomainException;
 use PaymentContracts\IPaymentService;
 use PaymentContracts\Utils\Result;
 
@@ -34,6 +35,12 @@ class PaymentService implements IPaymentService
 
             $orderAggregate = Order::retrieve($orderId);
 
+            if (!$orderAggregate->cancelledOrder && !$orderAggregate->isPrevious()) {
+                foreach ($downPayment as $dp) {
+                    if ($dp['credit']) throw new InvalidDomainException('Credit not allowed for new orders.', ['credit' => 'Credit not allowed for new orders.']);
+                }
+            }
+
             $customer = Customer::retrieve($customerId);
             $customer->initializeInstallment(
                 $installmentId,
@@ -46,7 +53,8 @@ class PaymentService implements IPaymentService
                 $transactionId,
                 $orNumber,
                 $order->delivery_type,
-                $orderAggregate->getInstallmentStartDate()
+                $orderAggregate->getInstallmentStartDate(),
+                $this->isSameDayCancelled($orderAggregate)
             );
 
             $customer->persist();
@@ -201,13 +209,22 @@ class PaymentService implements IPaymentService
     ): Result
     {
         try {
+            $order = Order::retrieve($orderId);
+
+            if (!$order->cancelledOrder && !$order->isPrevious()) {
+                foreach ($paymentMethods as $dp) {
+                    if ($dp['credit']) throw new InvalidDomainException('Credit not allowed for new orders.', ['credit' => 'Credit not allowed for new orders.']);
+                }
+            }
+
             $customer = Customer::retrieve($customerId);
             $customer->pay(
                 $paymentMethods,
                 $cashier,
                 $transactionId,
                 $orNumber,
-                $orderId
+                $orderId,
+                $this->isSameDayCancelled($order)
             );
 
             $customer->persist();
@@ -255,5 +272,18 @@ class PaymentService implements IPaymentService
             report($exception);
             return Result::failure($exception);
         }
+    }
+
+    private function isSameDayCancelled(Order $cancelledOrder): bool
+    {
+        if(!$cancelledOrder->cancelledOrder || $cancelledOrder->isPrevious()) return false;
+
+        $cancelled = DB::table('orders')
+            ->where('order_id', $cancelledOrder->cancelledOrder)
+            ->first();
+
+        if(!$cancelled) return false;
+
+        return date('Y-m-d', strtotime($cancelled->completed_at)) == date('Y-m-d');
     }
 }

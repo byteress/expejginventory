@@ -37,6 +37,8 @@ class Order extends Aggregate
     private bool $previous = false;
     private ?DateTime $installmentStartDate = null;
     private int $status = 0;
+    public ?DateTime $cancellationDate = null;
+    public ?string $cancelledOrder = null;
 
     /** @param array<array{
      *      'productId': string,
@@ -251,11 +253,13 @@ class Order extends Aggregate
     public function applyOrderPlaced(OrderPlaced $event): void
     {
         $this->status = 1;
+        $this->cancelledOrder = $event->cancelledOrder;
     }
 
     public function applyOrderCancelled(OrderCancelled $event): void
     {
         $this->status = 3;
+        $this->cancellationDate = $event->createdAt()?->toDateTime();
     }
 
     public function applyOrderRefunded(OrderRefunded $event): void

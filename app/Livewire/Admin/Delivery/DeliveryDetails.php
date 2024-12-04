@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use ProductManagement\Models\Product;
 use Throwable;
 
 #[Title('Delivery Details')]
@@ -138,6 +139,14 @@ class DeliveryDetails extends Component
         if(!$result) return '';
 
         return $result->title;
+    }
+
+    public function getProductSupplierCode(string $productId): string
+    {
+        $product = Product::find($productId);
+        if(!$product) return '';
+
+        return $product->supplier->code;
     }
 
     public function getCodAmount(string $orderId): string

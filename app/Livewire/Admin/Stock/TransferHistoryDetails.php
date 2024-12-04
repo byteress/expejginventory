@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use ProductManagement\Models\Product;
 use StockManagementContracts\IStockManagementService;
 use Transfer\Models\Transfer\Transfer;
 use TransferContracts\Exceptions\ErrorCode;
@@ -89,6 +90,14 @@ class TransferHistoryDetails extends Component
 
         DB::commit();
         session()->flash('success', 'Transfer completed successfully');
+    }
+
+    public function getProductSupplierCode(string $productId): string
+    {
+        $product = Product::find($productId);
+        if(!$product) return '';
+
+        return $product->supplier->code;
     }
 
     public function getItems()

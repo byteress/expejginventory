@@ -28,7 +28,7 @@ class TransactionProjector extends Projector
                 'type' => 'down',
                 'amount' => $total,
                 'created_at' => $event->createdAt()?->tz(config('app.timezone')),
-                'or_number' => $event->orNumber,
+                'or_number' => $event->orNumber
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){
@@ -42,6 +42,8 @@ class TransactionProjector extends Projector
                     'credit' => $event->paymentMethods[$i]['credit'],
                 ]);
         }
+
+        if($event->isSameDayCancelled) $this->setCancelledOrderasSameDay($event->orderId);
     }
 
     public function onInstallmentPaymentReceived(InstallmentPaymentReceived $event): void
@@ -122,7 +124,7 @@ class TransactionProjector extends Projector
                 'type' => 'full',
                 'amount' => $total,
                 'created_at' => $event->createdAt()?->tz(config('app.timezone')),
-                'or_number' => $event->orNumber,
+                'or_number' => $event->orNumber
             ]);
 
         for($i = 0; $i < count($event->paymentMethods); $i++){
@@ -136,6 +138,8 @@ class TransactionProjector extends Projector
                     'credit' => $event->paymentMethods[$i]['credit'],
                 ]);
         }
+
+        if($event->isSameDayCancelled) $this->setCancelledOrderasSameDay($event->orderId);
     }
 
     public function onOrderDeleted(OrderDeleted $event): void
@@ -154,5 +158,20 @@ class TransactionProjector extends Projector
 
         DB::table('payment_methods')
             ->truncate();
+    }
+
+    private function setCancelledOrderasSameDay(string $orderId): void
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if(!$order) return;
+
+        DB::table('transactions')
+            ->where('order_id', $order->cancelled_order_id)
+            ->update([
+                'is_same_day_cancelled' => true,
+            ]);
     }
 }

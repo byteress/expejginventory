@@ -354,6 +354,11 @@ class OrderDetails extends Component
         return DB::table('orders')->where('order_id', $order->cancelled_order_id)->first();
     }
 
+    public function isSameDayCancelled($order): bool
+    {
+        return $order && date('Y-m-d', strtotime($order->completed_at)) == date('Y-m-d');
+    }
+
     private function getPaymentMethods()
     {
         $paymentMethods = [];
@@ -390,11 +395,7 @@ class OrderDetails extends Component
                 $this->referenceNumbers[] = $methods->reference;
                 $this->paymentMethods[] = $methods->method;
                 $this->amounts[] = $methods->amount / 100;
-                if($fromCancelledOrder){
-                    $this->credit[] = true;
-                }else{
-                    $this->credit[] = $methods->credit;
-                }
+                $this->credit[] = $methods->credit ? true : false;
             }
         }
     }
@@ -542,6 +543,7 @@ class OrderDetails extends Component
     {
         $this->resetErrorBag();
         $this->validate([
+            'receiptNumber' => 'required',
             'deliveryAddress' => [
                 Rule::requiredIf($this->deliveryType == 'deliver' && !$this->sameAddress)
             ],
@@ -562,6 +564,11 @@ class OrderDetails extends Component
 //            $this->addError('total', 'Order total should be equal or greater than the previous amount of ' . Money::PHP($cancelledOrder->total));
 //            return;
 //        }
+
+        if($order->status != 0){
+            $this->addError('total', 'Order already processed.');
+            return;
+        }
 
         if($this->deliveryType == 'previous'){
             $orderService->setPreviousOrder($order->order_id, new DateTime($this->installmentStartDate));
@@ -661,7 +668,7 @@ class OrderDetails extends Component
                     'amount' => $this->amounts[$i] * 100,
                     'reference' => $this->referenceNumbers[$i],
                     'method' => $this->paymentMethods[$i],
-                    'credit' => $this->credit[$i],
+                    'credit' => $this->credit[$i] ?? false,
                 ];
             }
         }
@@ -695,7 +702,6 @@ class OrderDetails extends Component
     public function fullPayment(IPaymentService $paymentService, IDeliveryService $deliveryService): void
     {
         $this->validate([
-            'receiptNumber' => 'required',
             'amounts.*' => 'required|numeric',
             'referenceNumbers.*' => 'required',
         ], [
@@ -729,7 +735,7 @@ class OrderDetails extends Component
                     'amount' => $this->amounts[$i] * 100,
                     'reference' => $this->referenceNumbers[$i],
                     'method' => $this->paymentMethods[$i],
-                    'credit' => $this->credit[$i],
+                    'credit' => $this->credit[$i] ?? false,
                 ];
             }
         }
