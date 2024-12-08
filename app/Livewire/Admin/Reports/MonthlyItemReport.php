@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin\Reports;
 
-use App\Livewire\DateTime;
-use App\Livewire\Exception;
 use BranchManagement\Models\Branch;
+use DateTime;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -50,9 +50,9 @@ class MonthlyItemReport extends Component
         $date = $this->date ?? now()->format('Y-m');
 
         if($action == 'increment'){
-            $this->date = (new DateTime($date))->modify('+1 day')->format('Y-m');
+            $this->date = (new DateTime($date))->modify('+1 month')->format('Y-m');
         }else{
-            $this->date = (new DateTime($date))->modify('-1 day')->format('Y-m');
+            $this->date = (new DateTime($date))->modify('-1 month')->format('Y-m');
         }
 
         $this->redirect(route('admin.reports.monthly.items', [
