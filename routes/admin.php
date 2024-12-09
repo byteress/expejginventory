@@ -6,6 +6,7 @@ use App\Livewire\Admin\Delivery\OutForDelivery;
 use App\Livewire\Admin\Delivery\ToShip;
 use App\Livewire\Admin\Payment\CustomerList;
 use App\Livewire\Admin\Reports\Monthly;
+use App\Livewire\Admin\Reports\MonthlyItemReport;
 use App\Livewire\Admin\Stock\BatchDetails;
 use App\Livewire\Admin\Stock\BatchHistory;
 use App\Livewire\Admin\Stock\StockManagement;
@@ -107,6 +108,7 @@ Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
     Route::get('/reports/monthly', Monthly::class)->name('reports.monthly');
     Route::get('/reports/daily-items/{product}', DailyItemReport::class)->name('reports.daily.items');
+    Route::get('/reports/monthly-items/{product}', MonthlyItemReport::class)->name('reports.monthly.items');
 //    Route::get('/reports/daily-items/{branch}/{item_id}', DailyItemPrint::class)
 //        ->name('reports.print.daily.items');
 });

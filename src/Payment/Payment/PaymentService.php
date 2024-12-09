@@ -35,11 +35,11 @@ class PaymentService implements IPaymentService
 
             $orderAggregate = Order::retrieve($orderId);
 
-            if (!$orderAggregate->cancelledOrder && !$orderAggregate->isPrevious()) {
-                foreach ($downPayment as $dp) {
-                    if ($dp['credit']) throw new InvalidDomainException('Credit not allowed for new orders.', ['credit' => 'Credit not allowed for new orders.']);
-                }
-            }
+//            if (!$orderAggregate->cancelledOrder && !$orderAggregate->isPrevious()) {
+//                foreach ($downPayment as $dp) {
+//                    if ($dp['credit']) throw new InvalidDomainException('Credit not allowed for new orders.', ['credit' => 'Credit not allowed for new orders.']);
+//                }
+//            }
 
             $customer = Customer::retrieve($customerId);
             $customer->initializeInstallment(
@@ -211,11 +211,11 @@ class PaymentService implements IPaymentService
         try {
             $order = Order::retrieve($orderId);
 
-            if (!$order->cancelledOrder && !$order->isPrevious()) {
-                foreach ($paymentMethods as $dp) {
-                    if ($dp['credit']) throw new InvalidDomainException('Credit not allowed for new orders.', ['credit' => 'Credit not allowed for new orders.']);
-                }
-            }
+//            if (!$order->cancelledOrder && !$order->isPrevious()) {
+//                foreach ($paymentMethods as $dp) {
+//                    if ($dp['credit']) throw new InvalidDomainException('Credit not allowed for new orders.', ['credit' => 'Credit not allowed for new orders.']);
+//                }
+//            }
 
             $customer = Customer::retrieve($customerId);
             $customer->pay(

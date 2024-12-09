@@ -4,17 +4,19 @@ namespace App\Livewire\Admin\Reports;
 
 use BranchManagement\Models\Branch;
 use DateTime;
+use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Session;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use ProductManagement\Models\Product;
 
-#[Title('Daily Item Report')]
-class DailyItemReport extends Component
+#[Title('Monthly Item Report')]
+class MonthlyItemReport extends Component
 {
     #[Url]
     public ?string $date = null; // Holds the date for the report, defaulting to the current month
@@ -26,7 +28,7 @@ class DailyItemReport extends Component
     public function mount(Product $product): void
     {
         $this->product = $product;
-        $this->date = $this->date ?? now()->format('Y-m-d'); // Default to the current year and month
+        $this->date = $this->date ?? now()->format('Y-m'); // Default to the current year and month
         $this->branch = $this->branch ?: auth()->user()->branch_id; // Default branch to authenticated user's branch
     }
 
@@ -34,7 +36,7 @@ class DailyItemReport extends Component
     {
         $this->branch = $branch;
 
-        $this->redirect(route('admin.reports.daily.items', [
+        $this->redirect(route('admin.reports.monthly.items', [
             'date' => $this->date,
             'product' => $this->product->id
         ]), true);
@@ -45,15 +47,15 @@ class DailyItemReport extends Component
      */
     public function changeDate(string $action): void
     {
-        $date = $this->date ?? now()->format('Y-m-d');
+        $date = $this->date ?? now()->format('Y-m');
 
         if($action == 'increment'){
-            $this->date = (new DateTime($date))->modify('+1 day')->format('Y-m-d');
+            $this->date = (new DateTime($date))->modify('+1 month')->format('Y-m');
         }else{
-            $this->date = (new DateTime($date))->modify('-1 day')->format('Y-m-d');
+            $this->date = (new DateTime($date))->modify('-1 month')->format('Y-m');
         }
 
-        $this->redirect(route('admin.reports.daily.items', [
+        $this->redirect(route('admin.reports.monthly.items', [
             'date' => $this->date,
             'product' => $this->product->id
         ]), true);
@@ -62,7 +64,7 @@ class DailyItemReport extends Component
     #[On('date-set')]
     public function setDate(string $date): void
     {
-        $this->redirect(route('admin.reports.daily.items', [
+        $this->redirect(route('admin.reports.monthly.items', [
             'date' => $date,
             'product' => $this->product->id
         ]), true);
@@ -71,7 +73,7 @@ class DailyItemReport extends Component
     public function getOpeningQuantity(): int
     {
         $result = DB::table('stock_history')
-            ->whereDate('date', '<', $this->date)
+            ->whereDate('date', '<', $this->date . '-1')
             ->where('branch_id', $this->branch)
             ->where('product_id', $this->product->id)
             ->latest('date')
@@ -85,7 +87,8 @@ class DailyItemReport extends Component
     public function getClosingQuantity(): int|null
     {
         $result = DB::table('stock_history')
-            ->whereDate('date', $this->date)
+            ->whereMonth('date', date('m', strtotime($this->date)))
+            ->whereYear('date', date('Y', strtotime($this->date)))
             ->where('branch_id', $this->branch)
             ->where('product_id', $this->product->id)
             ->latest('date')
@@ -107,7 +110,8 @@ class DailyItemReport extends Component
             ->where('orders.branch_id', $this->branch)
             ->where('orders.status', 1)
             ->where('line_items.product_id', $this->product->id)
-            ->whereDate('orders.completed_at', $this->date)
+            ->whereMonth('orders.completed_at', date('m', strtotime($this->date)))
+            ->whereYear('orders.completed_at', date('Y', strtotime($this->date)))
             ->orderByDesc('orders.placed_at');
 
         return $query->get();
@@ -116,7 +120,7 @@ class DailyItemReport extends Component
     public function getReceives()
     {
         return DB::table('stock_history')
-            ->whereDate('date', $this->date)
+            ->whereMonth('date', $this->date)
             ->where('branch_id', $this->branch)
             ->where('product_id', $this->product->id)
             ->where('action', 'Received')
@@ -170,14 +174,15 @@ class DailyItemReport extends Component
             ->select(['transfers.*', 'branches.name', 'transfer_items.transferred'])
             ->where('transfer_items.product_id', $this->product->id)
             ->where('transfers.sender_branch', $this->branch)
-            ->whereDate('transfers.created_at', $this->date)
+            ->whereMonth('transfers.created_at', date('m', strtotime($this->date)))
+            ->whereYear('transfers.created_at', date('Y', strtotime($this->date)))
             ->get();
     }
 
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
-        return view('livewire.admin.reports.daily-item-report', [
+        return view('livewire.monthly-item-report', [
             'branches' => Branch::all(),
             'opening_quantity' => $this->getOpeningQuantity(),
             'closing_quantity' => $this->getClosingQuantity(),
