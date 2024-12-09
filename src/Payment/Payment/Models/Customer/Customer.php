@@ -50,6 +50,9 @@ class Customer extends Aggregate
      * @param string $cashier
      * @param string|null $transactionId
      * @param string|null $orNumber
+     * @param string $deliveryType
+     * @param DateTime|null $installmentStartDate
+     * @param bool $isSameDayCancelled
      * @return Customer
      * @throws InvalidDomainException
      */
@@ -64,7 +67,8 @@ class Customer extends Aggregate
         ?string $transactionId,
         ?string $orNumber,
         string $deliveryType,
-        ?DateTime $installmentStartDate = null
+        ?DateTime $installmentStartDate = null,
+        bool $isSameDayCancelled = false
     ): self
     {
         if(!empty($downPayment) && !$transactionId)
@@ -77,6 +81,8 @@ class Customer extends Aggregate
 
         $totalDownPayment = 0;
         foreach($downPayment as $dp){
+            if($isSameDayCancelled && $dp['credit']) throw new InvalidDomainException('Credit not allowed for same day cancel.', ['credit' => 'Credit not allowed for same day cancel.']);
+
             $totalDownPayment += $dp['amount'];
         }
 
@@ -113,7 +119,7 @@ class Customer extends Aggregate
         if($codAmount == 0 && $deliveryType == 'pickup')
             $this->startInstallment($orderId, installmentStartDate: $installmentStartDate);
 
-        if(empty($downPayment) || is_null($transactionId) || !$orNumber)
+        if(is_null($transactionId) || !$orNumber)
             return $this;
 
         $paymentReceivedEvent = new DownPaymentReceived(
@@ -122,7 +128,8 @@ class Customer extends Aggregate
             $this->uuid(),
             $downPayment,
             $orNumber,
-            $cashier
+            $cashier,
+            $isSameDayCancelled
         );
 
         $this->recordThat($paymentReceivedEvent);
@@ -348,15 +355,18 @@ class Customer extends Aggregate
      * @param string $transactionId
      * @param string $orNumber
      * @param string $orderId
+     * @param bool $isSameDayCancelled
      * @return $this
      * @throws InvalidDomainException
      */
-    public function pay(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId): self
+    public function pay(array $paymentMethods, string $cashier, string $transactionId, string $orNumber, string $orderId, bool $isSameDayCancelled): self
     {
         $this->validatePaymentMethods($paymentMethods);
 
         $total = 0;
         foreach($paymentMethods as $dp){
+            if($isSameDayCancelled && $dp['credit']) throw new InvalidDomainException('Credit not allowed for same day cancel.', ['credit' => 'Credit not allowed for same day cancel.']);
+
             $total += $dp['amount'];
         }
 
@@ -367,7 +377,8 @@ class Customer extends Aggregate
             $orNumber,
             $cashier,
             $total,
-            $orderId
+            $orderId,
+            $isSameDayCancelled
         );
 
         $this->recordThat($event);

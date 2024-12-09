@@ -17,6 +17,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use ProductManagement\Models\Product;
+use function Livewire\wrap;
 
 #[Title('Reports')]
 class Reports extends Component
@@ -151,23 +152,28 @@ class Reports extends Component
         return $query->sum('payment_methods.amount');
     }
 
-    public function getCancelledPaymentAmount(string $orderId, string $type): array
+    public function getCancelledPaymentAmount(string $orderId, string $cancelledOrderId, string $type): array
     {
-        $order = DB::table('orders')
-            ->where('order_id', $orderId)
+        $cancelledOrder = DB::table('orders')
+            ->where('order_id', $cancelledOrderId)
             ->first();
 
         $query = DB::table('payment_methods')
             ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
             ->where('orders.order_id', $orderId)
             ->where('payment_methods.method', $type)
+            ->where('payment_methods.credit', 1);
+
+        $query2 = DB::table('payment_methods')
+            ->join('orders', 'payment_methods.order_id', '=', 'orders.order_id')
+            ->where('orders.order_id', $orderId)
+            ->where('payment_methods.method', $type)
             ->where('payment_methods.credit', 0);
 
-        if($this->branch) $query->where('orders.branch_id', $this->branch);
-
         return [
-            'amount' => $query->sum('payment_methods.amount'),
-            'receipt' => $order->receipt_number
+            'creditedAmount' => $query->sum('payment_methods.amount'),
+            'amount' => $query2->sum('payment_methods.amount'),
+            'receipt' => $cancelledOrder->receipt_number
         ];
     }
 
@@ -181,7 +187,8 @@ class Reports extends Component
             ->whereDate('transactions.created_at', $date)
             ->where('payment_methods.method', $type)
             ->where('payment_methods.credit', 0)
-            ->where('transactions.type', '!=', 'void');
+            ->where('transactions.type', '!=', 'void')
+            ->where('transactions.is_same_day_cancelled', 0);
 
         if($this->branch) $query->where('orders.branch_id', $this->branch);
 
@@ -267,6 +274,11 @@ class Reports extends Component
         if(!$product) return '';
 
         return $product->supplier->code;
+    }
+
+    public function isVoid($transaction): bool
+    {
+        return ($transaction->status == 3 || $transaction->status == 4) && $this->isSameDayCancelled($transaction->order_id);
     }
 
     #[Layout('livewire.admin.base_layout')]

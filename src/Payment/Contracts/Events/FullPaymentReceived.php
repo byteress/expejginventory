@@ -14,6 +14,7 @@ class FullPaymentReceived extends ShouldBeStored
         public string $cashier,
         public int $amount,
         public string $orderId,
+        public bool $isSameDayCancelled = false
     )
     {
     }

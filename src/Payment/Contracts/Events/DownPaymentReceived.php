@@ -12,7 +12,8 @@ class DownPaymentReceived extends ShouldBeStored
         public string $customerId,
         public array $paymentMethods,
         public string $orNumber,
-        public string $cashier
+        public string $cashier,
+        public bool $isSameDayCancelled = false
     )
     {}
 }
