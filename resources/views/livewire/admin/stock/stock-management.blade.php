@@ -56,7 +56,7 @@
                                         <td>{{ $product->sku_number }}</td>
                                         <td>{{ $product->model }}</td>
                                         <td>{{ $product->description }}</td>
-                                        <td><livewire:admin.stock.partial.on-hand :key="now() . '-available-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" />
+                                            <td><livewire:admin.stock.partial.on-hand :key="now() . '-available-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" />
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-reserved-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="reserved" />
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-damaged-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="damaged" />
                                         <td><livewire:admin.stock.partial.on-hand :key="now() . '-sold-' . $product->id" productId="{{ $product->id }}" branch-id="{{ auth()->user()?->branch_id  }}" type="sold" />
