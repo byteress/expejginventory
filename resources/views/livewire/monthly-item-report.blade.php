@@ -56,6 +56,22 @@
             </div>
         </div>
 
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="expenses-tab" data-toggle="tab" href="#expenses" role="tab"
+               aria-controls="sales" aria-selected="true">Expenses</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
+               aria-controls="payments" aria-selected="false">Payments</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="reportTabsContent">
+        <!-- Expenses Tab -->
+        <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="sales-tab">
         <div class="card shadow mb-4">
             <div class="card-body p-0">
                 <table class="table ">
@@ -160,6 +176,74 @@
                 </table>
             </div>
         </div>
+
+    </div>
+
+        <!-- Payments Tab -->
+        <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+
+            <div class="card shadow mb-4">
+                <div class="card-body">
+
+                    <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="check-tab" data-toggle="tab" href="#check" role="tab"
+                               aria-controls="check" aria-selected="true">Check</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="bank-tab" data-toggle="tab" href="#bank" role="tab"
+                               aria-controls="bank" aria-selected="true">Bank</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="card-tab" data-toggle="tab" href="#card" role="tab"
+                               aria-controls="card" aria-selected="true">Card</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="cash-tab" data-toggle="tab" href="#cash" role="tab"
+                               aria-controls="cash" aria-selected="true">Cash</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="gcash-tab" data-toggle="tab" href="#gcash" role="tab"
+                               aria-controls="gcash" aria-selected="true">GCash</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="paymentTabsContent">
+                        <!-- Check Payments -->
+                        <div class="tab-pane fade show active" id="check" role="tabpanel"
+                             aria-labelledby="check-tab">
+                             <h3>Check Payments</h3>
+                             <table class="table table-bordered">
+                                 <thead>
+                                 <tr>
+                                     <th>Day</th>
+                                     <th>Customer Name</th>
+                                     <th>Reference Number</th>
+                                     <th>Amount</th>
+                                 </tr>
+                                 </thead>
+                                 <tbody>
+                                     <tr>
+                                         <td>4444</td>
+                                         <td>4444</td>
+                                         <td>4444</td>
+                                         <td>4444</td>
+                                     </tr>
+                                 <tr>
+                                     <td>Total</td>
+                                     <td></td>
+                                     <td></td>
+                                     <td><strong>$23232</strong></td>
+                                 </tr>
+                                 </tbody>
+                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
     </div>
 </div>
 
