@@ -28,24 +28,71 @@ class ProductsWithQuantity extends Component
     #[Url]
     public $supplier = null;
 
+    public $date;
+
     public function mount(): void
     {
         if(auth()->user()) $this->branch = auth()->user()->branch_id;
+        $this->date = date('Y-m-d');
     }
 
     private function getProducts(): LengthAwarePaginator
     {
-
         $query = DB::table('products')
             ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
             ->join('stocks', 'stocks.product_id', '=', 'products.id')
             ->join('branches', 'branches.id', '=', 'stocks.branch_id')
-            ->where('stocks.available', '>', 0);
+            ->where('stocks.available', '>', 0)
+            ->select(
+                'branches.name as branch_name',
+                'suppliers.name as supplier_name',
+                'products.description as product_name',
+                'stocks.available as quantity'
+            );
+
         if ($this->branch) {
             $query->where('stocks.branch_id', $this->branch);
         }
 
+        // Implement search functionality
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('branches.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('suppliers.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('products.description', 'like', '%' . $this->search . '%');});
+        }
+
         return $query->paginate(10);
+    }
+
+    private function getAllProducts()
+    {
+        $query = DB::table('products')
+            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+            ->join('stocks', 'stocks.product_id', '=', 'products.id')
+            ->join('branches', 'branches.id', '=', 'stocks.branch_id')
+            ->where('stocks.available', '>', 0)
+            ->select(
+                'branches.name as branch_name',
+                'suppliers.name as supplier_name',
+                'products.description as product_name',
+                'stocks.available as quantity'
+            );
+
+        if ($this->branch) {
+            $query->where('stocks.branch_id', $this->branch);
+        }
+
+        // Implement search functionality for all products as well
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('branches.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('suppliers.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('products.description', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        return $query->get();
     }
 
     #[Layout('livewire.admin.base_layout')]
@@ -55,6 +102,7 @@ class ProductsWithQuantity extends Component
             [
                 'suppliers' => Supplier::all(),
                 'products' => $this->getProducts(),
+                'allProducts' => $this->getAllProducts(),
                 'branches' => Branch::all(),
             ]);
     }

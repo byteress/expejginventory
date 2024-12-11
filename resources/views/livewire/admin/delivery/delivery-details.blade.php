@@ -194,15 +194,15 @@
                 <th colspan="3" style = "text-align:center ">Items</th>
                 <th colspan="2" style = "text-align:center ">Time</th>
                 <th rowspan="2" style = "vertical-align:middle;text-align:center ">COD</th>
-                <th rowspan="2" style = "vertical-align:middle;text-align:center ">Customer Signature</th>
+                <th rowspan="2" style = "vertical-align:middle;text-align:center; width: 80px ">Customer Signature</th>
                 <th rowspan="2" style = "vertical-align:middle;text-align:center ">Comments</th>
             </tr>
             <tr>
                 <th style = "text-align:center ">QTY</th>
-                <th style = "text-align:center ">Particulars</th>
-                <th style = "text-align:center ">B/A</th>
-                <th style = "text-align:center ">IN</th>
-                <th style = "text-align:center ">OUT</th>
+                <th style = "text-align:center; width: 250px; ">Particulars</th>
+                <th style = "text-align:center">B/A</th>
+                <th style = "text-align:center; width: 50px ">IN</th>
+                <th style = "text-align:center; width: 50px">OUT</th>
             </tr>
             </thead>
             <tbody>
