@@ -48,9 +48,9 @@
     <div class="card-body">
         <div class="table-responsive">
 
-            <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <table class="table table-bordered">
                 <thead>
-                <tr class="bg-secondary font-w">
+                <tr>
                     <th>Branch Name</th>
                     <th>Supplier Name</th>
                     <th>Product Name</th>

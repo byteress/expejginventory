@@ -92,6 +92,30 @@ class ProductsSoldOut extends Component
 
         return $query->paginate(10);
     }
+    public function getAllSoldOutItems()
+    {
+        $date = $this->date;
+        $query = DB::table('products')
+            ->join('stocks', 'stocks.product_id', '=', 'products.id')
+            ->leftJoin('stock_history', function($join) use ($date) {
+                $join->on('stock_history.product_id', '=', 'products.id')
+                    ->whereDate('stock_history.date', $date)
+                    ->where('stock_history.action', 'Sold');
+            })
+            ->join('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
+            ->select(
+                'products.*', 'branches.name', 'suppliers.code',
+                DB::raw('stocks.available - COALESCE(SUM(CASE WHEN stock_history.action = "Sold" THEN stock_history.quantity ELSE 0 END), 0) AS remaining_stock')
+            )
+            ->where('stocks.available', '>', 0)
+            ->groupBy('products.id', 'products.model', 'products.description', 'stocks.available')
+            ->havingRaw('remaining_stock <= 0');
+        if($this->branch) $query->where('stocks.branch_id', $this->branch);
+
+
+        return $query->get();
+    }
 
 
     #[Layout('livewire.admin.base_layout')]
@@ -100,6 +124,7 @@ class ProductsSoldOut extends Component
         return view('livewire.admin.product.products-sold-out',
         [
             'products' => $this->getSoldOutItems(),
+            'allProducts' => $this->getAllSoldOutItems(),
             'branches' => Branch::all(),
         ]);
     }
