@@ -204,7 +204,8 @@
                         @foreach (Carbon::parse($startOfMonth)->daysUntil($endOfMonth) as $day)
                             @php
                                 $opening = $this->getDailyOpeningQuantity($day->format('Y-m-d'));
-                                $closing = $this->getDailyClosingQuantity($day->format('Y-m-d'))
+                                $closing = $this->getDailyClosingQuantity($day->format('Y-m-d'));
+                                $closing = is_null($closing) ? $opening : $closing;
                             @endphp
                         <tr>
                             @if($day->format('F j, Y') == $startOfMonth->format('F j, Y') || $day->format('F j, Y') == $endOfMonth->format('F j, Y') || $opening != $closing)

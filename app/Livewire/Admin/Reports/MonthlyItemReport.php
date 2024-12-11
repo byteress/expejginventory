@@ -122,7 +122,7 @@ class MonthlyItemReport extends Component
             ->latest('date')
             ->first();
 
-        if(!$result) return 0;
+        if(!$result) return null;
 
         return $result->running_available + $result->running_reserved;
     }
