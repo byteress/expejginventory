@@ -32,8 +32,9 @@ class ProductsWithQuantity extends Component
 
     public function mount(): void
     {
-        if(auth()->user()) $this->branch = auth()->user()->branch_id;
+        $this->branch = $this->branch ?: auth()->user()->branch_id;
         $this->date = date('Y-m-d');
+
     }
 
     private function getProducts(): LengthAwarePaginator
@@ -104,6 +105,7 @@ class ProductsWithQuantity extends Component
                 'products' => $this->getProducts(),
                 'allProducts' => $this->getAllProducts(),
                 'branches' => Branch::all(),
+                'branch_name' => $this->branch ? Branch::find($this->branch)?->name : null,
             ]);
     }
 }
