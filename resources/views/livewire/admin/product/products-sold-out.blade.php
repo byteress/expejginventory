@@ -9,11 +9,12 @@
                 </div>
                 <div class="col-md-2">
                     <div class="d-flex justify-content-end">
-                        <a href = "#" class="btn btn-outline-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print Reports</a>
+                        <a href="#" class="btn btn-outline-secondary" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Reports
+                        </a>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -28,17 +29,15 @@
                     </div>
                 </div>
                 <div class="col-md-5">
-
-                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                        Date</div>
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Date</div>
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                         <button wire:click="changeDate('decrement')" type="button" class="btn btn-primary">
-                            <i class="fas fa-chevron-left"></i></button>
-
-                        <input class = "form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style ="border-radius: 0;">
-
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <input class="form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style="border-radius: 0;">
                         <button wire:click="changeDate('increment')" type="button" class="btn btn-primary">
-                            <i class="fas fa-chevron-right"></i></button>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
@@ -49,7 +48,8 @@
                         @foreach ($branches as $branch)
                             <option value="{{ $branch->id }}" @if (auth()->user()->branch_id == $branch->id)
                                 selected @endif>
-                                {{ $branch->name }}</option>
+                                {{ $branch->name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('branch')
@@ -59,92 +59,42 @@
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>Branch Name</th>
-                    <th>Supplier Name</th>
-                    <th>Product Name</th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse ($products as $product)
-                    <tr>
-                        <td>{{ $product->name  }}</td>
-                        <td>{{ $product->code }}</td>
-                        <td>{{ $product->model }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="text-center">No products found with zero quantity.</td>
-                    </tr>
-                @endforelse
-
-                </tbody>
-            </table>
-            {{ $products->links() }}
-        </div>
-    </div>
 </div>
 
-<x-slot:print>
-    <div class="printable">
-        <table>
-            <tr>
-                <td style="width: 38%">
-                    <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style="width:350px">
-                </td>
-                <td align="center">
-                    <h4><strong>SOLD OUT PRODUCTS REPORT</strong></h4>
-                    <h4>
-                        <strong>{{ $branch_name ?? 'All Branches' }} - {{ date('F j, Y', strtotime($date)) }}</strong>
-                        <small>Page 1 of 1 Printed {{ date('F j h:iA') }}</small>
-                    </h4>
-                </td>
-            </tr>
-        </table>
-        <table class="table table-bordered receipt-table">
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-bordered">
             <thead>
-            <tr class="bg-secondary font-w">
+            <tr>
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
-                <th>Quantity</th>
+                <th>Opening Count</th>
             </tr>
             </thead>
             <tbody>
-            @forelse ($allProducts as $product)
+            @forelse ($products as $product)
                 <tr>
-                    <td>{{ $product->name  }}</td>
+                    <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->model }}</td>
+                    <td>{{ $product->available }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="text-center">No products found with available quantity.</td>
+                    <td colspan="5" class="text-center">No products found with zero quantity.</td>
                 </tr>
             @endforelse
             </tbody>
         </table>
+        {{ $products->links() }}
     </div>
-</x-slot>
-
+</div>
+</div>
 @assets
 <style>
     body {
         font-family: Arial, sans-serif;
-    }
-    .table-responsive {
-        height: 100vh; /* Define a height */
-        overflow-y: auto;
-    }
-    .table-responsive thead th {
-        position: sticky;
-        top: 0;
-        z-index: 1; /* Ensure the sticky header stays above other content */
-        vertical-align: middle !important;
     }
 
     .receipt-container {
@@ -174,13 +124,17 @@
     .receipt-table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 12px;
+        border:1px solid #000 !important;
     }
 
     .receipt-table th,
     .receipt-table td {
-        border: none;
-        padding: 8px;
+        border:1px solid #000 !important;
+        padding: 8px !important;
         text-align: left;
+        color:#000;
+        font-weight: 700;
     }
 
     .receipt-totals {
@@ -208,17 +162,9 @@
     .printable {
         display: none;
     }
-    @media screen {
-        .receipt-table thead th {
-            position: sticky;
-            top: 0;
-            background-color: white; /* Ensure the background of the header is visible */
-            z-index: 1; /* Make sure the header stays on top */
-            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for better visual separation */
-        }
-    }
     @media print {
         @page {
+            size: portrait; /* Set to portrait mode */
             margin: 1cm; /* Set margins to ensure no content is cut off */
         }
 
@@ -231,40 +177,60 @@
         }
 
         .receipt-table{
-            font-size: 12px;
+            font-size: 10px;
         }
-        .receipt-table th,td{
+        .receipt-table th, td{
             padding:1px;
-            vertical-align: middle;
         }
-
         /* Apply a scaling factor to fit the table within the page */
         body {
-            transform: scale(0.85); /* Scale down the entire content */
+            transform: scale(1); /* Ensure content is not scaled down */
             transform-origin: top left; /* Ensure scaling starts from top-left corner */
         }
-
     }
 </style>
 @endassets
 
-
-@script
-<script>
-    $('#datepicker').datepicker({
-        format: 'yyyy-mm-dd',
-        weekStart: 1,
-        daysOfWeekHighlighted: "6,0",
-        autoclose: true,
-        todayHighlight: true,
-    }).on('change', function (){
-        var date = $(this).val();
-        $wire.dispatch('date-set', {date: date});
-    });
-
-    $wire.on('date-changed', (event) => {
-        $('#datepicker').datepicker('setDate', $wire.get('date'));
-    });
-</script>
-@endscript
+<x-slot:print>
+    <div class="printable">
+        <table>
+            <tr>
+                <td style="width: 38%">
+                    <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style="width:350px">
+                </td>
+                <td align="center">
+                    <h4><strong>SOLD OUT PRODUCTS REPORT</strong></h4>
+                    <h4>
+                        <strong>{{ $branch_name ?? 'All Branches' }} - {{ date('F j, Y', strtotime($date)) }}</strong>
+                        <small>Page 1 of 1 Printed {{ date('F j h:iA') }}</small>
+                    </h4>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered receipt-table">
+            <thead>
+            <tr class="bg-secondary font-w">
+                <th>Branch Name</th>
+                <th>Supplier Name</th>
+                <th>Product Name</th>
+                <th>Opening Count</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse ($allProducts as $product)
+                <tr>
+                    <td>{{ $product->name }}</td>
+                    <td>{{ $product->code }}</td>
+                    <td>{{ $product->model }}</td>
+                    <td>{{ $product->available }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center">No products found with available quantity.</td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+</x-slot>
 

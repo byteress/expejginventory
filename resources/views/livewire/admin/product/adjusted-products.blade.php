@@ -9,11 +9,10 @@
                 </div>
                 <div class="col-md-2">
                     <div class="d-flex justify-content-end">
-                        <a href = "#" class="btn btn-outline-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print Reports</a>
+                        <a href="#" class="btn btn-outline-secondary no-print" onclick="window.print()"><i class="fas fa-print"></i> Print Reports</a>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -45,35 +44,169 @@
             </div>
         </div>
     </div>
+
     <div class="card-body">
         <div class="table-responsive">
-
-            <table class="table table-bordered">
+            <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
                 <thead>
-                <tr>
-                    <th>Branch Name</th>
-                    <th>Supplier Name</th>
-                    <th>Product Name</th>
+                <tr class="bg-secondary font-w">
+                    <th>Supplier</th>
+                    <th>SKU</th>
+                    <th>Model</th>
+                    <th>Description</th>
+                    <th>Branch</th>
+                    <th>Action</th>
                     <th>Quantity</th>
+                    <th>Running Available</th>
+                    <th>Running Reserved</th>
+                    <th>Running Damaged</th>
+                    <th>Running Sold</th>
+                    <th>User</th>
+                    <th>Date</th>
                 </tr>
                 </thead>
                 <tbody>
-                @forelse ($products as $product)
+                @forelse ($histories as $history)
                     <tr>
-                        <td>{{ $product->branch_name }}</td>
-                        <td>{{ $product->supplier_name }}</td>
-                        <td>{{ $product->product_name }}</td>
-                        <td>{{ $product->quantity }}</td>
+                        <td>{{ $history->code }}</td>
+                        <td>{{ $history->sku_number }}</td>
+                        <td>{{ $history->model }}</td>
+                        <td>{{ $history->description }}</td>
+                        <td>{{ $history->name }}</td>
+                        <td>{{ $history->action }}</td>
+                        <td>{{ $history->quantity }}</td>
+                        <td>{{ $history->running_available }}</td>
+                        <td>{{ $history->running_reserved }}</td>
+                        <td>{{ $history->running_damaged }}</td>
+                        <td>{{ $history->running_sold }}</td>
+                        <td>{{ $history->first_name }} {{ $history->last_name }}</td>
+                        <td>{{ date('h:i a F j, Y', strtotime($history->date)) }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center">No products found with available quantity.</td>
+                        <td colspan="10">No data found.</td>
                     </tr>
                 @endforelse
                 </tbody>
             </table>
-            {{ $products->links() }}
-
+            {{ $histories->links() }}
         </div>
     </div>
 </div>
+
+<!-- Printable Section -->
+<x-slot:print>
+    <div class="printable">
+        <table>
+            <tr>
+                <td style="width: 38%">
+                    <img src="{{ asset('assets/img/left_logo.png') }}" alt="" style="width:350px">
+                </td>
+                <td align="center">
+                    <h4><strong>PRODUCTS WITH QUANTITY REPORT</strong></h4>
+                    <h4>
+                        <strong>{{ $branch_name ?? 'All Branches' }} - {{ date('F j, Y', strtotime($date)) }}</strong>
+                        <small>Page 1 of 1 Printed {{ date('F j h:iA') }}</small>
+                    </h4>
+                </td>
+            </tr>
+        </table>
+
+        <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <thead>
+            <tr class="bg-secondary font-w">
+                <th>Supplier</th>
+                <th>SKU</th>
+                <th>Model</th>
+                <th>Description</th>
+                <th>Branch</th>
+                <th>Action</th>
+                <th>Quantity</th>
+                <th>Running Available</th>
+                <th>Running Reserved</th>
+                <th>Running Damaged</th>
+                <th>Running Sold</th>
+                <th>User</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse ($products as $history)
+                <tr>
+                    <td>{{ $history->code }}</td>
+                    <td>{{ $history->sku_number }}</td>
+                    <td>{{ $history->model }}</td>
+                    <td>{{ $history->description }}</td>
+                    <td>{{ $history->name }}</td>
+                    <td>{{ $history->action }}</td>
+                    <td>{{ $history->quantity }}</td>
+                    <td>{{ $history->running_available }}</td>
+                    <td>{{ $history->running_reserved }}</td>
+                    <td>{{ $history->running_damaged }}</td>
+                    <td>{{ $history->running_sold }}</td>
+                    <td>{{ $history->first_name }} {{ $history->last_name }}</td>
+                    <td>{{ date('h:i a F j, Y', strtotime($history->date)) }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="13">No data found.</td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+</x-slot>
+
+</div>
+
+@assets
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .no-print {
+        display: inline;
+    }
+
+    .printable {
+        display: none;
+    }
+
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+
+        body {
+            transform: scale(0.95);
+            transform-origin: top left;
+        }
+
+        .no-print {
+            display: none;
+        }
+
+        .printable {
+            display: block;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .receipt-table th, .receipt-table td {
+            padding: 8px;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .receipt-table th {
+            background-color: #f2f2f2;
+        }
+    }
+</style>
+@endassets
