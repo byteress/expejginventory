@@ -27,8 +27,21 @@ class ProductsSoldOut extends Component
     public function mount()
     {
         $this->date = $this->date ?? now()->format('Y-m-d');
-        if(auth()->user()) $this->branch = auth()->user()->branch_id;
+        $this->branch = $this->branch ?: auth()->user()->branch_id;
+    }
 
+    /**
+     * Handles updates to the branch and redirects with updated parameters.
+     * @param string $branch
+     * @return void
+     */
+    public function updatedBranch(string $branch): void
+    {
+        $this->branch = $branch;
+
+        $this->redirect(route('admin.product.sold-out', [
+            'date' => $this->date
+        ]), true);
     }
 
     /**
@@ -81,7 +94,7 @@ class ProductsSoldOut extends Component
             ->join('branches', 'stocks.branch_id', '=', 'branches.id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
             ->select(
-                'products.*', 'branches.name', 'suppliers.code',
+                'products.*', 'branches.name', 'suppliers.code', 'stocks.available',
                 DB::raw('stocks.available - COALESCE(SUM(CASE WHEN stock_history.action = "Sold" THEN stock_history.quantity ELSE 0 END), 0) AS remaining_stock')
             )
             ->where('stocks.available', '>', 0)
@@ -105,7 +118,7 @@ class ProductsSoldOut extends Component
             ->join('branches', 'stocks.branch_id', '=', 'branches.id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
             ->select(
-                'products.*', 'branches.name', 'suppliers.code',
+                'products.*', 'branches.name', 'suppliers.code','stocks.available',
                 DB::raw('stocks.available - COALESCE(SUM(CASE WHEN stock_history.action = "Sold" THEN stock_history.quantity ELSE 0 END), 0) AS remaining_stock')
             )
             ->where('stocks.available', '>', 0)
@@ -126,6 +139,7 @@ class ProductsSoldOut extends Component
             'products' => $this->getSoldOutItems(),
             'allProducts' => $this->getAllSoldOutItems(),
             'branches' => Branch::all(),
+            'branch_name' => $this->branch ? Branch::find($this->branch)?->name : null,
         ]);
     }
 }

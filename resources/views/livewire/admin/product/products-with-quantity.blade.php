@@ -9,11 +9,10 @@
                 </div>
                 <div class="col-md-2">
                     <div class="d-flex justify-content-end">
-                        <a href = "#" class="btn btn-outline-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print Reports</a>
+                        <a href="#" class="btn btn-outline-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print Reports</a>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -45,36 +44,35 @@
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
+</div>
 
-            <table class="table table-bordered">
-                <thead>
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Branch Name</th>
+                <th>Supplier Name</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse ($products as $product)
                 <tr>
-                    <th>Branch Name</th>
-                    <th>Supplier Name</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
+                    <td>{{ $product->branch_name }}</td>
+                    <td>{{ $product->supplier_name }}</td>
+                    <td>{{ $product->product_name }}</td>
+                    <td>{{ $product->quantity }}</td>
                 </tr>
-                </thead>
-                <tbody>
-                @forelse ($products as $product)
-                    <tr>
-                        <td>{{ $product->branch_name }}</td>
-                        <td>{{ $product->supplier_name }}</td>
-                        <td>{{ $product->product_name }}</td>
-                        <td>{{ $product->quantity }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center">No products found with available quantity.</td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </table>
-            {{ $products->links() }}
-
-        </div>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center">No products found with available quantity.</td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
+        {{ $products->links() }}
     </div>
 </div>
 
@@ -128,10 +126,12 @@
     body {
         font-family: Arial, sans-serif;
     }
+
     .table-responsive {
         height: 100vh; /* Define a height */
         overflow-y: auto;
     }
+
     .table-responsive thead th {
         position: sticky;
         top: 0;
@@ -187,30 +187,35 @@
     .receipt-footer {
         margin-top: 80px;
         margin-left: 50px;
-        max-width:250px;
-        word-wrap:break-word;
+        max-width: 250px;
+        word-wrap: break-word;
     }
 
     .receipt-footer p {
         margin: 2px 0;
     }
+
     .no-print {
         display: block;
     }
+
     .printable {
         display: none;
     }
+
     @media screen {
         .receipt-table thead th {
             position: sticky;
             top: 0;
-            background-color: white; /* Ensure the background of the header is visible */
-            z-index: 1; /* Make sure the header stays on top */
-            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for better visual separation */
+            background-color: white;
+            z-index: 1;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
         }
     }
+
     @media print {
         @page {
+            size: portrait; /* Ensure the page is printed in portrait */
             margin: 1cm; /* Set margins to ensure no content is cut off */
         }
 
@@ -222,18 +227,18 @@
             display: block;
         }
 
-        .receipt-table{
+        .receipt-table {
             font-size: 12px;
         }
-        .receipt-table th,td{
-            padding:1px;
+
+        .receipt-table th, td {
+            padding: 1px;
             vertical-align: middle;
         }
 
-        /* Apply a scaling factor to fit the table within the page */
         body {
             transform: scale(0.85); /* Scale down the entire content */
-            transform-origin: top left; /* Ensure scaling starts from top-left corner */
+            transform-origin: top left;
         }
 
     }
