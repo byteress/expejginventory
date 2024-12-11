@@ -210,8 +210,8 @@
                         <tr>
                             @if($day->format('F j, Y') == $startOfMonth->format('F j, Y') || $day->format('F j, Y') == $endOfMonth->format('F j, Y') || $opening != $closing)
                             <td>{{ $day->format('F j, Y') }}</td>
-                            <td>{{ $this->getDailyOpeningQuantity($day->format('Y-m-d')) }}</td>
-                            <td>{{ $this->getDailyClosingQuantity($day->format('Y-m-d')) }}</td>
+                            <td>{{ $opening }}</td>
+                            <td>{{ $closing }}</td>
                             @endif
                         </tr>
                         @endforeach
