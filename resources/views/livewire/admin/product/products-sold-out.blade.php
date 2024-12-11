@@ -5,7 +5,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-10">
-                    <h1 class="h3 text-primary admin-title mb-0"><strong>Product with Zero Quantity List</strong></h1>
+                    <h1 class="h3 text-primary admin-title mb-0"><strong>Sold out Products</strong></h1>
                 </div>
             </div>
 
