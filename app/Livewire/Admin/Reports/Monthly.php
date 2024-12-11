@@ -229,13 +229,12 @@ class Monthly extends Component
     {
         $date = $this->date ?? now()->format('Y-m');
 
-        $query = DB::table('payment_methods')
-            ->join('transactions', 'payment_methods.transaction_id', '=', 'transactions.id')
+        $query = DB::table('transactions')
             ->join('orders', 'transactions.order_id', '=', 'orders.order_id')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
             ->join('users', 'orders.assistant_id', '=', 'users.id')
-            ->select(['transactions.id as transaction_id', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*', 'users.first_name as fname', 'users.last_name as lname'])
-            ->where('transactions.created_at', 'like', "{$date}-%") // Matches the specified month
+            ->select(['transactions.id as transaction_id', 'transactions.created_at as creation_date', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*', 'users.first_name as fname', 'users.last_name as lname'])
+            ->where('transactions.created_at', 'like', "{$date}-%")
             ->whereIn('transactions.type', ['installment', 'cod']);
 
         if ($this->branch) {

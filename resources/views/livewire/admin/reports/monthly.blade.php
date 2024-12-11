@@ -81,48 +81,72 @@
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tbody>
-                            <tr>
-                                <th>Day</th>
-                                <th>Total Payment</th>
-                                <th>Expenses</th>
-                                <th>Total</th>
-                            </tr>
-
                             @php
+
                                 $totalAmount = 0;
                                 $dailyExpenses = $this->getDailyExpenses();
                                 $currentMonth = $this->date ?? now()->format('Y-m');
-                                $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
+
+                                $currentDate = Carbon::createFromFormat('Y-m', $currentMonth);
+
+                                $daysInMonth = $currentDate->daysInMonth;
                             @endphp
 
                             @foreach(range(1, $daysInMonth) as $day)
                                 @php
                                     $dailyTotalAmount = 0;
                                     $dailyExpensesAmount = 0;
-                                    // Iterate through all transactions
-                                    foreach ($transactions as $transaction) {
-                                        $createdAt = Carbon::parse($transaction->created_at);
 
-                                        if ($createdAt->day == $day) {
-                                            $items = $this->getItems($transaction->order_id);
-
-                                            foreach ($items as $item) {
-                                                $dailyTotalAmount += $item->price * $item->quantity;
-                                            }
-
-                                        }
-                                         if ($transaction->delivery_fee > 0) {
-                                                $dailyTotalAmount += $transaction->delivery_fee;
-                                        }
+                                    if ($day > $daysInMonth) {
+                                        continue;
                                     }
 
+                                    $date = $currentDate->copy()->setDay($day);
+                                @endphp
+
+                                @foreach ($transactions as $transaction)
+                                    @php
+                                        $createdAt = Carbon::parse($transaction->creation_date);
+                                        $items = $this->getItems($transaction->order_id);
+                                    @endphp
+
+                                    @if (
+                                        $createdAt->year == $currentDate->year &&
+                                        $createdAt->month == $currentDate->month &&
+                                        $createdAt->day == $day
+                                    )
+                                        @if (
+                                            $transaction->status == 1 ||
+                                            (
+                                                !$this->isSameDayCancelled($transaction->order_id) &&
+                                                !$this->isSameDayRefunded($transaction->order_id)
+                                            )
+                                        )
+                                            @foreach ($items as $item)
+                                                @if ($loop->index == 0)
+                                                    @php
+                                                        $dailyTotalAmount += $item->price * $item->quantity;
+                                                    @endphp
+                                                @endif
+                                            @endforeach
+
+                                            @if ($transaction->delivery_fee > 0)
+                                                @php
+                                                    $dailyTotalAmount += $transaction->delivery_fee;
+                                                @endphp
+                                            @endif
+                                        @endif
+                                    @endif
+                                @endforeach
+
+                                @php
                                     $expenseData = $dailyExpenses->firstWhere('day', $day);
                                     $dailyExpensesAmount = $expenseData ? $expenseData->total_expenses : 0;
                                 @endphp
 
                                 @if($dailyTotalAmount > 0 || $dailyExpensesAmount > 0)
                                     <tr>
-                                        <td>{{ Carbon::now()->setDay($day)->format('m/d/Y') }}</td>
+                                        <td>{{ $date->format('m/d/Y') }}</td>
                                         <td>{{ money($dailyTotalAmount) }}</td>
                                         <td>{{ money($dailyExpensesAmount) }}</td>
                                         <td>{{ money($dailyTotalAmount - $dailyExpensesAmount) }}</td>
@@ -139,6 +163,7 @@
                                 <td>{{ money($totalAmount) }}</td>
                             </tr>
                             </tbody>
+
                         </table>
 
 
