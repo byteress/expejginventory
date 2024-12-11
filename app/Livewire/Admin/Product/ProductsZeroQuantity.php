@@ -24,12 +24,15 @@ class ProductsZeroQuantity extends Component
 
     public ?string $branch = null;
 
+    public $date = null;
+
     #[Url]
     public $supplier = null;
 
     public function mount(): void
     {
         if(auth()->user()) $this->branch = auth()->user()->branch_id;
+        $this->date = now();
     }
 
     private function getProducts(): LengthAwarePaginator
@@ -47,6 +50,21 @@ class ProductsZeroQuantity extends Component
         return $query->paginate(10);
     }
 
+    private function getAllProducts()
+    {
+
+        $query = DB::table('products')
+            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+            ->join('stocks', 'stocks.product_id', '=', 'products.id')
+            ->join('branches', 'branches.id', '=', 'stocks.branch_id')
+        ->where('stocks.available', '=', 0);
+        if ($this->branch) {
+            $query->where('stocks.branch_id', $this->branch);
+        }
+
+        return $query->get();
+    }
+
     #[Layout('livewire.admin.base_layout')]
     public function render()
     {
@@ -54,6 +72,7 @@ class ProductsZeroQuantity extends Component
         [
             'suppliers' => Supplier::all(),
             'products' => $this->getProducts(),
+            'allProducts' => $this->getAllProducts(),
             'branches' => Branch::all(),
         ]);
     }
