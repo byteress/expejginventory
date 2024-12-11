@@ -134,13 +134,7 @@
         z-index: 1; /* Ensure the sticky header stays above other content */
         vertical-align: middle !important;
     }
-    .table-responsive thead th[rowspan="2"] {
-        top: 0; /* Sticky header starts at the top */
-    }
 
-    .table-responsive thead th:not([rowspan="2"]) {
-        top: 40px; /* Second row headers start 40px below the top */
-    }
     .receipt-container {
         width: 600px;
         margin: 0;
