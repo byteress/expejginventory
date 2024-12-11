@@ -99,6 +99,34 @@ class MonthlyItemReport extends Component
         return $result->running_available + $result->running_reserved;
     }
 
+    public function getDailyOpeningQuantity(string $date): int
+    {
+        $result = DB::table('stock_history')
+            ->whereDate('date', '<', $date)
+            ->where('branch_id', $this->branch)
+            ->where('product_id', $this->product->id)
+            ->latest('date')
+            ->first();
+
+        if(!$result) return 0;
+
+        return $result->running_available + $result->running_reserved;
+    }
+
+    public function getDailyClosingQuantity(string $date): int|null
+    {
+        $result = DB::table('stock_history')
+            ->whereDate('date', $date)
+            ->where('branch_id', $this->branch)
+            ->where('product_id', $this->product->id)
+            ->latest('date')
+            ->first();
+
+        if(!$result) return 0;
+
+        return $result->running_available + $result->running_reserved;
+    }
+
     public function getOrderHistory()
     {
         $query = DB::table('orders')
