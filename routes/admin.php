@@ -5,6 +5,7 @@ use App\Livewire\Admin\Delivery\DeliveryDetails;
 use App\Livewire\Admin\Delivery\OutForDelivery;
 use App\Livewire\Admin\Delivery\ToShip;
 use App\Livewire\Admin\Payment\CustomerList;
+use App\Livewire\Admin\Product\AdjustedProducts;
 use App\Livewire\Admin\Product\ProductsSoldOut;
 use App\Livewire\Admin\Product\ProductsWithQuantity;
 use App\Livewire\Admin\Product\ProductsZeroQuantity;
@@ -66,11 +67,13 @@ Route::group(['middleware' => ['role:admin']], function () {
 });
 Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/product', Products::class)->name('product');
+    Route::get('/product/new', CreateProduct::class)->name('create.product');
+    Route::get('/product/edit/{product}', EditProduct::class)->name('edit.product');
+
     Route::get('/product/zero-quantity', ProductsZeroQuantity::class)->name('product.zero-quantity');
     Route::get('/product/with-quantity', ProductsWithQuantity::class)->name('product.with-quantity');
     Route::get('/product/sold-out', ProductsSoldOut::class)->name('product.sold-out');
-    Route::get('/product/new', CreateProduct::class)->name('create.product');
-    Route::get('/product/edit/{product}', EditProduct::class)->name('edit.product');
+    Route::get('/product/adjusted', AdjustedProducts::class)->name('product.adjusted-products');
 
     Route::get('/manage-stock', StockManagement::class)->name('manage.stock');
 
