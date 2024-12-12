@@ -80,6 +80,12 @@
                     <!-- Monthly Expenses table content -->
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <tr>
+                                <th>Day</th>
+                                <th>Total Payment</th>
+                                <th>Expenses</th>
+                                <th>Total</th>
+                            </tr>
                             <tbody>
                             @php
 
