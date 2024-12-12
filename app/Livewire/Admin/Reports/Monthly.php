@@ -58,7 +58,7 @@ class Monthly extends Component
 
     /**
      * Retrieves payments by type.
-     * 
+     *
      * @param string $type
      * @return Collection
      */
@@ -72,17 +72,17 @@ class Monthly extends Component
         ->where('transactions.created_at', 'like', "{$this->date}-%")
         ->select([
             'transactions.created_at as date',
-            DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as customer_name"), 
+            DB::raw("CONCAT(customers.first_name, ' ', customers.last_name) as customer_name"),
             'payment_methods.reference',
             'payment_methods.amount',
         ]);
-    
+
         if ($this->branch) {
             $query->where('orders.branch_id', $this->branch);
         }
-    
+
     return $query->get();
-    
+
     }
 
 
@@ -154,7 +154,7 @@ class Monthly extends Component
                 'orders.*',
                 'customers.*'
             ])
-            ->whereDate('transactions.created_at', $date)
+            ->whereDate('transactions.created_at', 'like', "{$date}-%")
             ->whereIn('transactions.type', ['full', 'down']) // Filters for specific transaction types
             ->where('orders.previous', 0); // Exclude previous orders
 
@@ -229,16 +229,16 @@ class Monthly extends Component
     {
         $date = $this->date ?? now()->format('Y-m');
 
-        $query = DB::table('payment_methods')
-            ->join('transactions', 'payment_methods.transaction_id', '=', 'transactions.id')
+        $query = DB::table('transactions')
             ->join('orders', 'transactions.order_id', '=', 'orders.order_id')
-            ->where('transactions.type', '!=', 'void') // Excludes void transactions
-            ->where('transactions.created_at', 'like', "{$date}-%") // Matches the specified month
-            ->selectRaw('DAY(transactions.created_at) as day, SUM(payment_methods.amount) as total') // Groups by day
-            ->groupByRaw('DAY(transactions.created_at)');
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
+            ->join('users', 'orders.assistant_id', '=', 'users.id')
+            ->select(['transactions.id as transaction_id', 'transactions.created_at as creation_date', 'orders.id as order_number', 'transactions.*', 'orders.*', 'customers.*', 'users.first_name as fname', 'users.last_name as lname'])
+            ->where('transactions.created_at', 'like', "{$date}-%")
+            ->whereIn('transactions.type', ['installment', 'cod']);
 
         if ($this->branch) {
-            $query->where('orders.branch_id', $this->branch); // Filters by branch
+            $query->where('orders.branch_id', $this->branch);
         }
 
         return $query->get();
@@ -334,6 +334,51 @@ class Monthly extends Component
         return $product->supplier->code;
     }
 
+    public function isSameDayCancelled(string $orderId): bool
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if(!$order || !$order->completed_at) return false;
+
+        $newOrder = DB::table('orders')
+            ->where('cancelled_order_id', $orderId)
+            ->first();
+
+        if(!$newOrder || !$newOrder->completed_at) return false;
+
+        $orderDate = date('Y-m-d', strtotime($order->completed_at));
+        $newOrderDate = date('Y-m-d', strtotime($newOrder->completed_at));
+
+        if($orderDate != $newOrderDate) return false;
+
+        return true;
+    }
+
+    public function isSameDayRefunded(string $orderId): bool
+    {
+        $order = DB::table('orders')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if(!$order || !$order->completed_at) return false;
+
+        $orderNumber = str_pad((string) $order->id, 12, '0', STR_PAD_LEFT);
+        $expense = DB::table('expenses')
+            ->where('description', "Refunded Order# $orderNumber")
+            ->first();
+
+        if(!$expense || !$expense->created_at) return false;
+
+        $orderDate = date('Y-m-d', strtotime($order->completed_at));
+        $newOrderDate = date('Y-m-d', strtotime($expense->created_at));
+
+        if($orderDate != $newOrderDate) return false;
+
+        return true;
+    }
+
     /**
      * Renders the component view.
      */
@@ -341,7 +386,7 @@ class Monthly extends Component
     public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {
         return view('livewire.admin.reports.monthly', [
-            'transactions' => $this->getTransactions(),
+            'transactions' => $this->getDailyPaymentAmountTotal(),
             'collections' => $this->getCollections(),
             'expenses' => $this->getExpenses(),
             'branches' => Branch::all(),

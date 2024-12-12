@@ -33,10 +33,14 @@
             <i class="fas fa-fw fa-chart-line"></i>
             <span>Reports</span>
         </a>
-        <div id="collapseReports" class="collapse {{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) ? 'show' : '' }}" aria-labelledby="headingReports" data-parent="#accordionSidebar">
+        <div id="collapseReports" class="collapse {{ isActiveRoute(['admin.reports.daily', 'admin.product.adjusted-products',  'admin.product.zero-quantity', 'admin.product.sold-out', 'admin.product.with-quantity', 'admin.reports.monthly' ]) ? 'show' : '' }}" aria-labelledby="headingReports" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item {{ isActiveRoute('admin.reports.daily') }}" href="{{ route('admin.reports.daily') }}">Daily Report</a>
                 <a wire:navigate class="collapse-item {{ isActiveRoute('admin.reports.monthly') }}" href="{{ route('admin.reports.monthly') }}">Monthly Report</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.product.zero-quantity') }}" href="{{ route('admin.product.zero-quantity') }}">Zero Quantity</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.product.with-quantity') }}" href="{{ route('admin.product.with-quantity') }}">With Quantity</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.product.sold-out') }}" href="{{ route('admin.product.sold-out') }}">Sold Out Products</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.product.adjusted-products') }}" href="{{ route('admin.product.adjusted-products') }}">Adjusted Products</a>
             </div>
         </div>
     </li>
@@ -60,7 +64,7 @@
         </a>
         <div id="collapseProducts" class="collapse {{ isActiveRoute(['admin.product', 'admin.create.product']) ? 'show' : '' }}" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.product') }}" href="{{ route('admin.product') }}">List</a>
+                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.product') }}" href="{{ route('admin.product') }}">All</a>
                 <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.product') }}" href="{{ route('admin.create.product') }}">New Product</a>
             </div>
         </div>

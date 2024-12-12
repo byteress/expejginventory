@@ -6,8 +6,12 @@
         <div class="card shadow mb-4">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-8">
                         <h1 class="h3 text-primary admin-title mb-0"><strong>Delivered</strong></h1>
+                    </div>
+                    <div class="col-md-4">
+                    <input type="text" wire:model.live="search" class="form-control" placeholder="Search by customer name or order ID">
+
                     </div>
                 </div>
 
@@ -82,3 +86,5 @@
     <!-- /.container-fluid -->
 
 </div>
+
+@livewireScripts
