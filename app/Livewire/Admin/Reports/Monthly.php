@@ -385,8 +385,13 @@ class Monthly extends Component
     #[Layout('livewire.admin.base_layout')]
     public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {
+        $transactions = $this->getDailyPaymentAmountTotal();  // This gets payments grouped by day
+        $dailyPayments = $transactions->groupBy('day');  // Group payments by day (assuming 'day' is a field)
+        $dailyExpenses = $this->getDailyExpenses();  // This fetches expenses grouped by day
+
         return view('livewire.admin.reports.monthly', [
-            'transactions' => $this->getDailyPaymentAmountTotal(),
+            'transactions' => $dailyPayments,  // Pass daily payments to the view
+            'daily_expenses' => $dailyExpenses,  // Pass daily expenses to the view
             'collections' => $this->getCollections(),
             'expenses' => $this->getExpenses(),
             'branches' => Branch::all(),
