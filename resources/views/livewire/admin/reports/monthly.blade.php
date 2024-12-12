@@ -80,6 +80,12 @@
                     <!-- Monthly Expenses table content -->
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <tr>
+                                <th>Day</th>
+                                <th>Total Payment</th>
+                                <th>Expenses</th>
+                                <th>Total</th>
+                            </tr>
                             <tbody>
                             @php
 
@@ -123,11 +129,9 @@
                                             )
                                         )
                                             @foreach ($items as $item)
-                                                @if ($loop->index == 0)
                                                     @php
                                                         $dailyTotalAmount += $item->price * $item->quantity;
                                                     @endphp
-                                                @endif
                                             @endforeach
 
                                             @if ($transaction->delivery_fee > 0)
