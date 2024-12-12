@@ -6,7 +6,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-10">
-                        <h1 class="h3 mb-2 text-primary admin-title"><strong>Daily Items Reports</strong></h1>
+                        <h1 class="h3 mb-2 text-primary admin-title"><strong>Monthly Items Reports</strong></h1>
                     </div>
                     <div class="col-md-2">
                         <div class="d-flex justify-content-end">
@@ -56,6 +56,22 @@
             </div>
         </div>
 
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="expenses-tab" data-toggle="tab" href="#expenses" role="tab"
+               aria-controls="sales" aria-selected="true">Month</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
+               aria-controls="payments" aria-selected="false">Daily Tally</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="reportTabsContent">
+        <!-- Expenses Tab -->
+        <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="sales-tab">
         <div class="card shadow mb-4">
             <div class="card-body p-0">
                 <table class="table ">
@@ -160,6 +176,52 @@
                 </table>
             </div>
         </div>
+
+    </div>
+
+        <!-- Payments Tab -->
+        <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+
+            <div class="card shadow mb-4">
+                <div class="card-body">
+
+                    <h3>{{ $product->model }} {{ $product->description }}</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Opening Count</th>
+                            <th>Closing Count</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @php
+                            use Carbon\Carbon;
+
+                            $startOfMonth = Carbon::createFromFormat('Y-m', $date)->startOfMonth();
+                            $endOfMonth = Carbon::createFromFormat('Y-m', $date)->endOfMonth();
+                        @endphp
+                        @foreach (Carbon::parse($startOfMonth)->daysUntil($endOfMonth) as $day)
+                            @php
+                                $opening = $this->getDailyOpeningQuantity($day->format('Y-m-d'));
+                                $closing = $this->getDailyClosingQuantity($day->format('Y-m-d'));
+                                $closing = is_null($closing) ? $opening : $closing;
+                            @endphp
+                        <tr>
+                            @if($day->format('F j, Y') == $startOfMonth->format('F j, Y') || $day->format('F j, Y') == $endOfMonth->format('F j, Y') || $opening != $closing)
+                            <td>{{ $day->format('F j, Y') }}</td>
+                            <td>{{ $opening }}</td>
+                            <td>{{ $closing }}</td>
+                            @endif
+                        </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>
+
     </div>
 </div>
 
