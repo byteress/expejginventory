@@ -80,17 +80,81 @@
                     <!-- Monthly Expenses table content -->
                     <div class="table-responsive">
                         <table class="table table-bordered">
-                            <tr>
-                                <th>Day</th>
-                                <th>Total Payment</th>
-                                <th>Expenses</th>
-                                <th>Total</th>
-                            </tr>
                             <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            @php
+
+                                $totalAmount = 0;
+                                $dailyExpenses = $this->getDailyExpenses();
+                                $currentMonth = $this->date ?? now()->format('Y-m');
+
+                                $currentDate = Carbon::createFromFormat('Y-m', $currentMonth);
+
+                                $daysInMonth = $currentDate->daysInMonth;
+                            @endphp
+
+                            @foreach(range(1, $daysInMonth) as $day)
+                                @php
+                                    $dailyTotalAmount = 0;
+                                    $dailyExpensesAmount = 0;
+
+                                    if ($day > $daysInMonth) {
+                                        continue;
+                                    }
+
+                                    $date = $currentDate->copy()->setDay($day);
+                                @endphp
+
+                                @foreach ($transactions as $transaction)
+                                    @php
+                                        $createdAt = Carbon::parse($transaction->creation_date);
+                                        $items = $this->getItems($transaction->order_id);
+                                    @endphp
+
+                                    @if (
+                                        $createdAt->year == $currentDate->year &&
+                                        $createdAt->month == $currentDate->month &&
+                                        $createdAt->day == $day
+                                    )
+                                        @if (
+                                            $transaction->status == 1 ||
+                                            (
+                                                !$this->isSameDayCancelled($transaction->order_id) &&
+                                                !$this->isSameDayRefunded($transaction->order_id)
+                                            )
+                                        )
+                                            @foreach ($items as $item)
+                                                    @php
+                                                        $dailyTotalAmount += $item->price * $item->quantity;
+                                                    @endphp
+                                            @endforeach
+
+                                            @if ($transaction->delivery_fee > 0)
+                                                @php
+                                                    $dailyTotalAmount += $transaction->delivery_fee;
+                                                @endphp
+                                            @endif
+                                        @endif
+                                    @endif
+                                @endforeach
+
+                                @php
+                                    $expenseData = $dailyExpenses->firstWhere('day', $day);
+                                    $dailyExpensesAmount = $expenseData ? $expenseData->total_expenses : 0;
+                                @endphp
+
+                                @if($dailyTotalAmount > 0 || $dailyExpensesAmount > 0)
+                                    <tr>
+                                        <td>{{ $date->format('m/d/Y') }}</td>
+                                        <td>{{ money($dailyTotalAmount) }}</td>
+                                        <td>{{ money($dailyExpensesAmount) }}</td>
+                                        <td>{{ money($dailyTotalAmount - $dailyExpensesAmount) }}</td>
+                                    </tr>
+
+                                    @php
+                                        $totalAmount += ($dailyTotalAmount - $dailyExpensesAmount);
+                                    @endphp
+                                @endif
+                            @endforeach
 
                             <tr class="font-weight-bold">
                                 <td colspan="3"><strong>Total</strong></td>
