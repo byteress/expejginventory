@@ -431,33 +431,82 @@
                 </thead>
                 <tbody>
                 @php
-                    $dailyPayments = $this->getDailyPaymentAmountTotal();
+
+                    $totalAmount = 0;
                     $dailyExpenses = $this->getDailyExpenses();
-                    $total = 0;
-
                     $currentMonth = $this->date ?? now()->format('Y-m');
-                    $daysInMonth = Carbon::createFromFormat('Y-m', $currentMonth)->daysInMonth;
-            @endphp
 
-            @foreach(range(1, $daysInMonth) as $day)
-                @php
-                    $fullDate = Carbon::createFromFormat('Y-m-d',
-                    "{$currentMonth}-{$day}")->format('m/d/Y');
-                    $payment = $dailyPayments->firstWhere('day', $day)->total ?? 0;
-                    $expense = $dailyExpenses->firstWhere('day', $day)->total_expenses ?? 0;
-                    $subtotal = $payment - $expense;
-                    $total += $subtotal;
+                    $currentDate = Carbon::createFromFormat('Y-m', $currentMonth);
+
+                    $daysInMonth = $currentDate->daysInMonth;
                 @endphp
-                <tr>
-                    <td>{{ $fullDate }}</td>
-                    <td>@money($payment)</td>
-                    <td>@money($expense)</td>
-                    <td>@money($subtotal)</td>
-                </tr>
-            @endforeach
+
+                @foreach(range(1, $daysInMonth) as $day)
+                    @php
+                        $dailyTotalAmount = 0;
+                        $dailyExpensesAmount = 0;
+
+                        if ($day > $daysInMonth) {
+                            continue;
+                        }
+
+                        $date = $currentDate->copy()->setDay($day);
+                    @endphp
+
+                    @foreach ($transactions as $transaction)
+                        @php
+                            $createdAt = Carbon::parse($transaction->creation_date);
+                            $items = $this->getItems($transaction->order_id);
+                        @endphp
+
+                        @if (
+                            $createdAt->year == $currentDate->year &&
+                            $createdAt->month == $currentDate->month &&
+                            $createdAt->day == $day
+                        )
+                            @if (
+                                $transaction->status == 1 ||
+                                (
+                                    !$this->isSameDayCancelled($transaction->order_id) &&
+                                    !$this->isSameDayRefunded($transaction->order_id)
+                                )
+                            )
+                                @foreach ($items as $item)
+                                    @php
+                                        $dailyTotalAmount += $item->price * $item->quantity;
+                                    @endphp
+                                @endforeach
+
+                                @if ($transaction->delivery_fee > 0)
+                                    @php
+                                        $dailyTotalAmount += $transaction->delivery_fee;
+                                    @endphp
+                                @endif
+                            @endif
+                        @endif
+                    @endforeach
+
+                    @php
+                        $expenseData = $dailyExpenses->firstWhere('day', $day);
+                        $dailyExpensesAmount = $expenseData ? $expenseData->total_expenses : 0;
+                    @endphp
+
+                    @if($dailyTotalAmount > 0 || $dailyExpensesAmount > 0)
+                        <tr>
+                            <td>{{ $date->format('m/d/Y') }}</td>
+                            <td>{{ money($dailyTotalAmount) }}</td>
+                            <td>{{ money($dailyExpensesAmount) }}</td>
+                            <td>{{ money($dailyTotalAmount - $dailyExpensesAmount) }}</td>
+                        </tr>
+
+                        @php
+                            $totalAmount += ($dailyTotalAmount - $dailyExpensesAmount);
+                        @endphp
+                    @endif
+                @endforeach
             <tr>
                 <td colspan="3"><strong>Total</strong></td>
-                <td>@money($total)</td>
+                <td>@money($totalAmount)</td>
             </tr>
             </tbody>
         </table>
