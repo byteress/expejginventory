@@ -78,7 +78,7 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->model }}</td>
-                    <td>{{ $product->available }}</td>
+                    <td>{{ $this->getOpeningQuantity($product->id) }}</td>
                 </tr>
             @empty
                 <tr>
