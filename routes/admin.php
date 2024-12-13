@@ -113,7 +113,7 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
     Route::get('/daily-expense/new', DailyExpense::class)->name('expense');
 });
 
-Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
+Route::group(['middleware' => ['role:admin|sales_rep|cashier|inventory_head']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
     Route::get('/reports/monthly', Monthly::class)->name('reports.monthly');
     Route::get('/reports/daily-items/{product}', DailyItemReport::class)->name('reports.daily.items');

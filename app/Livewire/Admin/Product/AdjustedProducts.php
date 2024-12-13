@@ -6,6 +6,7 @@ use BranchManagement\Models\Branch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Session;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -20,6 +21,7 @@ class AdjustedProducts extends Component
     #[Url(nullable:true)]
     public $search;
 
+    #[Session]
     public ?string $branch = null;
 
     public $date;
@@ -28,7 +30,20 @@ class AdjustedProducts extends Component
     public function mount()
     {
         $this->branch = $this->branch ?: auth()->user()->branch_id; // Default branch to authenticated user's branch
+        $this->date = now();
+    }
+    /**
+     * Handles updates to the branch and redirects with updated parameters.
+     * @param string $branch
+     * @return void
+     */
+    public function updatedBranch(string $branch): void
+    {
+        $this->branch = $branch;
 
+        $this->redirect(route('admin.product.adjusted-products', [
+
+        ]), true);
     }
 
 

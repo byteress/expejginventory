@@ -6,6 +6,7 @@ use BranchManagement\Models\Branch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Session;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -21,18 +22,32 @@ class ProductsZeroQuantity extends Component
     #[Url(nullable:true)]
     public $search;
 
-
+    #[Session]
     public ?string $branch = null;
 
-    public $date = null;
 
     #[Url]
     public $supplier = null;
+    public $date = null;
 
     public function mount(): void
     {
-        if(auth()->user()) $this->branch = auth()->user()->branch_id;
+        $this->branch = $this->branch ?: auth()->user()->branch_id;
         $this->date = now();
+    }
+
+    /**
+     * Handles updates to the branch and redirects with updated parameters.
+     * @param string $branch
+     * @return void
+     */
+    public function updatedBranch(string $branch): void
+    {
+        $this->branch = $branch;
+
+        $this->redirect(route('admin.product.zero-quantity', [
+
+        ]), true);
     }
 
     private function getProducts(): LengthAwarePaginator
@@ -74,6 +89,7 @@ class ProductsZeroQuantity extends Component
             'products' => $this->getProducts(),
             'allProducts' => $this->getAllProducts(),
             'branches' => Branch::all(),
+            'branch_name' => $this->branch ? Branch::find($this->branch)?->name : null,
         ]);
     }
 }
