@@ -22,7 +22,7 @@
         </a>
     </li>
 
-    @hasanyrole('admin|cashier')
+    @hasanyrole('admin|cashier|inventory_head')
     <!-- Divider -->
     <hr class="sidebar-divider">
 
