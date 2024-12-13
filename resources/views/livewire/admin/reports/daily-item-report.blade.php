@@ -353,7 +353,7 @@
         @media print {
             @page {
                 size: landscape; /* Ensures the page is printed in landscape */
-                margin: 1cm; /* Set margins to ensure no content is cut off */
+                margin: 2cm; /* Set margins to ensure no content is cut off */
             }
 
             .no-print {
