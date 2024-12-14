@@ -66,6 +66,7 @@
 
                         </tbody>
                     </table>
+                    {{ $deliveries->links() }}
                 </div>
             </div>
         </div>

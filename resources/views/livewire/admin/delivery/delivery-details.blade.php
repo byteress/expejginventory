@@ -207,23 +207,35 @@
             </thead>
             <tbody>
             @foreach ($orders as $order)
+                @php
+                    $items = $this->getItems($order->order_id);
+                    $rowspan = count($items);
+                @endphp
                 <tr>
-                    <td style="text-align: center;">{{ date('m/d/y', strtotime($order->completed_at)) }}</td>
-                    <td style="text-align: center;">{{ $order->receipt_number }}<br>{{ $order->assistant_first_name }}</td>
-                    <td>
+                    <td rowspan="{{ $rowspan }}" style="text-align: center;">{{ date('m/d/y', strtotime($order->completed_at)) }}</td>
+                    <td rowspan="{{ $rowspan }}" style="text-align: center;">{{ $order->receipt_number }}<br>{{ $order->assistant_first_name }}</td>
+                    <td rowspan="{{ $rowspan }}">
                         <strong>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</strong><br>
                         {{ $order->delivery_address }}<br>
                         {{ $order->customer_phone }}
                     </td>
-                    <td style="text-align: center;">@foreach($this->getItems($order->order_id) as $item) {{ $item->quantity }}<br> @endforeach</td>
-                    <td>@foreach($this->getItems($order->order_id) as $item) {{ $this->getProductSupplierCode($item->product_id) }} {{ $this->getProductTitle($order->order_id, $item->product_id) }}<br> @endforeach</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="text-align: center;">{{ $this->getCodAmount($order->order_id) }}</td>
-                    <td></td>
-                    <td></td>
+                    <td style="text-align: center;">{{ $items[0]->quantity }}</td>
+                    <td>{{ $this->getProductSupplierCode($items[0]->product_id) }} {{ $this->getProductTitle($order->order_id, $items[0]->product_id) }}</td>
+                    <td rowspan="{{ $rowspan }}"></td>
+                    <td rowspan="{{ $rowspan }}"></td>
+                    <td rowspan="{{ $rowspan }}"></td>
+                    <td rowspan="{{ $rowspan }}" style="text-align: center;">{{ $this->getCodAmount($order->order_id) }}</td>
+                    <td rowspan="{{ $rowspan }}"></td>
+                    <td rowspan="{{ $rowspan }}"></td>
                 </tr>
+                @foreach($items as $item)
+                    @if($loop->index != 0)
+                    <tr>
+                        <td style="text-align: center;">{{ $item->quantity }}</td>
+                        <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $this->getProductTitle($order->order_id, $item->product_id) }}</td>
+                    </tr>
+                    @endif
+                @endforeach
             @endforeach
             </tbody>
         </table>

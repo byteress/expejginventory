@@ -143,8 +143,10 @@ class ProductsSoldOut extends Component
         return $query->get();
     }
 
-    public function getOpeningQuantity($productId): int
+    public function getSoldItemCount($productId): int
     {
+        $sold = 0;
+
         $result = DB::table('stock_history')
             ->whereDate('date', '<', $this->date)
             ->where('branch_id', $this->branch)
@@ -152,9 +154,20 @@ class ProductsSoldOut extends Component
             ->latest('date')
             ->first();
 
-        if(!$result) return 0;
+        if($result) $sold = $result->running_sold;
 
-        return $result->running_available + $result->running_reserved;
+        $result = DB::table('stock_history')
+            ->whereDate('date', $this->date)
+            ->where('branch_id', $this->branch)
+            ->where('product_id', $productId)
+            ->latest('date')
+            ->first();
+
+        $sold2 = $sold;
+
+        if($result) $sold2 = $result->running_sold;
+
+        return $sold2 - $sold;
     }
 
     #[Layout('livewire.admin.base_layout')]

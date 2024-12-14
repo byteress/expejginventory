@@ -69,7 +69,7 @@
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
-                <th>Opening Count</th>
+                <th>Sold</th>
             </tr>
             </thead>
             <tbody>
@@ -78,7 +78,7 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->model }}</td>
-                    <td>{{ $this->getOpeningQuantity($product->id) }}</td>
+                    <td>{{ $this->getSoldItemCount($product->id) }}</td>
                 </tr>
             @empty
                 <tr>
