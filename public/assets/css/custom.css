@@ -224,5 +224,9 @@ body {
     font-weight: 400;
 }
 
+tbody {
+    color: #333333 !important;
+}
+
 
 

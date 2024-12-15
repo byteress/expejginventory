@@ -35,7 +35,8 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
-                                <thead>
+
+                                <tbody>
                                 <tr class="bg-secondary font-w">
                                     <th>Supplier</th>
                                     <th>SKU</th>
@@ -48,8 +49,6 @@
                                     <th>Total</th>
                                     <th></th>
                                 </tr>
-                                </thead>
-                                <tbody>
                                 @forelse ($products as $product)
                                     <tr wire:key="{{ $product->id }}">
                                         <td>{{ $product->code }}</td>
