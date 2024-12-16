@@ -64,15 +64,13 @@
 <div class="card-body">
     <div class="table-responsive">
         <table class="table table-bordered">
-            <thead>
+            <tbody>
             <tr>
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
                 <th>Sold</th>
             </tr>
-            </thead>
-            <tbody>
             @forelse ($products as $product)
                 <tr>
                     <td>{{ $product->name }}</td>

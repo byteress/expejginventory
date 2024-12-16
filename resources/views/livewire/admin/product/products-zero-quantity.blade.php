@@ -49,14 +49,12 @@
             <div class="table-responsive">
 
                 <table class="table table-bordered">
-                    <thead>
+                    <tbody>
                     <tr>
                         <th>Branch Name</th>
                         <th>Supplier Name</th>
                         <th>Product Name</th>
                     </tr>
-                    </thead>
-                    <tbody>
                     @forelse ($products as $product)
                         <tr>
                             <td>{{ $product->name  }}</td>

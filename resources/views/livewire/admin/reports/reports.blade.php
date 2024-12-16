@@ -103,7 +103,7 @@
                                 <th style="position: sticky; top: 40px; z-index: 10; background-color: #6c757d;">Gcash</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="color: #333333; !important;">
                         @php
                         $totalGrossPrice = 0;
                         $totalAmount = 0;
