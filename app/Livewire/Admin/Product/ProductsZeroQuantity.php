@@ -54,10 +54,20 @@ class ProductsZeroQuantity extends Component
     {
 
         $query = DB::table('products')
+    
             ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
             ->join('stocks', 'stocks.product_id', '=', 'products.id')
             ->join('branches', 'branches.id', '=', 'stocks.branch_id')
-        ->where('stocks.available', '=', 0);
+        ->where('stocks.available', '=', 0)
+        ->select(
+            'branches.name as branch_name',
+            'suppliers.name as supplier_name',
+            'products.id as product_id',
+            'products.description as product_name',
+            'products.model as product_model',
+            'stocks.available as quantity'
+        );
+  
         if ($this->branch) {
             $query->where('stocks.branch_id', $this->branch);
         }
@@ -67,14 +77,17 @@ class ProductsZeroQuantity extends Component
 
     private function getAllProducts()
     {
-
+       
         $query = DB::table('products')
+
             ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
             ->join('stocks', 'stocks.product_id', '=', 'products.id')
             ->join('branches', 'branches.id', '=', 'stocks.branch_id')
+          
         ->where('stocks.available', '=', 0);
         if ($this->branch) {
-            $query->where('stocks.branch_id', $this->branch);
+           // $query->where('stocks.branch_id', $this->branch);
+           
         }
 
         return $query->get();

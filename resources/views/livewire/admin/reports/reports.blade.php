@@ -481,7 +481,7 @@
                             <td rowspan="{{ $rowspan }}">{{ $transaction->fname }} {{ $transaction->lname }}</td>
                             <td rowspan="{{ $rowspan }}">{{ $transaction->first_name }} {{ $transaction->last_name }}</td>
                             <td>{{ $item->quantity }}</td>
-                            <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }}</td>
+                            <td>{{ $this->getProductSupplierCode($item->product_id) }} {{ $item->title }} </td>
                             <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity) @endif</td>
                             <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->price * $item->quantity) @endif</td>
                             <td>@if($transaction->status == 3 && $this->isSameDayCancelled($transaction->order_id)) Cancelled @elseif($transaction->status == 4 && $this->isSameDayRefunded($transaction->order_id)) Refunded @else @money($item->original_price * $item->quantity - $item->price * $item->quantity) @endif</td>

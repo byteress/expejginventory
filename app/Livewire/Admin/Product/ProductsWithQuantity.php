@@ -63,6 +63,8 @@ class ProductsWithQuantity extends Component
                 'branches.name as branch_name',
                 'suppliers.name as supplier_name',
                 'products.description as product_name',
+                'products.model as product_model',
+                'products.id as product_id',
                 'stocks.available as quantity'
             );
 
@@ -92,6 +94,7 @@ class ProductsWithQuantity extends Component
                 'branches.name as branch_name',
                 'suppliers.name as supplier_name',
                 'products.description as product_name',
+                'products.model as product_model',
                 'stocks.available as quantity'
             );
 
