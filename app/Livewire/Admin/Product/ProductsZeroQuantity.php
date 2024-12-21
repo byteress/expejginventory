@@ -84,7 +84,11 @@ class ProductsZeroQuantity extends Component
             ->join('stocks', 'stocks.product_id', '=', 'products.id')
             ->join('branches', 'branches.id', '=', 'stocks.branch_id')
           
-        ->where('stocks.available', '=', 0);
+        ->where('stocks.available', '=', 0)
+        ->select(
+            'products.*', 'branches.name', 'suppliers.code'
+        );
+    
         if ($this->branch) {
            // $query->where('stocks.branch_id', $this->branch);
            

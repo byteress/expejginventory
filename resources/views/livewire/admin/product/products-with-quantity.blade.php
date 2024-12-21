@@ -102,6 +102,7 @@
                 <th>Branch Name</th>
                 <th class="second-child">Supplier Name</th>
                 <th>Product Name</th>
+                <th>Description</th>
                 <th>Quantity</th>
             </tr>
             </thead>
@@ -110,7 +111,8 @@
                 <tr>
                     <td>{{ $product->branch_name }}</td>
                     <td class="second-child">{{ $product->supplier_name }}</td>
-                    <td>{{ $product->product_name }}</td>
+                    <td>{{ $product->product_model }}</td>
+                    <td>{{$product->product_name}}</td>
                     <td>{{ $product->quantity }}</td>
                 </tr>
             @empty

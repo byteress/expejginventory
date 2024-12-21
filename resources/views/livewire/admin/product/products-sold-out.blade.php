@@ -213,6 +213,7 @@
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
+                <th>Description</th>
                 <th>Opening Count</th>
             </tr>
             </thead>
@@ -222,6 +223,7 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->model }}</td>
+                    <td>{{ $product->description }}</td>
                     <td>{{ $product->available }}</td>
                 </tr>
             @empty
