@@ -69,14 +69,16 @@
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
+                <th>Description</th>
                 <th>Sold</th>
             </tr>
             @forelse ($products as $product)
                 <tr>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
-                    <td>{{ $product->model }}</td>
-                    <td>{{ $this->getSoldItemCount($product->id) }}</td>
+                    <td><a href="{{ route('admin.reports.monthly.items', ['product' => $product->id]) }}">{{ $product->model }} </a></td>
+                    <td>{{ $product->description }}</td>
+                    <td> {{ $this->getSoldItemCount($product->id) }}</td>
                 </tr>
             @empty
                 <tr>

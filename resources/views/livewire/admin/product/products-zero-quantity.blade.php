@@ -54,12 +54,14 @@
                         <th>Branch Name</th>
                         <th>Supplier Name</th>
                         <th>Product Name</th>
+                        <th>Description</th>
                     </tr>
                     @forelse ($products as $product)
                         <tr>
-                            <td>{{ $product->name  }}</td>
-                            <td>{{ $product->code }}</td>
-                            <td>{{ $product->model }}</td>
+                            <td>{{ $product->branch_name  }}</td>
+                            <td>{{ $product->supplier_name}}</td>
+                            <td><a href="{{ route('admin.reports.monthly.items', ['product' => $product->product_id]) }}">{{ $product->product_model }}</a></td>
+                            <td>{{ $product->product_name}}</td>
                         </tr>
                     @empty
                         <tr>
