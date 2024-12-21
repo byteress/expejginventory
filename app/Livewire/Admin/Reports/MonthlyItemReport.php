@@ -148,12 +148,13 @@ class MonthlyItemReport extends Component
     public function getReceives()
     {
         return DB::table('stock_history')
-            ->whereMonth('date', $this->date)
+            ->where('date', 'like', $this->date . '%')
             ->where('branch_id', $this->branch)
             ->where('product_id', $this->product->id)
             ->where('action', 'Received')
             ->latest('date')
             ->get();
+
     }
 
     public function getReference(int $quantity, $date)
@@ -202,9 +203,9 @@ class MonthlyItemReport extends Component
             ->select(['transfers.*', 'branches.name', 'transfer_items.transferred'])
             ->where('transfer_items.product_id', $this->product->id)
             ->where('transfers.sender_branch', $this->branch)
-            ->whereMonth('transfers.created_at', date('m', strtotime($this->date)))
-            ->whereYear('transfers.created_at', date('Y', strtotime($this->date)))
+            ->where('transfers.created_at', 'like', $this->date . '%')
             ->get();
+
     }
 
     #[Layout('livewire.admin.base_layout')]
