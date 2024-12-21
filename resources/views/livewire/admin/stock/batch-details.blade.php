@@ -37,7 +37,7 @@
                             <tr>
                                 <td>{{ $this->getProductSupplierCode($item->product_id) }}</td>
                                 <td>{{ $item->sku_number }}</td>
-                                <td><a href="{{ route('admin.reports.daily.items', ['product' => $item->product_id]) }}">{{ $item->model }}</a></td>
+                                <td>{{ $item->model }}</td>
                                 <td>{{ $item->description }}</td>
                                 <td>{{ $item->quantity }}</td>
                             </tr>
