@@ -85,6 +85,7 @@
                                 @error('role') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
+                        @hasrole('admin')
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="role">Branch</label>
@@ -98,6 +99,7 @@
                                 @error('branch') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
+                        @endhasrole
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password">Password</label>

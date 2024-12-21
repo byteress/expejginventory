@@ -5,6 +5,9 @@ namespace App\Livewire\Admin\User;
 use App\Exceptions\ErrorHandler;
 use BranchManagement\Models\Branch;
 use IdentityAndAccessContracts\IIdentityAndAccessService;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -39,7 +42,12 @@ class CreateUser extends Component
 
     public string $password_confirmation = '';
 
-    public function submit(IIdentityAndAccessService $identityAndAccessService)
+    public function mount(): void
+    {
+        $this->branch = auth()->user()->branch ?? null;
+    }
+
+    public function submit(IIdentityAndAccessService $identityAndAccessService): void
     {
         $this->validate();
 
@@ -65,7 +73,7 @@ class CreateUser extends Component
     }
 
     #[Layout('livewire.admin.base_layout')]
-    public function render()
+    public function render(): Factory|Application|View|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
     {
         return view('livewire.admin.create-user', [
             'branches' => Branch::all()
