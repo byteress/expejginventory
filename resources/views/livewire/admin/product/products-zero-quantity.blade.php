@@ -100,6 +100,7 @@
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
+                <th>Description</th>
             </tr>
             </thead>
             <tbody>
@@ -108,6 +109,7 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->model }}</td>
+                    <td>{{ $product->description}}</td>
                 </tr>
             @empty
                 <tr>
@@ -123,16 +125,6 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-    }
-    .table-responsive {
-        height: 100vh; /* Define a height */
-        overflow-y: auto;
-    }
-    .table-responsive thead th {
-        position: sticky;
-        top: 0;
-        z-index: 1; /* Ensure the sticky header stays above other content */
-        vertical-align: middle !important;
     }
 
     .receipt-container {
@@ -162,13 +154,17 @@
     .receipt-table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 12px;
+        border:1px solid #000 !important;
     }
 
     .receipt-table th,
     .receipt-table td {
-        border: none;
-        padding: 8px;
+        border:1px solid #000 !important;
+        padding: 8px !important;
         text-align: left;
+        color:#000;
+        font-weight: 700;
     }
 
     .receipt-totals {
@@ -196,17 +192,9 @@
     .printable {
         display: none;
     }
-    @media screen {
-        .receipt-table thead th {
-            position: sticky;
-            top: 0;
-            background-color: white; /* Ensure the background of the header is visible */
-            z-index: 1; /* Make sure the header stays on top */
-            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for better visual separation */
-        }
-    }
     @media print {
         @page {
+            size: portrait; /* Set to portrait mode */
             margin: 1cm; /* Set margins to ensure no content is cut off */
         }
 
@@ -219,20 +207,16 @@
         }
 
         .receipt-table{
-            font-size: 12px;
+            font-size: 10px;
         }
-        .receipt-table th,td{
+        .receipt-table th, td{
             padding:1px;
-            vertical-align: middle;
         }
-
         /* Apply a scaling factor to fit the table within the page */
         body {
-            transform: scale(0.85); /* Scale down the entire content */
+            transform: scale(1); /* Ensure content is not scaled down */
             transform-origin: top left; /* Ensure scaling starts from top-left corner */
         }
-
     }
 </style>
 @endassets
-
