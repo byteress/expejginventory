@@ -78,7 +78,7 @@
                     <thead style="background-color: #f4b083;color:#fff">
                     <tr>
                         <th>Item Name: {{ $product->model }} {{ $product->description }}</th>
-                        <th>Opening Quantity: {{ $opening_quantity }}</th>
+                        <th>Opening Quantity for the Month: {{ $opening_quantity }}</th>
                         <th>Closing Quantity: {{ is_null($closing_quantity) ? $opening_quantity : $closing_quantity }}</th>
                         <th></th>
                     </tr>
