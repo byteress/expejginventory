@@ -303,26 +303,26 @@
                                 $receiptType = $this->getReceiptType($collection);
                             @endphp
                         <tr>
-                            <td></td>
-                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'SI' ?  $collection->or_number : '' }}</a></td>
-                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'DR' ?  $collection->or_number : '' }}</a></td>
-                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'CI' ?  $collection->or_number : '' }}</a></td>
-                            <td><a href="{{ route('admin.order.details', ['order_id' => $collection->order_id]) }}">{{ $receiptType == 'CHG' ?  $collection->or_number : '' }}</a></td>
-                            <td>{{ $collection->or_number }}</td>
-                            <td></td>
-                            <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
-                            <td></td>
-                            <td>{{ $collection->or_number }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Card'))</td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
-                            <td>@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
+                    <td></td>
+                    <td><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'SI' ?  $collection->receipt_number : '' }}</a></td>
+                    <td><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'DR' ?  $collection->receipt_number : '' }}</a></td>
+                    <td><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CI' ?  $collection->receipt_number : '' }}</a></td>
+                    <td><a href="{{ route('admin.order.details', ['order_id' => $transaction->order_id]) }}">{{ $receiptType == 'CHG'?  $collection->receipt_number : '' }}</a></td>
+                    <td>{{ $collection->or_number }}</td>
+                    <td></td>
+                    <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Check'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Bank Transfer'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Card'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Cash'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Gcash'))</td>
+                    <td>@money($this->getPaymentAmount($collection->transaction_id, 'Financing'))</td>
                         </tr>
                         @empty
                             <tr>
@@ -646,9 +646,10 @@
                     <td>{{ $receiptType == 'CI' ?  $collection->receipt_number : '' }}</td>
                     <td>{{ $receiptType == 'CHG'?  $collection->receipt_number : '' }}</td>
                     <td>{{ $collection->or_number }}</td>
+                    <td></td>
                     <td>{{ $collection->first_name }} {{ $collection->last_name }}</td>
                     <td></td>
-                    <td>{{ $collection->or_number }}</td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -668,6 +669,7 @@
 
             <tr>
                 <td><strong>Totals</strong></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

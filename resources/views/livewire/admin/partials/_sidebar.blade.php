@@ -80,7 +80,7 @@
         <div id="collapseBranches" class="collapse {{ isActiveRoute(['admin.branch', 'admin.create.branch']) ? 'show' : '' }}" aria-labelledby="headingBranches" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a wire:navigate class="collapse-item {{ isActiveRoute('admin.branch') }}" href="{{ route('admin.branch') }}">List</a>
-                <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.branch') }}" href="{{ route('admin.create.branch') }}">New Branch</a>
+                {{-- <a wire:navigate class="collapse-item {{ isActiveRoute('admin.create.branch') }}" href="{{ route('admin.create.branch') }}">New Branch</a> --}}
             </div>
         </div>
     </li>
