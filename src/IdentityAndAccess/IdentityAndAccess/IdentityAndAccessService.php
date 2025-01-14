@@ -19,6 +19,10 @@ class IdentityAndAccessService implements IIdentityAndAccessService
     {
         try {
             DB::beginTransaction();
+
+            if(in_array($role, [ Role::Admin->value, Role::Manager->value ]) && !auth()->user()?->hasRole(Role::Admin->value))
+                throw new InvalidDomainException('Only admin can create admins and managers.', ['branch' => 'Only admin can create admins and managers.']);
+
             if($role != Role::Admin->value && is_null($branch)) throw new InvalidDomainException('Branch is required.', ['branch' => 'Branch is required.']);
 
             if (User::whereId($userId)->exists()) throw new InvalidDomainException('User ID already exists.', ['userId' => 'User ID already exists.']);
@@ -52,6 +56,9 @@ class IdentityAndAccessService implements IIdentityAndAccessService
     public function update(string $userId, string $firstName, string $lastName, string $email, ?string $phone, ?string $address, string $role, ?string $branch): Result
     {
         try {
+            if(in_array($role, [ Role::Admin->value, Role::Manager->value ]) && !auth()->user()?->hasRole(Role::Admin->value))
+                throw new InvalidDomainException('Only admin can create admins and managers.', ['branch' => 'Only admin can create admins and managers.']);
+
             if (User::whereEmail($email)->where('email', '!=', $email)->exists()) throw new InvalidDomainException('Email address already exists.', ['email' => 'Email address already exists.']);
 
             $user = User::find($userId);

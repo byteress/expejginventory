@@ -51,7 +51,7 @@ use App\Livewire\Admin\Reports\DailyItemPrint;
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
-Route::group(['middleware' => ['role:admin']], function () {
+Route::group(['middleware' => ['role:admin|manager']], function () {
     Route::get('/branch', Branches::class)->name('branch');
     Route::get('/branch/new', CreateBranch::class)->name('create.branch');
     Route::get('/branch/edit/{branch}', EditBranch::class)->name('edit.branch');
@@ -65,7 +65,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/users/edit/{user}', EditUser::class)->name('edit.user');
 
 });
-Route::group(['middleware' => ['role:admin|inventory_head']], function () {
+Route::group(['middleware' => ['role:admin|manager|inventory_head']], function () {
     Route::get('/product', Products::class)->name('product');
     Route::get('/product/new', CreateProduct::class)->name('create.product');
     Route::get('/product/edit/{product}', EditProduct::class)->name('edit.product');
@@ -97,12 +97,12 @@ Route::group(['middleware' => ['role:admin|inventory_head']], function () {
     Route::get('/delivery/details/{delivery_id}', DeliveryDetails::class)->name('delivery.details');
 });
 
-Route::group(['middleware' => ['role:admin|sales_rep|cashier']], function () {
+Route::group(['middleware' => ['role:admin|manager|sales_rep|cashier']], function () {
     Route::get('/browse', BrowseProducts::class)->name('browse.product');
     Route::get('/cart', Cart::class)->name('cart');
 });
 
-Route::group(['middleware' => ['role:admin|cashier']], function () {
+Route::group(['middleware' => ['role:admin|manager|cashier']], function () {
     Route::get('/orders/{type}/{status}', Orders::class)->name('orders');
     Route::get('/orders-history', History::class)->name('orders.history');
     Route::get('/orders/{order_id}', OrderDetails::class)->name('order.details');
@@ -113,7 +113,7 @@ Route::group(['middleware' => ['role:admin|cashier']], function () {
     Route::get('/daily-expense/new', DailyExpense::class)->name('expense');
 });
 
-Route::group(['middleware' => ['role:admin|sales_rep|cashier|inventory_head']], function () {
+Route::group(['middleware' => ['role:admin|manager|sales_rep|cashier|inventory_head']], function () {
     Route::get('/reports/daily', Reports::class)->name('reports.daily');
     Route::get('/reports/monthly', Monthly::class)->name('reports.monthly');
     Route::get('/reports/daily-items/{product}', DailyItemReport::class)->name('reports.daily.items');

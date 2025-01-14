@@ -17,7 +17,7 @@
                 <thead style="background-color: #f4b083;color:#fff">
                 <tr>
                     <th>Item Name: {{ $item_name  }}</th>
-                    <th>Opening Quantity:</th>
+                    <th>Opening Quantity for the Month:</th>
                     <th>Closing Quantity:</th>
                     <th>Branch: {{ $branch_name  }}</th>
                 </tr>

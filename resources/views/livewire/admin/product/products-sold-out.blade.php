@@ -64,21 +64,21 @@
 <div class="card-body">
     <div class="table-responsive">
         <table class="table table-bordered">
-            <thead>
+            <tbody>
             <tr>
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
-                <th>Opening Count</th>
+                <th>Description</th>
+                <th>Sold</th>
             </tr>
-            </thead>
-            <tbody>
             @forelse ($products as $product)
                 <tr>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
-                    <td>{{ $product->model }}</td>
-                    <td>{{ $product->available }}</td>
+                    <td><a href="{{ route('admin.reports.monthly.items', ['product' => $product->id]) }}">{{ $product->model }} </a></td>
+                    <td>{{ $product->description }}</td>
+                    <td> {{ $this->getSoldItemCount($product->id) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -213,6 +213,7 @@
                 <th>Branch Name</th>
                 <th>Supplier Name</th>
                 <th>Product Name</th>
+                <th>Description</th>
                 <th>Opening Count</th>
             </tr>
             </thead>
@@ -222,6 +223,7 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->model }}</td>
+                    <td>{{ $product->description }}</td>
                     <td>{{ $product->available }}</td>
                 </tr>
             @empty

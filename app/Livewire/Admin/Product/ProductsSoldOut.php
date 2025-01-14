@@ -86,23 +86,34 @@ class ProductsSoldOut extends Component
     public function getSoldOutItems(): LengthAwarePaginator
     {
         $date = $this->date;
-        $query = DB::table('products')
-            ->join('stocks', 'stocks.product_id', '=', 'products.id')
-            ->leftJoin('stock_history', function($join) use ($date) {
-                $join->on('stock_history.product_id', '=', 'products.id')
-                    ->whereDate('stock_history.date', $date)
-                    ->where('stock_history.action', 'Sold');
+
+        // Subquery to get the latest stock history record for each product and branch
+        $latestRecords = DB::table('stock_history')
+            ->select('product_id', 'branch_id', DB::raw('MAX(date) as latest_date'))
+            ->whereDate('date', '=', $date)
+            ->groupBy('product_id', 'branch_id');
+
+        if($this->branch) $latestRecords->where('stock_history.branch_id', $this->branch);
+
+// Subquery to filter stock history with the latest record and `running_available = 0`
+        $filteredStockHistory = DB::table('stock_history as sh')
+            ->joinSub($latestRecords, 'latest_records', function ($join) {
+                $join->on('sh.product_id', '=', 'latest_records.product_id')
+                    ->on('sh.branch_id', '=', 'latest_records.branch_id')
+                    ->on('sh.date', '=', 'latest_records.latest_date');
             })
-            ->join('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->where('sh.running_available', '=', 0)
+            ->select('sh.product_id', 'sh.branch_id', 'sh.date', 'sh.running_available');
+
+        $query = DB::table('products')
+            ->leftJoinSub($filteredStockHistory, 'filtered_stock_history', function ($join) {
+                $join->on('products.id', '=', 'filtered_stock_history.product_id');
+            })
+            ->join('branches', 'filtered_stock_history.branch_id', '=', 'branches.id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
             ->select(
-                'products.*', 'branches.name', 'suppliers.code', 'stocks.available',
-                DB::raw('stocks.available - COALESCE(SUM(CASE WHEN stock_history.action = "Sold" THEN stock_history.quantity ELSE 0 END), 0) AS remaining_stock')
-            )
-            ->where('stocks.available', '>', 0)
-            ->groupBy('products.id', 'products.model', 'products.description', 'stocks.available')
-            ->havingRaw('remaining_stock <= 0');
-        if($this->branch) $query->where('stocks.branch_id', $this->branch);
+                'products.*', 'branches.name', 'suppliers.code'
+            );
 
 
         return $query->paginate(10);
@@ -132,6 +143,32 @@ class ProductsSoldOut extends Component
         return $query->get();
     }
 
+    public function getSoldItemCount($productId): int
+    {
+        $sold = 0;
+
+        $result = DB::table('stock_history')
+            ->whereDate('date', '<', $this->date)
+            ->where('branch_id', $this->branch)
+            ->where('product_id', $productId)
+            ->latest('date')
+            ->first();
+
+        if($result) $sold = $result->running_sold;
+
+        $result = DB::table('stock_history')
+            ->whereDate('date', $this->date)
+            ->where('branch_id', $this->branch)
+            ->where('product_id', $productId)
+            ->latest('date')
+            ->first();
+
+        $sold2 = $sold;
+
+        if($result) $sold2 = $result->running_sold;
+
+        return $sold2 - $sold;
+    }
 
     #[Layout('livewire.admin.base_layout')]
     public function render()
