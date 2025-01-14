@@ -14,6 +14,7 @@ class Dashboard extends Component
 {
     public ?string $customerBranch = null;
     public ?string $itemBranch = null;
+    public ?string $birthdayBranch = null;
 
     /**
      * @return Collection<int, object>
@@ -55,6 +56,23 @@ class Dashboard extends Component
 
         return $query->get();
     }
+    
+    public function getCustomersWithTodayBirthday(): Collection
+    {
+        $currentMonth = now()->month; // Get the current month (1-12)
+        $currentDay = now()->day; // Get the current day (1-31)
+    
+        // Use Query Builder to select first_name and last_name for customers with today's birthday
+        $query = DB::table('customers')
+            ->select('first_name', 'last_name','phone','address','dob','id')  // Select the necessary columns
+            ->whereMonth('dob', $currentMonth)  // Filter by month
+            ->whereDay('dob', $currentDay);      // Filter by day
+             // Get the results
+            
+     if($this->birthdayBranch) $query->where('branch_id', $this->birthdayBranch);
+        return $query->get();  // Return the collection of customers
+    }
+    
 
     public function getIncome(string $branchId): int
     {
@@ -150,6 +168,7 @@ class Dashboard extends Component
             'branches' => Branch::all(),
             'customers' => $this->getCustomers(),
             'items' => $this->getItems(),
+            'birthdays'=>$this->getCustomersWithTodayBirthday()
         ]);
     }
 }
