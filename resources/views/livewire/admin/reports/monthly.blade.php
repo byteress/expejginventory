@@ -450,7 +450,7 @@
                 @endphp
                 <tr>
                     <td>{{ $fullDate }}</td>
-                    <td>@money($payment)</td>
+                    <td>@money($payment)</td> 
                     <td>@money($expense)</td>
                     <td>@money($subtotal)</td>
                 </tr>
