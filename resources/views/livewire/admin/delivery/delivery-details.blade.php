@@ -124,8 +124,10 @@
                             <tbody>
                             @forelse ($orders as $order)
                                 <tr wire:key="{{ $order->id }}">
-                                    <td>#{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
-                                    <td>{{ $order->customer_first_name }} {{ $order->customer_last_name }}</td>
+                                    <td><a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}">
+                                        #{{ str_pad((string) $order->id, 12, '0', STR_PAD_LEFT) }}</td>
+                                    <td>
+                                        {{ $order->customer_first_name }} {{ $order->customer_last_name }}</td>
                                     <td>
                                         @foreach($this->getItems($order->order_id) as $item)
                                             <div wire:key="{{ $item->order_id }}.{{ $item->product_id }}" class="form-group row">
