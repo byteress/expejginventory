@@ -107,9 +107,11 @@
             wire:click="decrementQuantity('{{ $item->getHash() }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
             <i class="fas fa-minus"></i>
         </button>
-        <input type="text" class="text-center"
-            wire:model="quantities.{{ $item->getHash() }}"
-            style="width:45px !important;">
+        <input type="number" class="text-center"
+    wire:model="quantities.{{ $item->getHash() }}"
+    wire:change="updateQuantity('{{ $item->getHash() }}')"
+    style="width:45px !important;"
+    min="1">
         <button class="btn btn-outline-secondary" type="button"
             wire:click="incrementQuantity('{{ $item->getHash() }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
             <i class="fas fa-plus"></i>

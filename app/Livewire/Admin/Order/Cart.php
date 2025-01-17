@@ -300,6 +300,64 @@ class Cart extends Component
 
         DB::commit();
     }
+    public function updateQuantity($hash)
+    {
+        $quantity = $this->quantities[$hash];
+    
+        // Validate quantity
+        if (!is_numeric($quantity) || $quantity < 1) {
+            $this->quantities[$hash] = 1; // Reset invalid values to 1
+            return;
+        }
+    
+        // Sync with backend or perform any additional logic
+        $item = CartAlias::getItem($hash);
+        $reservationId = $item->getExtraInfo()['reservation_id'];
+    
+        DB::beginTransaction();
+    
+        // Cancel previous reservation
+        $cancelResult = app(StockManagementService::class)->cancelReservation(
+            $item->getId(),
+            $reservationId,
+            auth()->user()->id,
+            false
+        );
+    
+        if ($cancelResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($cancelResult->getError()));
+        }
+    
+        // Create a new reservation with the updated quantity
+        $cartType = CartAlias::getExtraInfo('cart_type');
+        $newReservationId = Str::uuid()->toString();
+        $reserveResult = app(StockManagementService::class)->reserve(
+            $item->getId(),
+            $newReservationId,
+            $quantity,
+            $this->branch,
+            auth()->user()->id,
+            $cartType != 'regular',
+            true
+        );
+    
+        if ($reserveResult->isFailure()) {
+            DB::rollBack();
+            return session()->flash('alert', ErrorHandler::getErrorMessage($reserveResult->getError()));
+        }
+    
+        // Update the cart
+        CartAlias::updateItem($hash, [
+            'quantity' => $quantity,
+            'extra_info' => [
+                'reservation_id' => $newReservationId
+            ]
+        ]);
+    
+        DB::commit();
+    }
+    
 
     public function removeItem(IStockManagementService $stockManagementService, $hash)
     {

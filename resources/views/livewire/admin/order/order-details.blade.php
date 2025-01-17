@@ -701,6 +701,11 @@
                                     <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
                                 @error('total')<span class="text-danger">{{ $message }}</span>@enderror
 
+                                <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Tentative Monthly Due:@else Down Payment: @endif</small><br>
+                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
+                                @error('total')<span class="text-danger">{{ $message }}</span>@enderror
+
+
                                 @if($paymentType == 'cod' && $completed)
                                     <h4 class="text-secondary mt-1"><small>Full Payment</small><br>
                                         <strong class ="text-primary">@money(array_sum($amountsCod), 'PHP', true)</strong></h4>
@@ -798,11 +803,10 @@
         <div class="receipt-details">
             <p>{{ $customer->first_name }} {{ $customer->last_name }}</p>
             <p>{{ $customer->phone }}</p>
-            <p style = "margin-top:20px;">{{ $customer->address }}</p>
-            {{-- <p>DOB: 04/01</p> --}}
+            <p style="margin-top:20px;">{{ $customer->address }}</p>
         </div>
         <div class="receipt-table-container">
-            <table class="receipt-table" style = "margin-top:60px;">
+            <table class="receipt-table" style="margin-top:60px;">
                 @foreach ($cartItems as $item)
                 <tr>
                     <td>{{ $item->quantity }}</td>
@@ -816,8 +820,11 @@
             @php
                 $orderTotal = $order->total + $order->delivery_fee;
                 $paymentTotal = $this->getPaymentTotalWithoutCod();
+                $balance = $orderTotal - $paymentTotal;
+                $isInstallment = ($balance > 0 && isset($order->installment_months) && $order->installment_months > 0);
+                $monthlyPayment = $isInstallment ? $balance / $order->installment_months : 0;
             @endphp
-            <table style = "width:100%;">
+            <table style="width:100%;">
                 @if($order->delivery_fee > 0)
                 <tr>
                     <td>Delivery Fee: </td>
@@ -836,7 +843,7 @@
                     <td>Net Total: </td>
                     <td><x-money amount="{{ $orderTotal }}" /></td>
                 </tr>
-                    @if($paymentTotal != $orderTotal)
+                @if($paymentTotal != $orderTotal)
                 <tr>
                     <td>Downpayment: </td>
                     <td><x-money amount="{{ $paymentTotal }}" /></td>
@@ -844,19 +851,29 @@
 
                 <tr>
                     <td>Balance: </td>
-                    <td><x-money amount="{{ $orderTotal - $paymentTotal}}" /></td>
+                    <td><x-money amount="{{ $balance }}" /></td>
+                </tr>
+                @endif
+                @if($isInstallment)
+                <tr>
+                    <td>Monthly Payment: </td>
+                    <td><x-money amount="{{ $monthlyPayment }}" /></td>
                 </tr>
                 @endif
             </table>
         </div>
         <div class="receipt-footer">
             <p>{{ $this->getPaymentBreakdown() }}</p>
+            @if(($order->months) != 0)
+            <p>Monthly Due:<x-money amount="{{$balance/($order->months)}}"/></p>
+            @endif
             <p>FOR {{ strtoupper($order->delivery_type) }}</p>
             <p>Assisted by: {{ $assistant->first_name }}</p>
             <p>Cashier: {{ is_null($cashier) ? '' : $cashier->first_name }}</p>
         </div>
     </div>
 </div>
+
 </x-slot>
 
 @assets
