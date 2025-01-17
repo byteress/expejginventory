@@ -31,6 +31,7 @@
                         <tr class="bg-secondary font-w">
                             <th>First Name</th>
                             <th>Last Name</th>
+                            <th>Birthday</th>
                             <th>Phone</th>
                             <th>Email</th>
                             <th>Balance</th>
@@ -42,6 +43,7 @@
                             <tr>
                                 <td>{{ $customer->first_name }}</td>
                                 <td>{{ $customer->last_name }}</td>
+                                <td>{{ $customer->dob }}</td>
                                 <td>{{ $customer->phone }}</td>
                                 <td>{{ $customer->email }}</td>
                                 <td>@money($customer->balance ?? 0)</td>

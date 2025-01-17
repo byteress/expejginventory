@@ -682,6 +682,7 @@
                                                                         <input wire:model="rate" type="number" min="0" class="form-control" required @if($completed) disabled @endif>
                                                                     </div>
                                                                 </td>
+                
                                                             </tr>
                                                             </thead>
                                                         </table>
@@ -698,14 +699,10 @@
 
 
                                 <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Payment Total:@else Down Payment: @endif</small><br>
-                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
+                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong>
+                                </h4>
                                 @error('total')<span class="text-danger">{{ $message }}</span>@enderror
-
-                                <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Tentative Monthly Due:@else Down Payment: @endif</small><br>
-                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
-                                @error('total')<span class="text-danger">{{ $message }}</span>@enderror
-
-
+                                
                                 @if($paymentType == 'cod' && $completed)
                                     <h4 class="text-secondary mt-1"><small>Full Payment</small><br>
                                         <strong class ="text-primary">@money(array_sum($amountsCod), 'PHP', true)</strong></h4>
@@ -865,7 +862,11 @@
         <div class="receipt-footer">
             <p>{{ $this->getPaymentBreakdown() }}</p>
             @if(($order->months) != 0)
-            <p>Monthly Due:<x-money amount="{{$balance/($order->months)}}"/></p>
+            @php
+            $cod = $this->getCodPaymentTotal();
+            $monthlyDue = (($balance-$cod)/$order->months);
+        @endphp
+        <p>Monthly Due: <x-money :amount="$monthlyDue" /></p>
             @endif
             <p>FOR {{ strtoupper($order->delivery_type) }}</p>
             <p>Assisted by: {{ $assistant->first_name }}</p>
