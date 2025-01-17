@@ -701,6 +701,11 @@
                                     <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
                                 @error('total')<span class="text-danger">{{ $message }}</span>@enderror
 
+                                <h4 class="text-secondary mt-1"><small>@if($paymentType == 'full')Tentative Monthly Due:@else Down Payment: @endif</small><br>
+                                    <strong class ="text-primary">@money(array_sum($amounts), 'PHP', true)</strong></h4>
+                                @error('total')<span class="text-danger">{{ $message }}</span>@enderror
+
+
                                 @if($paymentType == 'cod' && $completed)
                                     <h4 class="text-secondary mt-1"><small>Full Payment</small><br>
                                         <strong class ="text-primary">@money(array_sum($amountsCod), 'PHP', true)</strong></h4>
