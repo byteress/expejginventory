@@ -86,7 +86,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <div class="input-group mt-5">
                                         <button class="btn btn-outline-secondary" type="button"
                                             wire:click="decrementQuantity('{{ $item->getHash() }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
@@ -100,7 +100,24 @@
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
-                                </div>
+                                </div> -->
+                                <div class="col-md-2">
+    <div class="input-group mt-5">
+        <button class="btn btn-outline-secondary" type="button"
+            wire:click="decrementQuantity('{{ $item->getHash() }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
+            <i class="fas fa-minus"></i>
+        </button>
+        <input type="number" class="text-center"
+    wire:model="quantities.{{ $item->getHash() }}"
+    wire:change="updateQuantity('{{ $item->getHash() }}')"
+    style="width:45px !important;"
+    min="1">
+        <button class="btn btn-outline-secondary" type="button"
+            wire:click="incrementQuantity('{{ $item->getHash() }}')" wire:loading.attr="disabled" wire:target="decrementQuantity, incrementQuantity">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+</div>
                                 <div class="col-md-2 text-center">
                                     <h5 class="font-weight-bold mt-5">@money($item->getTotalPrice(), 'PHP', true)</h5>
                                 </div>
