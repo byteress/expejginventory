@@ -27,21 +27,8 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-10">
                     <h1 class="h3 text-primary admin-title mb-0"><strong>Delivery #{{ str_pad((string) $delivery->id, 12, '0', STR_PAD_LEFT) }} <span class="badge badge-{{ $class }}">{{ $this->getStatus($delivery->status) }}</span></strong></h1>
-                </div>
-                <div class="col-md-4">
-                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Date</div>
-                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                            <button wire:click="changeDate('decrement')" type="button" class="btn btn-primary">
-                                <i class="fas fa-chevron-left"></i></button>
-    
-                            <input class = "form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style ="border-radius: 0;">
-    
-                            <button wire:click="changeDate('increment')" type="button" class="btn btn-primary">
-                                <i class="fas fa-chevron-right"></i></button>
-                </div>
                 </div>
                 <div class="col-md-2">
                     <div class="d-flex justify-content-end">
@@ -125,6 +112,19 @@
                         </div>
                     </div>
                     <div class="table-responsive">
+                        <div class="mb-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Date</div>
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <button wire:click="changeDate('decrement')" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-left"></i></button>
+    
+                            <input class = "form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style ="border-radius: 0;">
+    
+                            <button wire:click="changeDate('increment')" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        </div>
                         <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
                             <tr>
@@ -132,10 +132,13 @@
                                 <th>Customer</th>
                                 <th>Items</th>
                                 <th>Address</th>
-                                <th>Date Completed</th>
+                                <th>Date</th>
                             </tr>
                             </thead>
                             <tbody>
+                            @php
+                                $date = "";
+                            @endphp
                             @forelse ($orders as $order)
                                 <tr wire:key="{{ $order->id }}">
                                     <td><a href="{{ route('admin.order.details', ['order_id' => $order->order_id]) }}">
@@ -158,8 +161,11 @@
                                         @endforeach
                                     </td>
                                     <td>{{ $order->delivery_address }}</td>
-                                    <td></td>
+                                    <td>{{ $order->complete_date }}</td>
                                 </tr>
+                                @php
+                                    $date = $order->complete_date;
+                                @endphp
                             @empty
                                 <tr>
                                     <td colspan="10" style="text-align: center;">No orders found</td>
@@ -198,7 +204,7 @@
                 <td align = "center">
                     <h2><strong>{{ $delivery->branch_name }}</strong></h2>
                     <h6><strong>DAILY MONITORING DELIVERY REPORT</strong></h6>
-                    <h6><strong>Date: {{ date('F j h:iA') }}</strong></h6>
+                    <h6><strong>Date: {{ $date }}</strong></h6>
                 </td>
             </tr>
         </table>
@@ -384,3 +390,22 @@
         }
     </style>
 @endassets
+@script
+        <script>
+            $('#datepicker').datepicker({
+                    format: 'yyyy-mm-dd',
+                    weekStart: 1,
+                    daysOfWeekHighlighted: "6,0",
+                    autoclose: true,
+                    todayHighlight: true,
+            }).on('change', function (){
+                var date = $(this).val();
+                $wire.dispatch('date-set', {date: date});
+            });
+    
+            $wire.on('date-changed', (event) => {
+                $('#datepicker').datepicker('setDate', $wire.get('date'));
+            });
+        </script>
+    @endscript
+    
