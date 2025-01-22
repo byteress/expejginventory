@@ -27,8 +27,21 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-6">
                     <h1 class="h3 text-primary admin-title mb-0"><strong>Delivery #{{ str_pad((string) $delivery->id, 12, '0', STR_PAD_LEFT) }} <span class="badge badge-{{ $class }}">{{ $this->getStatus($delivery->status) }}</span></strong></h1>
+                </div>
+                <div class="col-md-4">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Date</div>
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <button wire:click="changeDate('decrement')" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-left"></i></button>
+    
+                            <input class = "form-control" value="{{ $date ?? date('Y-m-d') }}" id="datepicker" style ="border-radius: 0;">
+    
+                            <button wire:click="changeDate('increment')" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-right"></i></button>
+                </div>
                 </div>
                 <div class="col-md-2">
                     <div class="d-flex justify-content-end">
@@ -119,6 +132,7 @@
                                 <th>Customer</th>
                                 <th>Items</th>
                                 <th>Address</th>
+                                <th>Date Completed</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -144,6 +158,7 @@
                                         @endforeach
                                     </td>
                                     <td>{{ $order->delivery_address }}</td>
+                                    <td></td>
                                 </tr>
                             @empty
                                 <tr>

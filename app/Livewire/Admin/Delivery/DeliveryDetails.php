@@ -14,14 +14,19 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use ProductManagement\Models\Product;
 use Throwable;
+use DateTime;
 
 #[Title('Delivery Details')]
 class DeliveryDetails extends Component
 {
     public string $deliveryId;
+
+    #[Url]
+    public ?string $date = null;
 
     public $quantities = [];
     public object $delivery;
@@ -32,6 +37,7 @@ class DeliveryDetails extends Component
         $this->deliveryId = $delivery_id;
         $this->delivery = $this->getDelivery($delivery_id);
         $this->notes = $this->delivery->notes ?? '';
+        $this->date = $this->date ?? now()->format('Y-m-d');
 
         $orders = $this->getOrders();
         foreach ($orders as $order) {
@@ -40,6 +46,35 @@ class DeliveryDetails extends Component
             }
         }
     }
+
+       /**
+     * @throws Exception
+     */
+    public function changeDate(string $action): void
+    {
+        $date = $this->date ?? now()->format('Y-m-d');
+
+        if($action == 'increment'){
+            $this->date = (new DateTime($date))->modify('+1 day')->format('Y-m-d');
+        }else{
+            $this->date = (new DateTime($date))->modify('-1 day')->format('Y-m-d');
+        }
+
+        $this->redirect(route('admin.delivery.details', [
+            'delivery_id' => $this->deliveryId,
+            'date' => $this->date
+        ]), true);
+    }
+
+    #[On('date-set')]
+    public function setDate(string $date): void
+    {
+        $this->redirect(route('admin.delivery.details', [
+            'delivery_id' => $this->deliveryId,
+            'date' => $date
+        ]), true);
+    }
+
 
     /**
      * @throws Throwable
