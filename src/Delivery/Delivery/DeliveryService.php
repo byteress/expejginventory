@@ -30,7 +30,7 @@ class DeliveryService implements IDeliveryService
             }, $items);
 
             if($type == 'pickup'){
-                $order->placePickupOrder($convertedItems, branchId: $branchId);
+                $order->placePickupOrder($convertedItems, $branchId);
             }else{
                 if(!$address) throw new InvalidDomainException('Address is required.', [
                     'address' => 'Address is required.'

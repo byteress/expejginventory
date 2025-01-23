@@ -13,20 +13,20 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Url;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use ProductManagement\Models\Product;
 use Throwable;
 use DateTime;
-use Livewire\Attributes\On;
 
 #[Title('Delivery Details')]
 class DeliveryDetails extends Component
 {
+    public string $deliveryId;
+
     #[Url]
     public ?string $date = null;
-    public string $deliveryId;
 
     public $quantities = [];
     public object $delivery;
@@ -37,6 +37,7 @@ class DeliveryDetails extends Component
         $this->deliveryId = $delivery_id;
         $this->delivery = $this->getDelivery($delivery_id);
         $this->notes = $this->delivery->notes ?? '';
+        $this->date = $this->date ?? now()->format('Y-m-d');
 
         $orders = $this->getOrders();
         foreach ($orders as $order) {
@@ -46,7 +47,7 @@ class DeliveryDetails extends Component
         }
     }
 
-      /**
+       /**
      * @throws Exception
      */
     public function changeDate(string $action): void
@@ -60,8 +61,8 @@ class DeliveryDetails extends Component
         }
 
         $this->redirect(route('admin.delivery.details', [
-            'date' => $this->date,
-            'delivery_id' => $this->deliveryId
+            'delivery_id' => $this->deliveryId,
+            'date' => $this->date
         ]), true);
     }
 
@@ -69,10 +70,11 @@ class DeliveryDetails extends Component
     public function setDate(string $date): void
     {
         $this->redirect(route('admin.delivery.details', [
-            'date' => $date,
-            'delivery_id' => $this->deliveryId
+            'delivery_id' => $this->deliveryId,
+            'date' => $date
         ]), true);
     }
+
 
     /**
      * @throws Throwable
@@ -80,12 +82,10 @@ class DeliveryDetails extends Component
     public function setAsDelivered(IDeliveryService $deliveryService): void
     {
         $this->validate([
-            'quantities.*.*' => 'required', 
+            'quantities.*.*' => 'required',
         ], [
             'quantities.*.*.required' => 'The quantity field is required.',
         ]);
-
-        $date = $this->date;
 
         $items = [];
         foreach ($this->quantities as $orderId => $quantities) {
@@ -106,10 +106,6 @@ class DeliveryDetails extends Component
             session()->flash('alert', ErrorHandler::getErrorMessage($result->getError()));
             return;
         }
-
-        DB::table('deliveries')
-            ->where('delivery_id', $this->deliveryId)
-            ->update(['own_date' => $date]);
 
         DB::commit();
         session()->flash('success', 'Delivery marked as complete');
@@ -138,10 +134,9 @@ class DeliveryDetails extends Component
          return DB::table('attempt_items')
              ->join('orders', 'orders.order_id', '=', 'attempt_items.order_id')
              ->join('customers', 'orders.customer_id', '=', 'customers.id')
-             ->join('deliveries', 'deliveries.delivery_id', '=', 'attempt_items.delivery_id')
              ->join('branches', 'orders.branch_id', '=', 'branches.id')
              ->join('users', 'orders.assistant_id', '=', 'users.id')
-             ->select(['deliveries.own_date as complete_date' ,'orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'customers.phone as customer_phone', 'orders.delivery_address as customer_address', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
+             ->select(['orders.*', 'branches.name as branch_name', 'customers.first_name as customer_first_name', 'customers.last_name as customer_last_name', 'customers.phone as customer_phone', 'orders.delivery_address as customer_address', 'users.first_name as assistant_first_name', 'users.last_name as assistant_last_name'])
              ->where('attempt_items.delivery_id', $this->deliveryId)
              ->distinct()
              ->get();
