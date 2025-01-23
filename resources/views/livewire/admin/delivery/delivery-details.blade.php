@@ -137,7 +137,6 @@
                             </thead>
                             <tbody>
                             @php
-                                $date = "";
                             @endphp
                             @forelse ($orders as $order)
                                 <tr wire:key="{{ $order->id }}">
@@ -204,7 +203,7 @@
                 <td align = "center">
                     <h2><strong>{{ $delivery->branch_name }}</strong></h2>
                     <h6><strong>DAILY MONITORING DELIVERY REPORT</strong></h6>
-                    <h6><strong>Date: {{ $date }}</strong></h6>
+                    <h6><strong>Date: {{ $this->date }}</strong></h6>
                 </td>
             </tr>
         </table>
