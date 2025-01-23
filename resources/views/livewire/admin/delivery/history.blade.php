@@ -50,7 +50,7 @@
                                 @hasrole('admin')
                                 <td>{{ $delivery->branch_name }}</td>
                                 @endhasrole
-                                <td>{{ date('h:i a F j, Y', strtotime($delivery->completed_at)) }}</td>
+                                <td>{{ $delivery->own_date ? date('F j, Y', strtotime($delivery->own_date)) : date('h:i a F j, Y', strtotime($delivery->completed_at)) }}</td>
                                 <td align="center">
                                     <div class="btn-group">
                                         <a href="{{ route('admin.delivery.details', ['delivery_id' => $delivery->delivery_id]) }}" type="button"
