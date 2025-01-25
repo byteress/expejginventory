@@ -21,9 +21,11 @@
         <div class="card-header py-3">
             <div class="row">
                 <div class="col-md-3">
-                    <div class="form-group">
-                        <input type="text" class="float-left form-control" placeholder="Search..."
-                               wire:model.live="search">
+                    <div class="form-group d-flex align-items-center">
+                        <input type="text" class="float-left form-control me-2" placeholder="Search..." wire:model.live="search">
+                        <button type="button" class="btn btn-success" onclick="location.reload();">
+                            Load
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-4" @unlessrole('admin') style="display:none;" @endunlessrole>
@@ -107,20 +109,21 @@
             </tr>
             </thead>
             <tbody>
-            @forelse ($allProducts as $product)
-                <tr>
-                    <td>{{ $product->branch_name }}</td>
-                    <td class="second-child">{{ $product->supplier_name }}</td>
-                    <td>{{ $product->product_model }}</td>
-                    <td>{{$product->product_name}}</td>
-                    <td>{{ $product->quantity }}</td>
-                </tr>
+                @forelse ($allProducts as $product)
+                @if ($product->quantity > 0) <!-- Replace condition with your filter -->
+                    <tr>
+                        <td>{{ $product->branch_name }}</td>
+                        <td class="second-child">{{ $product->supplier_name }}</td>
+                        <td>{{ $product->product_model }}</td>
+                        <td>{{ $product->product_name }}</td>
+                        <td>{{ $product->quantity }}</td>
+                    </tr>
+                @endif
             @empty
                 <tr>
-                    <td colspan="4" class="text-center">No products found with available quantity.</td>
+                    <td colspan="5" class="text-center">No products found with available quantity.</td>
                 </tr>
             @endforelse
-            </tbody>
         </table>
     </div>
 </x-slot>
