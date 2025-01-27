@@ -163,6 +163,16 @@ class Dashboard extends Component
         return true;
     }
 
+    public function hasNotified($customer_id) {
+        
+        $date = now()->format('Y-m-d');
+        $query = DB::table('sms_logs')
+            ->where('customer_id', $customer_id)
+            ->whereDate('sent_at', $date);
+
+        return $query->exists();
+    }
+
 
     public function notifyAll()
     {

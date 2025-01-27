@@ -113,7 +113,7 @@
                             <td>{{ $customer->phone }}</td>
                             <td>@money($customer->balance)</td>
                             <td>
-                                @if($customer)
+                                @if($this->hasNotified($customer->id))
                                     <span class="badge badge-success">Notified</span>
                                 @else
                                     <span class="badge badge-warning">Not Notified</span>
