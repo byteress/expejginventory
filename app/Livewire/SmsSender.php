@@ -37,6 +37,37 @@ class SmsSender extends Component
         }
 
     }
+    
+    public function sendBirthday($name, $contact) {
+
+        $currentDateTime = date('dM H:i'); 
+
+        $message = <<<EOT
+        {$currentDateTime}: Hi {$name}!
+
+        We would like to wish you a Happy Birthday! May your day be filled with joy and happiness.
+        
+        Greetings from Jenny Grace Furniture Homestore.
+        EOT;
+
+        
+        $data = [
+            'sender_id' =>  'PhilSMS',
+            'recipient' => $contact,
+            'message' => $message,
+        ];
+
+        $response = Http::withToken('944|9Szci3KSbDkuxNGOzsL9nRycelhylzLoidyCNf4u')
+        ->withHeaders(['Content-Type' => 'application/json'])
+        ->post('https://app.philsms.com/api/v3/sms/send', $data);
+
+        if ($response->successful()) {
+           return true;
+        } else {
+           return false;
+        }
+
+    }
 
     public function render()
     {
