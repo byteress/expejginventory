@@ -173,8 +173,33 @@ class Dashboard extends Component
         return $query->exists();
     }
 
+    public function birthdayCelebrants() {
 
-    public function notifyAll()
+        $customers = $this->getCustomersWithTodayBirthday();
+
+        foreach ($customers as $customer) {
+            $phoneNumbers = $customer->phone;
+    
+            if (strpos($phoneNumbers, '/') !== false) {
+                $phoneArray = explode('/', $phoneNumbers);
+                $phoneArray = array_map('trim', $phoneArray);
+            } else {
+                $phoneArray = [$phoneNumbers]; 
+            }
+    
+            foreach ($phoneArray as $phone) {
+                try {
+                    $sms = new SmsSender();
+                    $sms->sendBirthday($customer->first_name . ' ' . $customer->last_name, $this->formatPhone($phone));
+                } catch (\Exception $e) {
+                    \Log::error("Failed to send SMS to {$phone} for customer {$customer->id}: {$e->getMessage()}");
+                }
+            }
+        }
+
+    }
+
+    public function notifyDueToday()
     {
         $customers = $this->getCustomers(); 
         $sms = new SmsSender(); 

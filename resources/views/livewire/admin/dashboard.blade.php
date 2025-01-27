@@ -85,13 +85,9 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <button wire:click="notifyAll()" type="button" class="btn btn-primary btn-sm">Notify</button>
-                  <!-- Display flash message -->
-@if (session()->has('message'))
-    <div class="alert alert-success">
-        {{ session('message') }}
-    </div>
-@endif
+                    @hasanyrole('admin|manager')
+                    <button wire:click="notifyDueToday()" type="button" class="btn btn-primary btn-sm">Notify</button>
+                    @endhasanyrole
 
                 </div>
                 <!-- Card Body -->
@@ -208,6 +204,9 @@
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+            @hasanyrole('admin|manager')
+            <button type="button" wire:click="birthdayCelebrants()" class="btn btn-success btn-sm">Send Greetings!</button>
+            @endhasanyrole
         </div>
         <!-- Card Body -->
         <div class="card-body p-0 dashboard-table-section custom-scrollbar">

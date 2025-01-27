@@ -27,7 +27,7 @@
     <hr class="sidebar-divider">
 
     <!-- Reports Collapse Menu -->
-    <li class="nav-item {{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) }}">
+    <li class="nav-item {{ isActiveRoute(routes: ['admin.reports.daily', 'admin.reports.monthly']) }}">
         <a class="nav-link {{ isActiveCollapse(['admin.reports.daily', 'admin.reports.monthly']) }}" href="#" data-toggle="collapse" data-target="#collapseReports"
            aria-expanded="{{ isActiveRoute(['admin.reports.daily', 'admin.reports.monthly']) ? 'true' : 'false' }}" aria-controls="collapseReports">
             <i class="fas fa-fw fa-chart-line"></i>
