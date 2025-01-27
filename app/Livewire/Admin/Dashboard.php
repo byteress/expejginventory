@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\SmsSender;
+use Illuminate\Support\Str;
 
 #[Title('Dashboard')]
 class Dashboard extends Component
@@ -160,6 +162,50 @@ class Dashboard extends Component
 
         return true;
     }
+
+
+    public function notifyAll()
+    {
+        $customers = $this->getCustomers(); 
+        $sms = new SmsSender(); 
+    
+        foreach ($customers as $customer) {
+            $phoneNumbers = '09568104939';
+    
+            if (strpos($phoneNumbers, '/') !== false) {
+                $phoneArray = explode('/', $phoneNumbers);
+                $phoneArray = array_map('trim', $phoneArray);
+            } else {
+                $phoneArray = [$phoneNumbers]; 
+            }
+    
+            foreach ($phoneArray as $phone) {
+                try {
+                    $sms->send($customer->first_name . ' ' . $customer->last_name, $customer->balance, $this->formatPhone($phone));
+                    DB::table('sms_logs')->insert([
+                        'customer_id' => $customer->id,
+                        'sent_at' => now()
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error("Failed to send SMS to {$phone} for customer {$customer->id}: {$e->getMessage()}");
+                }
+            }
+        }
+    
+        // Flash success message
+        session()->flash('message', 'All notifications sent successfully!');
+    }
+
+    private function formatPhone($phoneNumber)
+    {
+        if (substr($phoneNumber, 0, 1) === '0') {
+            return '+63' . substr($phoneNumber, 1);
+        }
+
+        return $phoneNumber;
+    }
+
+    
 
     #[Layout('livewire.admin.base_layout')]
     public function render()
