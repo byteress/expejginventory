@@ -182,8 +182,8 @@ class Dashboard extends Component
         foreach ($customers as $customer) {
 
             if($this->hasNotified($customer->id)) continue;
-            
-            $phoneNumbers = '09568104939';
+
+            $phoneNumbers = $customer->phone;
     
             if (strpos($phoneNumbers, '/') !== false) {
                 $phoneArray = explode('/', $phoneNumbers);

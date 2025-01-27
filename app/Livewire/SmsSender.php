@@ -22,7 +22,7 @@ class SmsSender extends Component
         
         $data = [
             'sender_id' =>  'PhilSMS',
-            'recipient' => '+639568104939',
+            'recipient' => $contact,
             'message' => $message,
         ];
 
