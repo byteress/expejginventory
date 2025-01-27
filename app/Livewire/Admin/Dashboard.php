@@ -164,7 +164,7 @@ class Dashboard extends Component
     }
 
     public function hasNotified($customer_id) {
-        
+
         $date = now()->format('Y-m-d');
         $query = DB::table('sms_logs')
             ->where('customer_id', $customer_id)
@@ -180,6 +180,9 @@ class Dashboard extends Component
         $sms = new SmsSender(); 
     
         foreach ($customers as $customer) {
+
+            if($this->hasNotified($customer->id)) continue;
+            
             $phoneNumbers = '09568104939';
     
             if (strpos($phoneNumbers, '/') !== false) {
