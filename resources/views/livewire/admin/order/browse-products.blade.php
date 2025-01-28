@@ -69,7 +69,29 @@
                             @foreach ($products as $product)
                                 <div wire:key="{{ $product->id }}" class="col-md-4 mb-4">
                                     <div class="card shadow">
-                                        {{ $product->getFirstMedia('featured')->img()->lazy()->attributes(['class' => 'card-img-top']) }}
+                                    <div id="productCarousel-{{ $product->id }}" class="carousel slide" data-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    <div class="carousel-item active">
+                                                        <img src="{{ $product->getFirstMedia('featured')->getUrl() }}" class="d-block w-100 card-img-top" alt="Featured Image">
+                                                    </div>
+
+                                                    @foreach($product->getMedia('gallery') as $index => $media)
+                                                        <div class="carousel-item {{ $index == 0 && !$product->hasMedia('featured') ? 'active' : '' }}">
+                                                            <img src="{{ $media->getUrl() }}" class="d-block w-100 card-img-top" alt="Gallery Image {{ $index + 1 }}">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                                <a class="carousel-control-prev" href="#productCarousel-{{ $product->id }}" role="button" data-slide="prev">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Previous</span>
+                                                </a>
+                                                <a class="carousel-control-next" href="#productCarousel-{{ $product->id }}" role="button" data-slide="next">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Next</span>
+                                                </a>
+
+                                            </div>
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <h5 class="card-title"><b>{{ $product['model'] }}</b><br><span class="text-sm">{{ $product['supplier_name']  }}</span></h5>
