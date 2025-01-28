@@ -9,7 +9,6 @@ class SmsSender extends Component
 {
 
     public function send($name, $balance, $contact) {
-
         $currentDateTime = date('dM H:i'); 
         $balance = @money($balance);
 
@@ -19,7 +18,6 @@ class SmsSender extends Component
         Your outstanding balance of {$balance} is due today. Please settle your balance at your earliest convenience. Please disregard if already paid.
         EOT;
 
-        
         $data = [
             'sender_id' =>  'PhilSMS',
             'recipient' => $contact,
@@ -39,9 +37,7 @@ class SmsSender extends Component
     }
     
     public function sendBirthday($name, $contact) {
-
         $currentDateTime = date('dM H:i'); 
-
         $message = <<<EOT
         {$currentDateTime}: Hi {$name}!
 
@@ -50,7 +46,6 @@ class SmsSender extends Component
         Greetings from Jenny Grace Furniture Homestore.
         EOT;
 
-        
         $data = [
             'sender_id' =>  'PhilSMS',
             'recipient' => $contact,
@@ -66,7 +61,6 @@ class SmsSender extends Component
         } else {
            return false;
         }
-
     }
 
     public function render()
