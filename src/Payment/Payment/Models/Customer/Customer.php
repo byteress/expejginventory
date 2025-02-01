@@ -2,9 +2,12 @@
 
 namespace Payment\Models\Customer;
 
+use App\Livewire\Admin\Delivery\DeliveryDetails;
 use Carbon\Carbon;
+use Date;
 use DateTime;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Payment\Models\Aggregate;
 use PaymentContracts\Events\CodPaymentCollected;
 use PaymentContracts\Events\CodPaymentRequested;
@@ -17,6 +20,7 @@ use PaymentContracts\Events\InstallmentStarted;
 use PaymentContracts\Events\PenaltyApplied;
 use PaymentContracts\Events\PenaltyRemoved;
 use PaymentContracts\Exceptions\InvalidDomainException;
+use Psr\Log\NullLogger;
 
 class Customer extends Aggregate
 {
@@ -146,6 +150,27 @@ class Customer extends Aggregate
         return $this;
     }
 
+    /**
+     * Get the own date based on the order ID.
+     *
+     * @param string $orderId
+     * @return mixed
+     */
+    public function getOwnDate($orderId)
+    {
+        $result = DB::table('attempt_items')
+            ->join('deliveries', 'attempt_items.delivery_id', '=', 'deliveries.delivery_id')
+            ->where('attempt_items.order_id', '=', $orderId)
+            ->select('deliveries.own_date')
+            ->first();
+
+        if ($result && $result->own_date) {
+            return Carbon::parse($result->own_date);
+        }
+
+        return null;
+    }
+
     public function startInstallment(string $orderId, int $codBalance = 0, ?DateTime $installmentStartDate = null): self
     {
         $balance = $this->codBalances[$orderId]['balance'] ?? 0;
@@ -155,13 +180,15 @@ class Customer extends Aggregate
         $interestRate = $this->installmentRequests[$orderId]->interestRate;
         $withInterest = round($codBalance + ($codBalance * ($interestRate / 100)));
 
+        $date = session()->get('own_date');
         $dues = [];
         $i = $installmentStartDate ? 0 : 1;
+
         foreach($this->installments as $installment){
             if($installment['orderId'] == $orderId && !isset($installment['due'])){
-                $date = $installmentStartDate ? \Date::parse($installmentStartDate->format('Y-m-d')) : Carbon::now();
+                $date = Carbon::parse($date);
                 $dues[] = [
-                    'due' => $date->addMonths($i),
+                    'due' => $date->addMonths($i)->format('Y-m-d'),
                     'index' => $installment['index'],
                     'amount' => round($withInterest / $this->installmentRequests[$orderId]->months),
                 ];
@@ -170,9 +197,11 @@ class Customer extends Aggregate
             }
         }
 
-        $this->recordThat(new InstallmentStarted($orderId, $this->uuid(), $dues, $codBalance));
 
+         $this->recordThat(new InstallmentStarted($orderId, $this->uuid(), $dues, $codBalance));
+        session()->forget('own_date');
         return $this;
+
     }
 
     /**

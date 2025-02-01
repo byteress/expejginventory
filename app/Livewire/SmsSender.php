@@ -1,66 +1,73 @@
 <?php
 
 namespace App\Livewire;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
+use Carbon\Carbon;
 
 class SmsSender extends Component
 {
+    private $apiUrl;
+    private $apiToken;
 
-    public function send($name, $balance, $contact) {
-        $currentDateTime = date('dM H:i'); 
-        $balance = @money($balance);
-
-        $message = <<<EOT
-        {$currentDateTime}: Hi {$name}! This is a friendly reminder from Jenny Grace Furniture Homestore.
-
-        Your outstanding balance of {$balance} is due today. Please settle your balance at your earliest convenience. Please disregard if already paid.
-        EOT;
-
-        $data = [
-            'sender_id' =>  'PhilSMS',
-            'recipient' => $contact,
-            'message' => $message,
-        ];
-
-        $response = Http::withToken('944|9Szci3KSbDkuxNGOzsL9nRycelhylzLoidyCNf4u')
-        ->withHeaders(['Content-Type' => 'application/json'])
-        ->post('https://app.philsms.com/api/v3/sms/send', $data);
-
-        if ($response->successful()) {
-           return true;
-        } else {
-           return false;
-        }
-
+    public function __construct()
+    {
+        $this->apiUrl = config('services.philsms.url');
+        $this->apiToken = config('services.philsms.token');
     }
-    
-    public function sendBirthday($name, $contact) {
-        $currentDateTime = date('dM H:i'); 
+
+    public function send($name, $balance, $contact)
+    {
+        $currentDateTime = Carbon::now()->format('d M H:i');
+        $formattedBalance = number_format($balance, 2);
+
         $message = <<<EOT
-        {$currentDateTime}: Hi {$name}!
+{$currentDateTime}: Hi {$name}! This is a friendly reminder from Jenny Grace Furniture Homestore.
 
-        We would like to wish you a Happy Birthday! May your day be filled with joy and happiness.
-        
-        Greetings from Jenny Grace Furniture Homestore.
-        EOT;
+Your outstanding balance of PHP {$formattedBalance} is due today. Please settle your balance at your earliest convenience. Please disregard if already paid.
+EOT;
 
+        return $this->sendSms($contact, $message);
+    }
+
+    public function sendBirthday($name, $contact)
+    {
+        $currentDateTime = Carbon::now()->format('d M H:i');
+
+        $message = <<<EOT
+{$currentDateTime}: Hi {$name}!
+
+We would like to wish you a Happy Birthday! May your day be filled with joy and happiness.
+
+Greetings from Jenny Grace Furniture Homestore.
+EOT;
+
+        return $this->sendSms($contact, $message);
+    }
+
+    private function sendSms($recipient, $message)
+    {
         $data = [
-            'sender_id' =>  'PhilSMS',
-            'recipient' => $contact,
+            'sender_id' => 'PhilSMS',
+            'recipient' => $recipient,
             'message' => $message,
         ];
 
-        $response = Http::withToken('944|9Szci3KSbDkuxNGOzsL9nRycelhylzLoidyCNf4u')
-        ->withHeaders(['Content-Type' => 'application/json'])
-        ->post('https://app.philsms.com/api/v3/sms/send', $data);
+        $response = Http::withToken($this->apiToken)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post($this->apiUrl, $data);
 
         if ($response->successful()) {
-           return true;
-        } else {
-           return false;
+            return true;
         }
+
+        logger()->error('SMS sending failed', [
+            'recipient' => $recipient,
+            'response' => $response->body()
+        ]);
+
+        return false;
     }
 
     public function render()
