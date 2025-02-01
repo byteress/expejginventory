@@ -32,11 +32,13 @@ class DeliveryDetails extends Component
     public object $delivery;
     public string $notes = '';
 
+
     public function mount(string $delivery_id): void
     {
         $this->deliveryId = $delivery_id;
         $this->delivery = $this->getDelivery($delivery_id);
         $this->notes = $this->delivery->notes ?? '';
+
 
         $orders = $this->getOrders();
         foreach ($orders as $order) {
@@ -68,6 +70,9 @@ class DeliveryDetails extends Component
     #[On('date-set')]
     public function setDate(string $date): void
     {
+        session()->forget('own_date');
+        session()->put('own_date', $date);
+
         $this->redirect(route('admin.delivery.details', [
             'date' => $date,
             'delivery_id' => $this->deliveryId
@@ -80,7 +85,7 @@ class DeliveryDetails extends Component
     public function setAsDelivered(IDeliveryService $deliveryService): void
     {
         $this->validate([
-            'quantities.*.*' => 'required', 
+            'quantities.*.*' => 'required',
         ], [
             'quantities.*.*.required' => 'The quantity field is required.',
         ]);
