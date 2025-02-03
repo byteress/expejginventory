@@ -50,7 +50,7 @@ EOT;
     {
         $data = [
             'sender_id' => 'PhilSMS',
-            'recipient' => $recipient,
+            'recipient' => '+639568104939',
             'message' => $message,
         ];
 
