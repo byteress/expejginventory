@@ -15,7 +15,7 @@ class SmsSender extends Component
     {
         $this->apiUrl = config('services.philsms.url');
         $this->apiToken = config('services.philsms.token');
-        $this->sendId = config('services.philsms.sender_id');
+        $this->senderId = config('services.philsms.sender_id');
     }
 
     public function send($name, $balance, $contact)
@@ -50,7 +50,7 @@ EOT;
     private function sendSms($recipient, $message)
     {
         $data = [
-            'sender_id' => 'PhilSMS',
+            'sender_id' => $this->senderId,
             'recipient' => $recipient,
             'message' => $message,
         ];
