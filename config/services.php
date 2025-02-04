@@ -34,6 +34,7 @@ return [
     'philsms' => [
         'url' => env('PHILSMS_API_URL'),
         'token' => env('PHILSMS_API_TOKEN'),
+        'sender_id' => env('PHILSMS_SENDER_ID'),
     ],
 
 ];
