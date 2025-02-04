@@ -35,6 +35,7 @@ class IdentityAndAccessService implements IIdentityAndAccessService
             $user->email = $email;
             $user->phone = $phone;
             $user->address = $address;
+            $user->password = $password;
             $user->branch_id = $branch;
             $user->password = Hash::make($password);
 
@@ -53,7 +54,7 @@ class IdentityAndAccessService implements IIdentityAndAccessService
     /**
      * @throws InvalidDomainException
      */
-    public function update(string $userId, string $firstName, string $lastName, string $email, ?string $phone, ?string $address, string $role, ?string $branch): Result
+    public function update(string $userId, string $firstName, string $lastName, string $email, ?string $phone, ?string $address, $password, string $role, ?string $branch): Result
     {
         try {
             if(in_array($role, [ Role::Admin->value, Role::Manager->value ]) && !auth()->user()?->hasRole(Role::Admin->value))
@@ -71,6 +72,7 @@ class IdentityAndAccessService implements IIdentityAndAccessService
                 'email' => $email,
                 'phone' => $phone,
                 'address' => $address,
+                'password'=> $password,
                 'branch_id' => $branch,
             ]);
 

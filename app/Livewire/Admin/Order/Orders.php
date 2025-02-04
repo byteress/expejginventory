@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Admin\Order;
 
 use App\Exceptions\ErrorHandler;
@@ -45,6 +44,10 @@ class Orders extends Component
         $this->branch = auth()->user()->branch_id;
         $this->type = $type;
         $this->displayStatus = $status;
+
+        $this->email = auth()->user()->email; // Prefill with logged-in user's email
+        $this->password = 'password'; // Set a default password (consider removing for security)
+        $this->notes = 'Order deletion request 1/30/2025'; // Default note text
 
         switch ($status){
             case 'pending':
@@ -158,6 +161,10 @@ class Orders extends Component
     ): void
     {
         $this->validate();
+        if ($this->email !== 'admin@mailinator.com') {
+            session()->flash('alert-auth', 'Unauthorized: Only the admin can delete orders.');
+            return;
+        }
 
         DB::beginTransaction();
 

@@ -60,13 +60,13 @@
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
 
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileSettings">
+                {{-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileSettings">
                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Settings
-                </a>
-                <a class="dropdown-item" href="#">
+                </a> --}}
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#changepassword">
                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Activity Log
+                   Change Password
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ route('logout') }}">
@@ -80,6 +80,24 @@
 
     <!-- Modal -->
     <div class="modal fade" id="profileSettings" tabindex="-1" aria-labelledby="profileSettingsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="profileSettingsLabel">
+                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                Account Settings</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <livewire:admin.profile.settings />
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changepassword" tabindex="-1" aria-labelledby="changepassword" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
